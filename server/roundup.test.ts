@@ -125,7 +125,7 @@ describe("stats.dashboard", () => {
 
     const result = await caller.stats.dashboard();
 
-    expect(result.archiveEntryCount).toBe(50);
+    expect(result.archiveEntryCount).toBe(60);
   });
 
   it("returns daysUntilSunday between 0 and 6", async () => {
@@ -166,7 +166,7 @@ describe("archive.stats", () => {
 
     expect(result).toHaveProperty("totalEntries");
     expect(result).toHaveProperty("byPhase");
-    expect(result.totalEntries).toBe(50);
+    expect(result.totalEntries).toBe(60);
     expect(typeof result.byPhase).toBe("object");
   });
 

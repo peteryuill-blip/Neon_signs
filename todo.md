@@ -86,3 +86,13 @@
 - [x] Single user authentication
 - [x] Protected API routes
 - [x] SQL injection prevention (parameterized queries)
+
+
+## Archive Enrichment (New Request)
+- [x] Read and analyze FULL_PHASE_A1_A5_NEON_MASTER.txt
+- [x] Read and analyze PRIMARY_SOURCE_WRITING_MASTER.txt
+- [x] Extract phase transitions, somatic states, Jester moments, breakthrough points
+- [x] Structure entries with: phase_dna, somatic_state, jester_activity_level, emotional_resonance, pattern_tag
+- [x] Create seed script for new historical entries
+- [x] Load enriched archive into database
+- [x] Verify data integrity and counts
