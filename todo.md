@@ -155,3 +155,19 @@
 - [x] Display step summary on form
 - [ ] Show step trends in History charts
 - [ ] Include steps in CSV/PDF export
+
+
+## Feature: Expanded Work Input Section
+- [x] Add worksData JSON column to weekly_roundups table
+- [x] Create TypeScript types for WorkEntry structure
+- [x] Update roundup.submit API to accept worksData
+- [x] Update roundup.update API to handle worksData
+- [x] Build expandable Works Made UI with toggle
+- [x] Create WorkCard component with all sub-fields (medium, emotional temp, counts, etc.)
+- [x] Implement repeating work cards with "+ Add Another Work" button
+- [x] Auto-generate worksMade summary text from structured data
+- [x] Validate: emotionalTemp required if started/finished > 0
+- [x] Update Pattern Archaeology to search by medium and emotional temperature
+- [x] Update Neon's Mirror prompt to reference work details
+- [x] Add emotional temperature filter to History page
+- [ ] Update CSV/PDF export to include work details

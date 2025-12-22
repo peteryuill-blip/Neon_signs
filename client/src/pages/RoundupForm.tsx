@@ -8,12 +8,14 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Loader2, ArrowLeft, Calendar, AlertCircle, CheckCircle2, Save, Footprints } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Loader2, ArrowLeft, Calendar, AlertCircle, CheckCircle2, Save, Footprints, Plus, Trash2, ChevronDown, ChevronUp, Palette } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "sonner";
+import { nanoid } from "nanoid";
 
 const DRAFT_KEY = 'neon-signs-roundup-draft';
 
@@ -25,6 +27,20 @@ interface DailySteps {
   fri: number;
   sat: number;
   sun: number;
+}
+
+// Work Entry type matching the database schema
+interface WorkEntry {
+  id: string;
+  workTitle?: string;
+  medium: 'ink' | 'mixed' | 'study' | 'other';
+  emotionalTemp: 'struggling' | 'processing' | 'flowing' | 'uncertain';
+  started: number;
+  finished: number;
+  abandoned: number;
+  keyInquiry: string;
+  technicalNote?: string;
+  abandonmentReason?: string;
 }
 
 interface FormData {
@@ -41,6 +57,8 @@ interface FormData {
   somaticState: string;
   doorIntention: string;
   dailySteps: DailySteps;
+  worksData: WorkEntry[];
+  worksExpanded: boolean;
 }
 
 const initialDailySteps: DailySteps = {
@@ -52,6 +70,19 @@ const initialDailySteps: DailySteps = {
   sat: 0,
   sun: 0,
 };
+
+const createEmptyWorkEntry = (): WorkEntry => ({
+  id: nanoid(),
+  workTitle: '',
+  medium: 'ink',
+  emotionalTemp: 'processing',
+  started: 0,
+  finished: 0,
+  abandoned: 0,
+  keyInquiry: '',
+  technicalNote: '',
+  abandonmentReason: '',
+});
 
 const initialFormData: FormData = {
   weatherReport: '',
@@ -67,10 +98,26 @@ const initialFormData: FormData = {
   somaticState: '',
   doorIntention: '',
   dailySteps: initialDailySteps,
+  worksData: [],
+  worksExpanded: false,
 };
 
 const STEP_THRESHOLD_HIGH = 8000;
 const STEP_THRESHOLD_LOW = 5000;
+
+const mediumOptions = [
+  { value: 'ink', label: '🖋️ Ink' },
+  { value: 'mixed', label: '🎨 Mixed Media' },
+  { value: 'study', label: '📚 Study' },
+  { value: 'other', label: '✨ Other' },
+];
+
+const emotionalTempOptions = [
+  { value: 'struggling', label: '😓 Struggling', color: 'neon-text-magenta' },
+  { value: 'processing', label: '🔄 Processing', color: 'neon-text-amber' },
+  { value: 'flowing', label: '🌊 Flowing', color: 'neon-text-cyan' },
+  { value: 'uncertain', label: '❓ Uncertain', color: 'neon-text-purple' },
+];
 
 function getJesterColor(value: number): string {
   if (value <= 3) return 'neon-text-cyan';
@@ -114,11 +161,232 @@ const dayLabels: { key: keyof DailySteps; label: string; short: string }[] = [
   { key: 'sun', label: 'Sunday', short: 'Sun' },
 ];
 
+// Generate works summary from structured data
+function generateWorksSummary(works: WorkEntry[]): string {
+  if (works.length === 0) return '';
+  
+  const totals = works.reduce((acc, w) => ({
+    started: acc.started + w.started,
+    finished: acc.finished + w.finished,
+    abandoned: acc.abandoned + w.abandoned,
+  }), { started: 0, finished: 0, abandoned: 0 });
+  
+  // Find dominant emotional temp
+  const tempCounts: Record<string, number> = {};
+  works.forEach(w => {
+    tempCounts[w.emotionalTemp] = (tempCounts[w.emotionalTemp] || 0) + 1;
+  });
+  const dominantTemp = Object.entries(tempCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'processing';
+  
+  // Find dominant medium
+  const mediumCounts: Record<string, number> = {};
+  works.forEach(w => {
+    mediumCounts[w.medium] = (mediumCounts[w.medium] || 0) + 1;
+  });
+  const dominantMedium = Object.entries(mediumCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'mixed';
+  
+  // Get key inquiries
+  const inquiries = works.map(w => w.keyInquiry).filter(Boolean).slice(0, 2);
+  
+  const parts: string[] = [];
+  if (totals.started > 0) parts.push(`${totals.started} started`);
+  if (totals.finished > 0) parts.push(`${totals.finished} finished`);
+  if (totals.abandoned > 0) parts.push(`${totals.abandoned} abandoned`);
+  
+  let summary = parts.join(', ');
+  summary += ` — ${dominantTemp} through ${dominantMedium}`;
+  if (inquiries.length > 0) {
+    summary += ` (${inquiries.join('; ')})`;
+  }
+  
+  return summary;
+}
+
+// Work Card Component
+function WorkCard({ 
+  work, 
+  index, 
+  onUpdate, 
+  onRemove, 
+  disabled 
+}: { 
+  work: WorkEntry; 
+  index: number; 
+  onUpdate: (id: string, updates: Partial<WorkEntry>) => void; 
+  onRemove: (id: string) => void;
+  disabled: boolean;
+}) {
+  const hasActivity = work.started > 0 || work.finished > 0;
+  const needsEmotionalTemp = hasActivity && !work.emotionalTemp;
+  const hasAbandoned = work.abandoned > 0;
+  
+  return (
+    <div className="cyber-card rounded-xl p-4 space-y-4 border border-[var(--neon-amber)]/30">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Palette className="h-4 w-4 neon-text-amber" />
+          <span className="text-sm font-medium neon-text-amber">Work #{index + 1}</span>
+        </div>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => onRemove(work.id)}
+          disabled={disabled}
+          className="text-muted-foreground hover:text-[var(--neon-magenta)] hover:bg-[var(--neon-magenta)]/10 h-8 w-8 p-0"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+      
+      {/* Title (optional) */}
+      <div>
+        <Label className="text-xs text-muted-foreground">Title (optional)</Label>
+        <Input
+          value={work.workTitle || ''}
+          onChange={(e) => onUpdate(work.id, { workTitle: e.target.value })}
+          placeholder="e.g., Untitled Series #3"
+          className="cyber-input rounded-lg mt-1"
+          disabled={disabled}
+        />
+      </div>
+      
+      {/* Medium & Counts Row */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <Label className="text-xs text-muted-foreground">Medium</Label>
+          <Select
+            value={work.medium}
+            onValueChange={(value) => onUpdate(work.id, { medium: value as WorkEntry['medium'] })}
+            disabled={disabled}
+          >
+            <SelectTrigger className="cyber-input rounded-lg mt-1">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-[var(--near-black)] border-[var(--neon-amber)]/30">
+              {mediumOptions.map(opt => (
+                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <div className="grid grid-cols-3 gap-2">
+          <div>
+            <Label className="text-xs text-muted-foreground text-center block">Started</Label>
+            <Input
+              type="number"
+              min="0"
+              value={work.started || ''}
+              onChange={(e) => onUpdate(work.id, { started: parseInt(e.target.value) || 0 })}
+              className="cyber-input rounded-lg mt-1 text-center"
+              disabled={disabled}
+            />
+          </div>
+          <div>
+            <Label className="text-xs text-muted-foreground text-center block">Finished</Label>
+            <Input
+              type="number"
+              min="0"
+              value={work.finished || ''}
+              onChange={(e) => onUpdate(work.id, { finished: parseInt(e.target.value) || 0 })}
+              className="cyber-input rounded-lg mt-1 text-center"
+              disabled={disabled}
+            />
+          </div>
+          <div>
+            <Label className="text-xs text-muted-foreground text-center block">Abandoned</Label>
+            <Input
+              type="number"
+              min="0"
+              value={work.abandoned || ''}
+              onChange={(e) => onUpdate(work.id, { abandoned: parseInt(e.target.value) || 0 })}
+              className="cyber-input rounded-lg mt-1 text-center"
+              disabled={disabled}
+            />
+          </div>
+        </div>
+      </div>
+      
+      {/* Emotional Temperature */}
+      <div>
+        <Label className={`text-xs ${needsEmotionalTemp ? 'neon-text-magenta' : 'text-muted-foreground'}`}>
+          Emotional Temperature {hasActivity && '*'}
+        </Label>
+        <RadioGroup
+          value={work.emotionalTemp}
+          onValueChange={(value) => onUpdate(work.id, { emotionalTemp: value as WorkEntry['emotionalTemp'] })}
+          className="flex flex-wrap gap-2 mt-2"
+          disabled={disabled}
+        >
+          {emotionalTempOptions.map(opt => (
+            <div key={opt.value} className="flex items-center">
+              <RadioGroupItem
+                value={opt.value}
+                id={`${work.id}-${opt.value}`}
+                className="peer sr-only"
+              />
+              <Label
+                htmlFor={`${work.id}-${opt.value}`}
+                className={`px-3 py-1.5 rounded-lg text-sm cursor-pointer border transition-all
+                  ${work.emotionalTemp === opt.value 
+                    ? `bg-[var(--neon-${opt.value === 'struggling' ? 'magenta' : opt.value === 'processing' ? 'amber' : opt.value === 'flowing' ? 'cyan' : 'purple'})]/20 border-[var(--neon-${opt.value === 'struggling' ? 'magenta' : opt.value === 'processing' ? 'amber' : opt.value === 'flowing' ? 'cyan' : 'purple'})]/50 ${opt.color}` 
+                    : 'bg-[var(--deep-space)] border-muted/30 text-muted-foreground hover:border-muted/50'
+                  }`}
+              >
+                {opt.label}
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
+      </div>
+      
+      {/* Key Inquiry */}
+      <div>
+        <Label className="text-xs text-muted-foreground">Key Inquiry *</Label>
+        <Input
+          value={work.keyInquiry}
+          onChange={(e) => onUpdate(work.id, { keyInquiry: e.target.value })}
+          placeholder="What were you testing or exploring?"
+          className="cyber-input rounded-lg mt-1"
+          disabled={disabled}
+        />
+      </div>
+      
+      {/* Technical Note (optional) */}
+      <div>
+        <Label className="text-xs text-muted-foreground">Technical Note (optional)</Label>
+        <Input
+          value={work.technicalNote || ''}
+          onChange={(e) => onUpdate(work.id, { technicalNote: e.target.value })}
+          placeholder="Material or process detail"
+          className="cyber-input rounded-lg mt-1"
+          disabled={disabled}
+        />
+      </div>
+      
+      {/* Abandonment Reason (conditional) */}
+      {hasAbandoned && (
+        <div>
+          <Label className="text-xs neon-text-magenta">Why abandoned?</Label>
+          <Textarea
+            value={work.abandonmentReason || ''}
+            onChange={(e) => onUpdate(work.id, { abandonmentReason: e.target.value })}
+            placeholder="What led to abandoning this work?"
+            className="cyber-input rounded-lg mt-1 min-h-[60px]"
+            disabled={disabled}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function RoundupForm() {
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
   const [formData, setFormData] = useState<FormData>(initialFormData);
-  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData | 'worksDataInquiry', string>>>({});
   const [draftSaved, setDraftSaved] = useState(false);
 
   const { data: canSubmitData, isLoading: checkingSubmit } = trpc.roundup.canSubmit.useQuery(undefined, {
@@ -155,6 +423,21 @@ export default function RoundupForm() {
     return { total, average, daysWithSteps, suggestion };
   }, [formData.dailySteps]);
 
+  // Calculate works summary
+  const worksSummary = useMemo(() => {
+    return generateWorksSummary(formData.worksData);
+  }, [formData.worksData]);
+
+  // Auto-update worksMade when worksData changes
+  useEffect(() => {
+    if (formData.worksExpanded && formData.worksData.length > 0) {
+      const summary = generateWorksSummary(formData.worksData);
+      if (summary && summary !== formData.worksMade) {
+        setFormData(prev => ({ ...prev, worksMade: summary }));
+      }
+    }
+  }, [formData.worksData, formData.worksExpanded]);
+
   // Auto-update walking engine based on step threshold
   useEffect(() => {
     if (stepStats.suggestion === 'yes' && !formData.walkingEngineUsed) {
@@ -173,6 +456,10 @@ export default function RoundupForm() {
         // Ensure dailySteps has all keys
         if (parsed.dailySteps) {
           parsed.dailySteps = { ...initialDailySteps, ...parsed.dailySteps };
+        }
+        // Ensure worksData is an array
+        if (!Array.isArray(parsed.worksData)) {
+          parsed.worksData = [];
         }
         setFormData(prev => ({ ...prev, ...parsed }));
         toast.info('Draft restored from previous session');
@@ -208,8 +495,41 @@ export default function RoundupForm() {
     }));
   };
 
+  // Work entry handlers
+  const addWorkEntry = () => {
+    setFormData(prev => ({
+      ...prev,
+      worksData: [...prev.worksData, createEmptyWorkEntry()],
+    }));
+  };
+
+  const updateWorkEntry = (id: string, updates: Partial<WorkEntry>) => {
+    setFormData(prev => ({
+      ...prev,
+      worksData: prev.worksData.map(w => w.id === id ? { ...w, ...updates } : w),
+    }));
+  };
+
+  const removeWorkEntry = (id: string) => {
+    setFormData(prev => ({
+      ...prev,
+      worksData: prev.worksData.filter(w => w.id !== id),
+    }));
+  };
+
+  const toggleWorksExpanded = () => {
+    setFormData(prev => {
+      const newExpanded = !prev.worksExpanded;
+      // If expanding and no works yet, add one empty card
+      if (newExpanded && prev.worksData.length === 0) {
+        return { ...prev, worksExpanded: newExpanded, worksData: [createEmptyWorkEntry()] };
+      }
+      return { ...prev, worksExpanded: newExpanded };
+    });
+  };
+
   const validateForm = (): boolean => {
-    const newErrors: Partial<Record<keyof FormData, string>> = {};
+    const newErrors: Partial<Record<keyof FormData | 'worksDataInquiry', string>> = {};
 
     if (!formData.weatherReport || formData.weatherReport.length < 10) {
       newErrors.weatherReport = 'Weather report must be at least 10 characters';
@@ -235,6 +555,14 @@ export default function RoundupForm() {
     if (!formData.somaticState.trim()) {
       newErrors.somaticState = 'Please describe your somatic state';
     }
+    
+    // Validate work entries if expanded
+    if (formData.worksExpanded && formData.worksData.length > 0) {
+      const hasInvalidWork = formData.worksData.some(w => !w.keyInquiry.trim());
+      if (hasInvalidWork) {
+        newErrors.worksDataInquiry = 'Each work entry requires a key inquiry';
+      }
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -247,6 +575,16 @@ export default function RoundupForm() {
       toast.error('Please fix the errors before submitting');
       return;
     }
+
+    // Prepare worksData for submission (only if expanded and has entries)
+    const worksDataToSubmit = formData.worksExpanded && formData.worksData.length > 0 
+      ? formData.worksData.map(w => ({
+          ...w,
+          workTitle: w.workTitle || undefined,
+          technicalNote: w.technicalNote || undefined,
+          abandonmentReason: w.abandonmentReason || undefined,
+        }))
+      : undefined;
 
     submitMutation.mutate({
       weatherReport: formData.weatherReport,
@@ -262,6 +600,7 @@ export default function RoundupForm() {
       somaticState: formData.somaticState,
       doorIntention: formData.doorIntention || null,
       dailySteps: formData.dailySteps,
+      worksData: worksDataToSubmit,
     });
   };
 
@@ -386,44 +725,110 @@ export default function RoundupForm() {
             )}
           </div>
 
-          {/* Studio Hours & Works Made */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="cyber-card rounded-xl p-5">
-              <div className="flex items-center gap-3 mb-3">
-                <NumberBadge num={2} variant="cyan" />
-                <h3 className="font-semibold">Studio Hours</h3>
-              </div>
-              <Input
-                type="number"
-                min="0"
-                max="168"
-                step="0.5"
-                value={formData.studioHours}
-                onChange={(e) => updateField('studioHours', parseFloat(e.target.value) || 0)}
-                className="cyber-input rounded-lg"
-                disabled={!canSubmit}
-              />
-              {errors.studioHours && (
-                <p className="text-sm neon-text-magenta mt-2">{errors.studioHours}</p>
-              )}
+          {/* Studio Hours */}
+          <div className="cyber-card rounded-xl p-5">
+            <div className="flex items-center gap-3 mb-3">
+              <NumberBadge num={2} variant="cyan" />
+              <h3 className="font-semibold">Studio Hours</h3>
             </div>
+            <Input
+              type="number"
+              min="0"
+              max="168"
+              step="0.5"
+              value={formData.studioHours}
+              onChange={(e) => updateField('studioHours', parseFloat(e.target.value) || 0)}
+              className="cyber-input rounded-lg"
+              disabled={!canSubmit}
+            />
+            {errors.studioHours && (
+              <p className="text-sm neon-text-magenta mt-2">{errors.studioHours}</p>
+            )}
+          </div>
 
-            <div className="cyber-card rounded-xl p-5">
-              <div className="flex items-center gap-3 mb-3">
-                <NumberBadge num={3} variant="cyan" />
-                <h3 className="font-semibold">Works Made</h3>
+          {/* Works Made - Expanded Section */}
+          <div className="cyber-form rounded-xl p-6 border border-[var(--neon-amber)]/30">
+            <div className="flex items-center gap-3 mb-4">
+              <NumberBadge num={3} variant="amber" />
+              <div className="flex-1">
+                <h3 className="font-semibold neon-text-white">Works Made</h3>
+                <p className="text-sm text-muted-foreground">Track your creative output</p>
               </div>
-              <Textarea
-                value={formData.worksMade}
-                onChange={(e) => updateField('worksMade', e.target.value)}
-                placeholder="Major progress or pieces completed"
-                className="cyber-input min-h-[80px] rounded-lg"
-                disabled={!canSubmit}
-              />
-              {errors.worksMade && (
-                <p className="text-sm neon-text-magenta mt-2">{errors.worksMade}</p>
-              )}
+              <Palette className="h-5 w-5 neon-text-amber" />
             </div>
+            
+            {/* Quick Entry (always visible) */}
+            <Textarea
+              value={formData.worksMade}
+              onChange={(e) => updateField('worksMade', e.target.value)}
+              placeholder="Major progress or pieces completed"
+              className="cyber-input min-h-[80px] rounded-lg"
+              disabled={!canSubmit || (formData.worksExpanded && formData.worksData.length > 0)}
+            />
+            {errors.worksMade && (
+              <p className="text-sm neon-text-magenta mt-2">{errors.worksMade}</p>
+            )}
+            
+            {/* Expand Toggle */}
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={toggleWorksExpanded}
+              disabled={!canSubmit}
+              className="w-full mt-4 text-muted-foreground hover:text-[var(--neon-amber)] hover:bg-[var(--neon-amber)]/10 border border-dashed border-muted/30 hover:border-[var(--neon-amber)]/30"
+            >
+              {formData.worksExpanded ? (
+                <>
+                  <ChevronUp className="h-4 w-4 mr-2" />
+                  Collapse Details
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="h-4 w-4 mr-2" />
+                  Expand Details (add structured work entries)
+                </>
+              )}
+            </Button>
+            
+            {/* Expanded Work Cards */}
+            {formData.worksExpanded && (
+              <div className="mt-4 space-y-4">
+                {formData.worksData.map((work, index) => (
+                  <WorkCard
+                    key={work.id}
+                    work={work}
+                    index={index}
+                    onUpdate={updateWorkEntry}
+                    onRemove={removeWorkEntry}
+                    disabled={!canSubmit}
+                  />
+                ))}
+                
+                {/* Add Another Work Button */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={addWorkEntry}
+                  disabled={!canSubmit}
+                  className="w-full border-dashed border-[var(--neon-amber)]/30 text-[var(--neon-amber)] hover:bg-[var(--neon-amber)]/10 hover:border-[var(--neon-amber)]/50"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Another Work
+                </Button>
+                
+                {errors.worksDataInquiry && (
+                  <p className="text-sm neon-text-magenta">{errors.worksDataInquiry}</p>
+                )}
+                
+                {/* Works Summary Preview */}
+                {formData.worksData.length > 0 && worksSummary && (
+                  <div className="bg-[var(--deep-space)] rounded-lg p-4 border border-[var(--neon-amber)]/20">
+                    <Label className="text-xs text-muted-foreground">Auto-generated Summary</Label>
+                    <p className="text-sm neon-text-amber mt-1">{worksSummary}</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Jester Activity Slider */}
@@ -600,12 +1005,12 @@ export default function RoundupForm() {
           <div className="cyber-card rounded-xl p-5">
             <div className="flex items-center gap-3 mb-3">
               <NumberBadge num={7} variant="purple" />
-              <h3 className="font-semibold">Partnership/Solitude Temperature</h3>
+              <h3 className="font-semibold">Partnership / Solitude Temperature</h3>
             </div>
             <Textarea
               value={formData.partnershipTemperature}
               onChange={(e) => updateField('partnershipTemperature', e.target.value)}
-              placeholder="How did connection and solitude feel this week?"
+              placeholder="How was the balance between collaboration and solitude?"
               className="cyber-input min-h-[80px] rounded-lg"
               disabled={!canSubmit}
             />
@@ -614,7 +1019,7 @@ export default function RoundupForm() {
             )}
           </div>
 
-          {/* Thing Worked / Thing Resisted */}
+          {/* Thing Worked / Resisted */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="cyber-card rounded-xl p-5">
               <div className="flex items-center gap-3 mb-3">
@@ -624,7 +1029,7 @@ export default function RoundupForm() {
               <Textarea
                 value={formData.thingWorked}
                 onChange={(e) => updateField('thingWorked', e.target.value)}
-                placeholder="What succeeded this week?"
+                placeholder="A win, breakthrough, or success"
                 className="cyber-input min-h-[80px] rounded-lg"
                 disabled={!canSubmit}
               />
@@ -641,7 +1046,7 @@ export default function RoundupForm() {
               <Textarea
                 value={formData.thingResisted}
                 onChange={(e) => updateField('thingResisted', e.target.value)}
-                placeholder="What pushed back this week?"
+                placeholder="A challenge, friction, or obstacle"
                 className="cyber-input min-h-[80px] rounded-lg"
                 disabled={!canSubmit}
               />
@@ -654,16 +1059,13 @@ export default function RoundupForm() {
           {/* Somatic State */}
           <div className="cyber-card rounded-xl p-5">
             <div className="flex items-center gap-3 mb-3">
-              <NumberBadge num={10} variant="purple" />
-              <div>
-                <h3 className="font-semibold">Somatic State</h3>
-                <p className="text-sm text-muted-foreground">Where did you feel this week in your body?</p>
-              </div>
+              <NumberBadge num={10} variant="amber" />
+              <h3 className="font-semibold">Somatic State</h3>
             </div>
             <Textarea
               value={formData.somaticState}
               onChange={(e) => updateField('somaticState', e.target.value)}
-              placeholder="Shoulders? Chest? Stomach? What sensations?"
+              placeholder="How does your body feel? Any physical sensations or tensions?"
               className="cyber-input min-h-[80px] rounded-lg"
               disabled={!canSubmit}
             />
@@ -672,27 +1074,26 @@ export default function RoundupForm() {
             )}
           </div>
 
-          {/* Door Intention (Optional) */}
-          <div className="cyber-card rounded-xl p-5 opacity-80">
-            <div className="flex items-center gap-3 mb-3">
-              <NumberBadge num={11} variant="muted" />
+          {/* Door Intention */}
+          <div className="cyber-form rounded-xl p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <NumberBadge num={11} variant="purple" />
               <div>
-                <h3 className="font-semibold">Door Intention Whisper</h3>
-                <p className="text-sm text-muted-foreground">A quiet intention for the week ahead (optional)</p>
+                <h3 className="font-semibold neon-text-white">Door Intention Whisper</h3>
+                <p className="text-sm text-muted-foreground">Optional: A quiet intention for the week ahead</p>
               </div>
             </div>
             <Textarea
               value={formData.doorIntention}
               onChange={(e) => updateField('doorIntention', e.target.value)}
-              placeholder="What do you whisper to the door as you leave?"
-              className="cyber-input min-h-[60px] rounded-lg"
+              placeholder="What do you whisper to yourself as you step through the door into next week?"
+              className="cyber-input min-h-[80px] rounded-lg"
               disabled={!canSubmit}
             />
           </div>
 
           {/* Submit Button */}
-          <div className="pt-6">
-            <div className="tattoo-line mb-6" />
+          <div className="pt-4">
             <Tooltip>
               <TooltipTrigger asChild>
                 <div>

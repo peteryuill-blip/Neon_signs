@@ -144,6 +144,44 @@ function getDateInfoWithSettings(settings?: {
   };
 }
 
+// Format works data for Neon's Mirror prompt
+function formatWorksDataForNeon(worksData: unknown): string {
+  if (!worksData || !Array.isArray(worksData) || worksData.length === 0) {
+    return '';
+  }
+  
+  const works = worksData as Array<{
+    title?: string;
+    medium?: string;
+    emotionalTemp?: string;
+    started?: number;
+    finished?: number;
+    abandoned?: number;
+    keyInquiry?: string;
+    technicalNote?: string;
+    abandonmentReason?: string;
+  }>;
+  
+  const lines: string[] = ['[Work Details]:'];
+  
+  works.forEach((work, i) => {
+    const counts: string[] = [];
+    if (work.started) counts.push(`${work.started} started`);
+    if (work.finished) counts.push(`${work.finished} finished`);
+    if (work.abandoned) counts.push(`${work.abandoned} abandoned`);
+    
+    lines.push(`  Work ${i + 1}${work.title ? ` - "${work.title}"` : ''}:`);
+    if (work.medium) lines.push(`    Medium: ${work.medium}`);
+    if (counts.length > 0) lines.push(`    Progress: ${counts.join(', ')}`);
+    if (work.emotionalTemp) lines.push(`    Emotional Temperature: ${work.emotionalTemp}`);
+    if (work.keyInquiry) lines.push(`    Key Inquiry: ${work.keyInquiry}`);
+    if (work.technicalNote) lines.push(`    Technical Note: ${work.technicalNote}`);
+    if (work.abandonmentReason) lines.push(`    Abandonment Reason: ${work.abandonmentReason}`);
+  });
+  
+  return lines.join('\n') + '\n';
+}
+
 // Extract key phrases from text for pattern matching
 function extractPhrases(text: string): string[] {
   const phrases: string[] = [];
@@ -253,6 +291,7 @@ async function generateNeonReading(
     weatherReport: string;
     studioHours: number;
     worksMade: string;
+    worksData?: unknown;
     jesterActivity: number;
     energyLevel: string;
     walkingEngineUsed: boolean;
@@ -306,7 +345,7 @@ Never be generic. Always ground in the specific data provided. Keep response to 
 [All Data Points]:
 - Studio Hours: ${roundup.studioHours}
 - Works Made: ${roundup.worksMade}
-- Jester Activity: ${roundup.jesterActivity}/10
+${formatWorksDataForNeon(roundup.worksData)}- Jester Activity: ${roundup.jesterActivity}/10
 - Energy Level: ${roundup.energyLevel}
 - Walking Engine: ${roundup.walkingEngineUsed ? `Yes - "${roundup.walkingInsights}"` : 'No'}
 - Partnership Temperature: ${roundup.partnershipTemperature}
@@ -396,6 +435,18 @@ export const appRouter = router({
           sat: z.number().min(0).max(99999),
           sun: z.number().min(0).max(99999),
         }).optional(),
+        worksData: z.array(z.object({
+          id: z.string(),
+          workTitle: z.string().optional(),
+          medium: z.enum(['ink', 'mixed', 'study', 'other']),
+          emotionalTemp: z.enum(['struggling', 'processing', 'flowing', 'uncertain']),
+          started: z.number().min(0),
+          finished: z.number().min(0),
+          abandoned: z.number().min(0),
+          keyInquiry: z.string().min(1, "Key inquiry is required"),
+          technicalNote: z.string().optional(),
+          abandonmentReason: z.string().optional(),
+        })).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const settings = await getUserSettings(ctx.user.id);
@@ -455,6 +506,7 @@ export const appRouter = router({
           thingResisted: input.thingResisted,
           somaticState: input.somaticState,
           doorIntention: input.doorIntention,
+          worksData: input.worksData || null,
         });
         
         // Detect and assign phase-DNA
@@ -515,7 +567,28 @@ export const appRouter = router({
         // Clear existing matches
         await deletePatternMatchesForWeek(input.roundupId);
         
-        // Extract phrases from all text fields
+        // Extract phrases from all text fields including work data
+        const workTexts: string[] = [];
+        const workEmotionalTemps: string[] = [];
+        const workMediums: string[] = [];
+        
+        if (roundup.worksData && Array.isArray(roundup.worksData)) {
+          const works = roundup.worksData as Array<{
+            keyInquiry?: string;
+            technicalNote?: string;
+            abandonmentReason?: string;
+            emotionalTemp?: string;
+            medium?: string;
+          }>;
+          works.forEach(work => {
+            if (work.keyInquiry) workTexts.push(work.keyInquiry);
+            if (work.technicalNote) workTexts.push(work.technicalNote);
+            if (work.abandonmentReason) workTexts.push(work.abandonmentReason);
+            if (work.emotionalTemp) workEmotionalTemps.push(work.emotionalTemp);
+            if (work.medium) workMediums.push(work.medium);
+          });
+        }
+        
         const allText = [
           roundup.weatherReport,
           roundup.worksMade,
@@ -524,12 +597,16 @@ export const appRouter = router({
           roundup.thingWorked,
           roundup.thingResisted,
           roundup.somaticState,
-          roundup.doorIntention || ''
+          roundup.doorIntention || '',
+          ...workTexts
         ].join(' ');
         
         const phrases = extractPhrases(allText);
         const emotionalState = energyToEmotionalState(roundup.energyLevel);
         const phaseDna = roundup.phaseDnaAssigned || 'PH2';
+        
+        // Get dominant work emotional temperature if available
+        const workEmotionalTemp = workEmotionalTemps.length > 0 ? workEmotionalTemps[0] : null;
         
         const matches: Array<{
           matchedArchiveId: number;
@@ -574,6 +651,29 @@ export const appRouter = router({
               relevanceScore: 70 + Math.floor(Math.random() * 25),
               matchedPhrase: phaseDna
             });
+          }
+        }
+        
+        // Search for work emotional temperature matches (if work data exists)
+        if (workEmotionalTemp) {
+          // Map work emotional temp to archive emotional states
+          const emotionalMapping: Record<string, string> = {
+            'struggling': 'hot',
+            'processing': 'sustainable',
+            'flowing': 'sustainable',
+            'uncertain': 'depleted'
+          };
+          const mappedState = emotionalMapping[workEmotionalTemp] || workEmotionalTemp;
+          const workEmotionalMatches = await searchArchiveByEmotionalState(mappedState);
+          for (const archive of workEmotionalMatches.slice(0, 2)) {
+            if (!matches.find(m => m.matchedArchiveId === archive.id)) {
+              matches.push({
+                matchedArchiveId: archive.id,
+                matchType: 'emotional',
+                relevanceScore: 65 + Math.floor(Math.random() * 25),
+                matchedPhrase: `work-${workEmotionalTemp}`
+              });
+            }
           }
         }
         
@@ -974,6 +1074,18 @@ export const appRouter = router({
         thingResisted: z.string().optional(),
         somaticState: z.string().optional(),
         doorIntention: z.string().optional(),
+        worksData: z.array(z.object({
+          id: z.string(),
+          workTitle: z.string().optional(),
+          medium: z.enum(['ink', 'mixed', 'study', 'other']),
+          emotionalTemp: z.enum(['struggling', 'processing', 'flowing', 'uncertain']),
+          started: z.number().min(0),
+          finished: z.number().min(0),
+          abandoned: z.number().min(0),
+          keyInquiry: z.string().min(1),
+          technicalNote: z.string().optional(),
+          abandonmentReason: z.string().optional(),
+        })).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const { id, ...updates } = input;

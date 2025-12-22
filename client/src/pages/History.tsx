@@ -464,6 +464,7 @@ export default function History() {
   // Filter state
   const [energyFilter, setEnergyFilter] = useState<string>("all");
   const [phaseFilter, setPhaseFilter] = useState<string>("all");
+  const [workTempFilter, setWorkTempFilter] = useState<string>("all");
   const [showFilters, setShowFilters] = useState(false);
   
   // Quick edit modal
@@ -605,6 +606,13 @@ export default function History() {
   const filteredRoundups = roundups.filter(r => {
     if (energyFilter !== "all" && r.energyLevel !== energyFilter) return false;
     if (phaseFilter !== "all" && r.phaseDnaAssigned !== phaseFilter) return false;
+    // Filter by work emotional temperature if worksData exists
+    if (workTempFilter !== "all") {
+      const worksData = (r as { worksData?: Array<{ emotionalTemp?: string }> }).worksData;
+      if (!worksData || !Array.isArray(worksData)) return false;
+      const hasMatchingTemp = worksData.some(w => w.emotionalTemp === workTempFilter);
+      if (!hasMatchingTemp) return false;
+    }
     return true;
   });
 
@@ -690,7 +698,7 @@ export default function History() {
               >
                 <Filter className="h-4 w-4 mr-1" />
                 Filters
-                {(energyFilter !== "all" || phaseFilter !== "all") && (
+                {(energyFilter !== "all" || phaseFilter !== "all" || workTempFilter !== "all") && (
                   <span className="ml-1 w-2 h-2 rounded-full bg-[var(--neon-magenta)]" />
                 )}
               </Button>
@@ -747,11 +755,26 @@ export default function History() {
                   </SelectContent>
                 </Select>
               </div>
-              {(energyFilter !== "all" || phaseFilter !== "all") && (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Work Temp:</span>
+                <Select value={workTempFilter} onValueChange={setWorkTempFilter}>
+                  <SelectTrigger className="w-[140px] cyber-input h-9">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[var(--void-black)] border-[var(--neon-cyan)]/30">
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="struggling">😤 Struggling</SelectItem>
+                    <SelectItem value="processing">🔄 Processing</SelectItem>
+                    <SelectItem value="flowing">🌊 Flowing</SelectItem>
+                    <SelectItem value="uncertain">❓ Uncertain</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {(energyFilter !== "all" || phaseFilter !== "all" || workTempFilter !== "all") && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => { setEnergyFilter("all"); setPhaseFilter("all"); }}
+                  onClick={() => { setEnergyFilter("all"); setPhaseFilter("all"); setWorkTempFilter("all"); }}
                   className="text-muted-foreground hover:text-[var(--neon-magenta)]"
                 >
                   <X className="h-4 w-4 mr-1" />

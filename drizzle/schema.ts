@@ -42,6 +42,9 @@ export const weeklyRoundups = mysqlTable("weekly_roundups", {
   somaticState: text("somaticState").notNull(),
   doorIntention: text("doorIntention"), // optional
   
+  // Structured works data
+  worksData: json("worksData").$type<WorkEntry[] | null>(),
+  
   // Step tracking (7-day data)
   dailySteps: json("dailySteps").$type<{ mon: number; tue: number; wed: number; thu: number; fri: number; sat: number; sun: number } | null>(),
   weeklyStepTotal: int("weeklyStepTotal"), // calculated sum
@@ -57,6 +60,20 @@ export const weeklyRoundups = mysqlTable("weekly_roundups", {
 
 export type WeeklyRoundup = typeof weeklyRoundups.$inferSelect;
 export type InsertWeeklyRoundup = typeof weeklyRoundups.$inferInsert;
+
+// Work Entry type for structured works data
+export type WorkEntry = {
+  id: string; // unique ID for each work card
+  workTitle?: string; // optional title
+  medium: 'ink' | 'mixed' | 'study' | 'other';
+  emotionalTemp: 'struggling' | 'processing' | 'flowing' | 'uncertain';
+  started: number;
+  finished: number;
+  abandoned: number;
+  keyInquiry: string; // one-line description of what you were testing
+  technicalNote?: string; // optional material or process detail
+  abandonmentReason?: string; // optional, if works were abandoned
+};
 
 /**
  * Archive Entries - historical journal entries for pattern matching
