@@ -635,8 +635,11 @@ export default function RoundupForm() {
 
   const canSubmit = canSubmitData?.canSubmit ?? false;
   const isCheckInDay = canSubmitData?.isCheckInDay ?? false;
-  const alreadySubmitted = canSubmitData?.alreadySubmitted ?? false;
+  const hasCheckInDayEntry = canSubmitData?.hasCheckInDayEntry ?? false;
+  const entryCount = canSubmitData?.entryCount ?? 0;
+  const maxEntries = canSubmitData?.maxEntries ?? 7;
   const checkInDay = canSubmitData?.checkInDay ?? 'Sunday';
+  const nextEntryNumber = canSubmitData?.nextEntryNumber ?? 1;
 
   return (
     <div className="min-h-screen">
@@ -671,30 +674,42 @@ export default function RoundupForm() {
         {/* Status Banner */}
         {!canSubmit && (
           <div className="cyber-card rounded-xl mb-6 p-4">
-            {alreadySubmitted ? (
+            {entryCount >= maxEntries ? (
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-[var(--neon-cyan)]/10 flex items-center justify-center">
-                  <CheckCircle2 className="h-5 w-5 neon-text-cyan" />
+                <div className="w-10 h-10 rounded-lg bg-[var(--neon-amber)]/10 flex items-center justify-center">
+                  <CheckCircle2 className="h-5 w-5 neon-text-amber" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium neon-text-cyan">Already submitted this week</p>
+                  <p className="font-medium neon-text-amber">Maximum entries reached ({maxEntries}/{maxEntries})</p>
                   <p className="text-sm text-muted-foreground">
-                    You can view your results or wait until next {checkInDay}.
+                    You've submitted the maximum number of entries for this week.
                   </p>
                 </div>
-                <Link href={`/results/${canSubmitData?.existingRoundupId}`}>
-                  <Button className="cyber-button-secondary">View Results</Button>
+                <Link href="/history">
+                  <Button className="cyber-button-secondary">View History</Button>
                 </Link>
               </div>
-            ) : (
+            ) : !isCheckInDay && !hasCheckInDayEntry ? (
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-lg bg-[var(--neon-magenta)]/10 flex items-center justify-center">
                   <Calendar className="h-5 w-5 neon-text-magenta" />
                 </div>
                 <div>
-                  <p className="font-medium neon-text-magenta">Submissions open on {checkInDay}s only</p>
+                  <p className="font-medium neon-text-magenta">First entry must be on {checkInDay}</p>
                   <p className="text-sm text-muted-foreground">
-                    Current day: {canSubmitData?.currentDay}
+                    Current day: {canSubmitData?.currentDay}. Submit your first entry on {checkInDay}, then you can add more any day.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-lg bg-[var(--neon-cyan)]/10 flex items-center justify-center">
+                  <CheckCircle2 className="h-5 w-5 neon-text-cyan" />
+                </div>
+                <div>
+                  <p className="font-medium neon-text-cyan">Ready to submit</p>
+                  <p className="text-sm text-muted-foreground">
+                    Entry {nextEntryNumber} of {maxEntries} for this week
                   </p>
                 </div>
               </div>
@@ -1122,9 +1137,11 @@ export default function RoundupForm() {
               </TooltipTrigger>
               {!canSubmit && (
                 <TooltipContent className="bg-[var(--near-black)] border-[var(--neon-magenta)]/30">
-                  {alreadySubmitted 
-                    ? "You've already submitted this week's roundup"
-                    : `Come back ${checkInDay} (Bangkok time). Current day: ${canSubmitData?.currentDay}`
+                  {entryCount >= maxEntries 
+                    ? `Maximum ${maxEntries} entries reached for this week`
+                    : !hasCheckInDayEntry && !isCheckInDay
+                    ? `First entry must be on ${checkInDay}. Current day: ${canSubmitData?.currentDay}`
+                    : `Entry ${nextEntryNumber} of ${maxEntries} ready to submit`
                   }
                 </TooltipContent>
               )}

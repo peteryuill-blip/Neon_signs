@@ -30,6 +30,9 @@ import {
   getUserSettings,
   upsertUserSettings,
   updateWeeklyRoundup,
+  getEntryCountForWeek,
+  hasSundayEntryForWeek,
+  getAllEntriesForWeek,
 } from "./db";
 import { TRPCError } from "@trpc/server";
 
@@ -385,29 +388,44 @@ export const appRouter = router({
 
   // Roundup routes
   roundup: router({
-    // Check if submission is allowed (check-in day in configured timezone)
+    // Check if submission is allowed
+    // Multi-entry logic: up to 7 entries per week, at least 1 must be on check-in day
     canSubmit: protectedProcedure.query(async ({ ctx }) => {
       const settings = await getUserSettings(ctx.user.id);
       const dateInfo = getDateInfoWithSettings(settings);
+      const checkInDay = settings?.checkInDay || 'Sunday';
       
-      // Check if already submitted this week
-      const existing = await getWeeklyRoundupByWeekAndYear(
+      // Get entry count for this week
+      const entryCount = await getEntryCountForWeek(
         ctx.user.id,
         dateInfo.weekNumber,
         dateInfo.year
       );
       
-      const checkInDay = settings?.checkInDay || 'Sunday';
+      // Check if there's already a check-in day entry
+      const hasCheckInDayEntry = await hasSundayEntryForWeek(
+        ctx.user.id,
+        dateInfo.weekNumber,
+        dateInfo.year,
+        checkInDay
+      );
+      
+      // Can submit if:
+      // 1. Less than 7 entries this week AND
+      // 2. Either it's check-in day OR there's already a check-in day entry
+      const canSubmit = entryCount < 7 && (dateInfo.isCheckInDay || hasCheckInDayEntry);
       
       return {
-        canSubmit: dateInfo.isCheckInDay && !existing,
+        canSubmit,
         isCheckInDay: dateInfo.isCheckInDay,
-        alreadySubmitted: !!existing,
+        hasCheckInDayEntry,
+        entryCount,
+        maxEntries: 7,
         currentDay: dateInfo.dayOfWeek,
         checkInDay,
         weekNumber: dateInfo.weekNumber,
         year: dateInfo.year,
-        existingRoundupId: existing?.id
+        nextEntryNumber: entryCount + 1
       };
     }),
 
@@ -453,25 +471,34 @@ export const appRouter = router({
         const dateInfo = getDateInfoWithSettings(settings);
         const checkInDay = settings?.checkInDay || 'Sunday';
         
-        // Validate check-in day submission
-        if (!dateInfo.isCheckInDay) {
-          throw new TRPCError({
-            code: 'FORBIDDEN',
-            message: `Submissions are only allowed on ${checkInDay}s. Current day: ${dateInfo.dayOfWeek}`
-          });
-        }
-        
-        // Check for duplicate submission
-        const existing = await getWeeklyRoundupByWeekAndYear(
+        // Get current entry count for this week
+        const entryCount = await getEntryCountForWeek(
           ctx.user.id,
           dateInfo.weekNumber,
           dateInfo.year
         );
         
-        if (existing) {
+        // Check if there's already a check-in day entry
+        const hasCheckInDayEntry = await hasSundayEntryForWeek(
+          ctx.user.id,
+          dateInfo.weekNumber,
+          dateInfo.year,
+          checkInDay
+        );
+        
+        // Validate: max 7 entries per week
+        if (entryCount >= 7) {
           throw new TRPCError({
             code: 'CONFLICT',
-            message: 'You have already submitted a roundup for this week'
+            message: 'Maximum 7 entries per week reached'
+          });
+        }
+        
+        // Validate: must have check-in day entry OR be on check-in day
+        if (!dateInfo.isCheckInDay && !hasCheckInDayEntry) {
+          throw new TRPCError({
+            code: 'FORBIDDEN',
+            message: `Your first entry of the week must be on ${checkInDay}. Additional entries can be submitted any day after.`
           });
         }
         
@@ -485,11 +512,15 @@ export const appRouter = router({
           dailyStepAverage = daysWithSteps > 0 ? Math.round(weeklyStepTotal / daysWithSteps) : 0;
         }
         
+        // Calculate entry number (1-7)
+        const entryNumber = entryCount + 1;
+        
         // Create the roundup
         const roundupId = await createWeeklyRoundup({
           userId: ctx.user.id,
           weekNumber: dateInfo.weekNumber,
           year: dateInfo.year,
+          entryNumber,
           createdDayOfWeek: dateInfo.dayOfWeek,
           dailySteps: input.dailySteps || null,
           weeklyStepTotal: weeklyStepTotal || null,
@@ -518,6 +549,7 @@ export const appRouter = router({
           roundupId,
           weekNumber: dateInfo.weekNumber,
           year: dateInfo.year,
+          entryNumber,
           phaseDna
         };
       }),
@@ -536,7 +568,7 @@ export const appRouter = router({
     // Get all roundups with pagination
     getAll: protectedProcedure
       .input(z.object({
-        limit: z.number().min(1).max(100).default(52),
+        limit: z.number().min(1).max(100).default(100),
         offset: z.number().min(0).default(0)
       }))
       .query(async ({ ctx, input }) => {
@@ -544,7 +576,35 @@ export const appRouter = router({
           getAllWeeklyRoundups(ctx.user.id, input.limit, input.offset),
           getWeeklyRoundupCount(ctx.user.id)
         ]);
-        return { roundups, total };
+        
+        // Group roundups by week to add entry numbering
+        const weekGroups = new Map<string, typeof roundups>();
+        for (const roundup of roundups) {
+          const key = `${roundup.weekNumber}-${roundup.year}`;
+          if (!weekGroups.has(key)) {
+            weekGroups.set(key, []);
+          }
+          weekGroups.get(key)!.push(roundup);
+        }
+        
+        // Add entry number and total entries in week to each roundup
+        const roundupsWithEntryInfo = roundups.map(roundup => {
+          const key = `${roundup.weekNumber}-${roundup.year}`;
+          const weekEntries = weekGroups.get(key) || [];
+          // Sort by createdAt to get entry number
+          const sortedEntries = [...weekEntries].sort((a, b) => 
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+          const entryNumber = sortedEntries.findIndex(e => e.id === roundup.id) + 1;
+          
+          return {
+            ...roundup,
+            entryNumber,
+            entriesInWeek: weekEntries.length
+          };
+        });
+        
+        return { roundups: roundupsWithEntryInfo, total };
       }),
 
     // Get last roundup
@@ -745,7 +805,8 @@ export const appRouter = router({
         jesterTrend,
         lastRoundup,
         totalRoundups,
-        archiveCount
+        archiveCount,
+        entriesThisWeek
       ] = await Promise.all([
         getTotalStudioHours(ctx.user.id),
         getAverageJesterActivity(ctx.user.id),
@@ -753,7 +814,8 @@ export const appRouter = router({
         getJesterTrend(ctx.user.id, 12),
         getLastRoundup(ctx.user.id),
         getWeeklyRoundupCount(ctx.user.id),
-        getArchiveEntryCount()
+        getArchiveEntryCount(),
+        getEntryCountForWeek(ctx.user.id, dateInfo.weekNumber, dateInfo.year)
       ]);
       
       // Calculate days until next check-in day
@@ -785,7 +847,8 @@ export const appRouter = router({
         daysUntilCheckIn,
         checkInDay,
         currentDay: dateInfo.dayOfWeek,
-        archiveEntryCount: archiveCount
+        archiveEntryCount: archiveCount,
+        entriesThisWeek
       };
     }),
 

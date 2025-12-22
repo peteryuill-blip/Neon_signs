@@ -355,6 +355,8 @@ interface RoundupCardProps {
     energyLevel: string;
     somaticState: string;
     phaseDnaAssigned: string | null;
+    entryNumber?: number;
+    entriesInWeek?: number;
   };
   isCurrent: boolean;
   onViewFull: () => void;
@@ -362,6 +364,8 @@ interface RoundupCardProps {
 }
 
 function RoundupCard({ roundup, isCurrent, onViewFull, onEdit }: RoundupCardProps) {
+  const hasMultipleEntries = roundup.entriesInWeek && roundup.entriesInWeek > 1;
+  
   return (
     <div 
       className={`cyber-card rounded-xl p-5 min-w-[280px] max-w-[320px] flex-shrink-0 snap-center transition-all duration-300
@@ -373,6 +377,11 @@ function RoundupCard({ roundup, isCurrent, onViewFull, onEdit }: RoundupCardProp
         <div>
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold neon-text-cyan">W{roundup.weekNumber}</span>
+            {hasMultipleEntries && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--neon-magenta)]/20 neon-text-magenta border border-[var(--neon-magenta)]/30">
+                {roundup.entryNumber}/{roundup.entriesInWeek}
+              </span>
+            )}
             {isCurrent && (
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--neon-cyan)]/20 neon-text-cyan border border-[var(--neon-cyan)]/30">
                 CURRENT
@@ -381,6 +390,7 @@ function RoundupCard({ roundup, isCurrent, onViewFull, onEdit }: RoundupCardProp
           </div>
           <p className="text-xs text-muted-foreground mt-1">
             {new Date(roundup.createdAt).toLocaleDateString('en-US', { 
+              weekday: 'short',
               month: 'short', 
               day: 'numeric', 
               year: 'numeric' 
@@ -616,13 +626,14 @@ export default function History() {
     return true;
   });
 
-  // Create 52-week timeline data
+  // Create 52-week timeline data with entry counts
   const timelineData = Array.from({ length: 52 }, (_, i) => {
     const weekNum = i;
-    const roundup = roundups.find(r => r.weekNumber === weekNum);
+    const weekRoundups = roundups.filter(r => r.weekNumber === weekNum);
     return {
       week: weekNum,
-      submitted: !!roundup,
+      submitted: weekRoundups.length > 0,
+      entryCount: weekRoundups.length,
       isCurrent: weekNum === currentWeek,
     };
   });
@@ -834,24 +845,30 @@ export default function History() {
               {timelineData.map((week) => (
                 <div
                   key={week.week}
-                  className={`w-5 h-5 rounded-sm flex items-center justify-center text-[10px] font-medium transition-all cursor-default
+                  className={`w-5 h-5 rounded-sm flex items-center justify-center text-[10px] font-medium transition-all cursor-default relative
                     ${week.isCurrent 
                       ? 'ring-2 ring-[var(--neon-cyan)] ring-offset-2 ring-offset-[var(--void-black)] shadow-[0_0_10px_var(--neon-cyan)]' 
                       : ''}
-                    ${week.submitted 
+                    ${week.entryCount > 1
+                      ? 'bg-gradient-to-br from-[var(--neon-cyan)] to-[var(--neon-magenta)] text-[var(--void-black)] shadow-[0_0_8px_var(--neon-magenta)]'
+                      : week.submitted 
                       ? 'bg-[var(--neon-cyan)] text-[var(--void-black)] shadow-[0_0_8px_var(--neon-cyan)]' 
                       : 'bg-[var(--deep-space)] text-muted-foreground border border-[var(--neon-cyan)]/20'}
                   `}
-                  title={`Week ${week.week}${week.isCurrent ? ' (current)' : ''}${week.submitted ? ' - submitted' : ''}`}
+                  title={`Week ${week.week}${week.isCurrent ? ' (current)' : ''}${week.entryCount > 0 ? ` - ${week.entryCount} ${week.entryCount === 1 ? 'entry' : 'entries'}` : ''}`}
                 >
                   {week.week}
                 </div>
               ))}
             </div>
-            <div className="flex items-center gap-6 mt-6 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 mt-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-sm bg-[var(--neon-cyan)] shadow-[0_0_8px_var(--neon-cyan)]" />
-                <span>Submitted</span>
+                <span>1 entry</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded-sm bg-gradient-to-br from-[var(--neon-cyan)] to-[var(--neon-magenta)] shadow-[0_0_8px_var(--neon-magenta)]" />
+                <span>Multiple entries</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 rounded-sm bg-[var(--deep-space)] border border-[var(--neon-cyan)]/20" />

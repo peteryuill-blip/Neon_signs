@@ -1,0 +1,1 @@
+ALTER TABLE `weekly_roundups` ADD `entryNumber` int DEFAULT 1 NOT NULL;

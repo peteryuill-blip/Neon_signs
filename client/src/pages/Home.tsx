@@ -242,6 +242,9 @@ export default function Home() {
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {stats?.totalRoundups || 0} roundups submitted
+                  {stats?.entriesThisWeek !== undefined && stats.entriesThisWeek > 0 && (
+                    <span className="ml-2 neon-text-cyan">• {stats.entriesThisWeek}/7 this week</span>
+                  )}
                 </p>
               </div>
               

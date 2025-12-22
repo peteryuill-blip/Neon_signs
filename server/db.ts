@@ -128,6 +128,48 @@ export async function getWeeklyRoundupByWeekAndYear(userId: number, weekNumber: 
   return result[0];
 }
 
+export async function getAllEntriesForWeek(userId: number, weekNumber: number, year: number): Promise<WeeklyRoundup[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(weeklyRoundups)
+    .where(and(
+      eq(weeklyRoundups.userId, userId),
+      eq(weeklyRoundups.weekNumber, weekNumber),
+      eq(weeklyRoundups.year, year)
+    ))
+    .orderBy(weeklyRoundups.entryNumber);
+}
+
+export async function getEntryCountForWeek(userId: number, weekNumber: number, year: number): Promise<number> {
+  const db = await getDb();
+  if (!db) return 0;
+  
+  const result = await db.select({ count: sql<number>`count(*)` })
+    .from(weeklyRoundups)
+    .where(and(
+      eq(weeklyRoundups.userId, userId),
+      eq(weeklyRoundups.weekNumber, weekNumber),
+      eq(weeklyRoundups.year, year)
+    ));
+  return result[0]?.count ?? 0;
+}
+
+export async function hasSundayEntryForWeek(userId: number, weekNumber: number, year: number, checkInDay: string = 'Sunday'): Promise<boolean> {
+  const db = await getDb();
+  if (!db) return false;
+  
+  const result = await db.select({ count: sql<number>`count(*)` })
+    .from(weeklyRoundups)
+    .where(and(
+      eq(weeklyRoundups.userId, userId),
+      eq(weeklyRoundups.weekNumber, weekNumber),
+      eq(weeklyRoundups.year, year),
+      eq(weeklyRoundups.createdDayOfWeek, checkInDay)
+    ));
+  return (result[0]?.count ?? 0) > 0;
+}
+
 export async function getAllWeeklyRoundups(userId: number, limit = 52, offset = 0): Promise<WeeklyRoundup[]> {
   const db = await getDb();
   if (!db) return [];

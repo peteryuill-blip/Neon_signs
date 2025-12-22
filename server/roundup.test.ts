@@ -67,6 +67,32 @@ describe("roundup.canSubmit", () => {
     expect(typeof result.year).toBe("number");
   });
 
+  it("returns multi-roundup tracking fields", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const result = await caller.roundup.canSubmit();
+
+    expect(result).toHaveProperty("entryCount");
+    expect(result).toHaveProperty("maxEntries");
+    expect(result).toHaveProperty("hasCheckInDayEntry");
+    expect(result).toHaveProperty("nextEntryNumber");
+    expect(typeof result.entryCount).toBe("number");
+    expect(result.maxEntries).toBe(7);
+    expect(typeof result.hasCheckInDayEntry).toBe("boolean");
+    expect(typeof result.nextEntryNumber).toBe("number");
+  });
+
+  it("entryCount is between 0 and 7", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const result = await caller.roundup.canSubmit();
+
+    expect(result.entryCount).toBeGreaterThanOrEqual(0);
+    expect(result.entryCount).toBeLessThanOrEqual(7);
+  });
+
   it("returns weekNumber between 1 and 52", async () => {
     const { ctx } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
@@ -100,6 +126,23 @@ describe("roundup.getAll", () => {
 
     expect(result.roundups.length).toBeLessThanOrEqual(5);
   });
+
+  it("returns entry numbering fields for multi-roundup support", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const result = await caller.roundup.getAll({ limit: 10, offset: 0 });
+
+    // Each roundup should have entry numbering fields
+    result.roundups.forEach((roundup) => {
+      expect(roundup).toHaveProperty("entryNumber");
+      expect(roundup).toHaveProperty("entriesInWeek");
+      expect(typeof roundup.entryNumber).toBe("number");
+      expect(typeof roundup.entriesInWeek).toBe("number");
+      expect(roundup.entryNumber).toBeGreaterThanOrEqual(1);
+      expect(roundup.entriesInWeek).toBeGreaterThanOrEqual(1);
+    });
+  });
 });
 
 describe("stats.dashboard", () => {
@@ -116,12 +159,24 @@ describe("stats.dashboard", () => {
     expect(result).toHaveProperty("daysUntilCheckIn");
     expect(result).toHaveProperty("checkInDay");
     expect(result).toHaveProperty("archiveEntryCount");
+    expect(result).toHaveProperty("entriesThisWeek");
     expect(typeof result.totalRoundups).toBe("number");
     expect(typeof result.totalStudioHours).toBe("number");
     expect(typeof result.currentWeek).toBe("number");
     expect(typeof result.daysUntilCheckIn).toBe("number");
     expect(typeof result.checkInDay).toBe("string");
     expect(typeof result.archiveEntryCount).toBe("number");
+    expect(typeof result.entriesThisWeek).toBe("number");
+  });
+
+  it("returns entriesThisWeek between 0 and 7", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+
+    const result = await caller.stats.dashboard();
+
+    expect(result.entriesThisWeek).toBeGreaterThanOrEqual(0);
+    expect(result.entriesThisWeek).toBeLessThanOrEqual(7);
   });
 
   it("returns archiveEntryCount of 50 (seeded data)", async () => {

@@ -24,8 +24,9 @@ export type InsertUser = typeof users.$inferInsert;
 export const weeklyRoundups = mysqlTable("weekly_roundups", {
   id: int("id").autoincrement().primaryKey(),
   userId: int("userId").notNull(),
-  weekNumber: int("weekNumber").notNull(), // 1-52
+  weekNumber: int("weekNumber").notNull(), // 0-52
   year: int("year").notNull(),
+  entryNumber: int("entryNumber").default(1).notNull(), // 1-7 entries per week
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   
   // Form fields
@@ -52,7 +53,7 @@ export const weeklyRoundups = mysqlTable("weekly_roundups", {
   
   // AI-assigned metadata
   phaseDnaAssigned: varchar("phaseDnaAssigned", { length: 32 }),
-  createdDayOfWeek: varchar("createdDayOfWeek", { length: 16 }).notNull(), // Should be "Sunday"
+  createdDayOfWeek: varchar("createdDayOfWeek", { length: 16 }).notNull(), // Day of week when entry was created
   
   // Edit tracking
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

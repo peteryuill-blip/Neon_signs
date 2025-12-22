@@ -12,7 +12,7 @@
 - [x] GET /api/patterns/:weekNumber - Pattern archaeology for week
 - [x] GET /api/neon-reading/:weekNumber - AI-generated Neon's Mirror response
 - [x] GET /api/trends - Aggregate stats for dashboard
-- [x] Rate limiting (max 1 submission per Sunday)
+- [x] Rate limiting (max 7 submissions per week, at least 1 on Sunday)
 
 ## Weekly Intake Form (11 Fields)
 - [x] Weather report (free text, 2-3 sentences)
@@ -28,8 +28,9 @@
 - [x] Door intention whisper (optional text)
 - [x] Real-time field validation
 - [x] localStorage draft saving
-- [x] Sunday-only submit button (Bangkok time UTC+7)
-- [x] Grayed out button with tooltip on non-Sundays
+- [x] Multi-entry submit button (Bangkok time UTC+7)
+- [x] Entry counter showing X/7 this week
+- [x] Sunday required for first entry, any day for subsequent entries
 
 ## Pattern Archaeology Engine
 - [x] Phrase matching from weather report + text fields
@@ -171,3 +172,15 @@
 - [x] Update Neon's Mirror prompt to reference work details
 - [x] Add emotional temperature filter to History page
 - [ ] Update CSV/PDF export to include work details
+
+
+## Feature: Multi-Roundup Per Week
+- [x] Add entryNumber column to weekly_roundups table (1-7 within each week)
+- [x] Update canSubmit logic to allow any-day submissions (not just Sunday)
+- [x] Add 7-per-week rate limit (replace 1-per-Sunday limit)
+- [x] Keep Sunday as required check-in (at least 1 entry must be on Sunday)
+- [x] Update submit mutation to calculate entry number within week
+- [x] Update Dashboard to show "X entries this week" count
+- [x] Update History to group/display multiple entries per week
+- [x] Update Results page to show entry number (e.g., "Week 3, Entry 2")
+- [x] Test multi-entry submission flow (17 tests passing)

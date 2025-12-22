@@ -168,7 +168,14 @@ export default function Results() {
               </Button>
             </Link>
             <div>
-              <h1 className="text-lg font-semibold neon-text-white">Week {roundup.weekNumber} Results</h1>
+              <h1 className="text-lg font-semibold neon-text-white">
+                Week {roundup.weekNumber} Results
+                {roundup.entryNumber && roundup.entryNumber > 0 && (
+                  <span className="ml-2 text-sm font-normal neon-text-magenta">
+                    Entry {roundup.entryNumber}
+                  </span>
+                )}
+              </h1>
               <p className="text-sm text-muted-foreground">
                 {new Date(roundup.createdAt).toLocaleDateString('en-US', {
                   weekday: 'long',
