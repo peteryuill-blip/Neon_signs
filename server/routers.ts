@@ -387,6 +387,15 @@ export const appRouter = router({
         thingResisted: z.string().min(1),
         somaticState: z.string().min(1),
         doorIntention: z.string().nullable(),
+        dailySteps: z.object({
+          mon: z.number().min(0).max(99999),
+          tue: z.number().min(0).max(99999),
+          wed: z.number().min(0).max(99999),
+          thu: z.number().min(0).max(99999),
+          fri: z.number().min(0).max(99999),
+          sat: z.number().min(0).max(99999),
+          sun: z.number().min(0).max(99999),
+        }).optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const settings = await getUserSettings(ctx.user.id);
@@ -415,13 +424,37 @@ export const appRouter = router({
           });
         }
         
+        // Calculate step statistics if provided
+        let weeklyStepTotal: number | undefined;
+        let dailyStepAverage: number | undefined;
+        if (input.dailySteps) {
+          const steps = Object.values(input.dailySteps);
+          weeklyStepTotal = steps.reduce((sum, v) => sum + v, 0);
+          const daysWithSteps = steps.filter(v => v > 0).length;
+          dailyStepAverage = daysWithSteps > 0 ? Math.round(weeklyStepTotal / daysWithSteps) : 0;
+        }
+        
         // Create the roundup
         const roundupId = await createWeeklyRoundup({
           userId: ctx.user.id,
           weekNumber: dateInfo.weekNumber,
           year: dateInfo.year,
           createdDayOfWeek: dateInfo.dayOfWeek,
-          ...input
+          dailySteps: input.dailySteps || null,
+          weeklyStepTotal: weeklyStepTotal || null,
+          dailyStepAverage: dailyStepAverage || null,
+          weatherReport: input.weatherReport,
+          studioHours: input.studioHours,
+          worksMade: input.worksMade,
+          jesterActivity: input.jesterActivity,
+          energyLevel: input.energyLevel,
+          walkingEngineUsed: input.walkingEngineUsed,
+          walkingInsights: input.walkingInsights,
+          partnershipTemperature: input.partnershipTemperature,
+          thingWorked: input.thingWorked,
+          thingResisted: input.thingResisted,
+          somaticState: input.somaticState,
+          doorIntention: input.doorIntention,
         });
         
         // Detect and assign phase-DNA
@@ -729,30 +762,96 @@ export const appRouter = router({
         'Week', 'Year', 'Date', 'Weather Report', 'Studio Hours', 'Works Made',
         'Jester Activity', 'Energy Level', 'Walking Engine', 'Walking Insights',
         'Partnership Temperature', 'Thing Worked', 'Thing Resisted', 'Somatic State',
-        'Door Intention', 'Phase DNA'
+        'Door Intention', 'Phase DNA', 'Weekly Steps', 'Avg Steps/Day',
+        'Mon Steps', 'Tue Steps', 'Wed Steps', 'Thu Steps', 'Fri Steps', 'Sat Steps', 'Sun Steps'
       ];
       
-      const rows = roundups.map(r => [
-        r.weekNumber,
-        r.year,
-        r.createdAt.toISOString().split('T')[0],
-        `"${(r.weatherReport || '').replace(/"/g, '""')}"`,
-        r.studioHours,
-        `"${(r.worksMade || '').replace(/"/g, '""')}"`,
-        r.jesterActivity,
-        r.energyLevel,
-        r.walkingEngineUsed ? 'Yes' : 'No',
-        `"${(r.walkingInsights || '').replace(/"/g, '""')}"`,
-        `"${(r.partnershipTemperature || '').replace(/"/g, '""')}"`,
-        `"${(r.thingWorked || '').replace(/"/g, '""')}"`,
-        `"${(r.thingResisted || '').replace(/"/g, '""')}"`,
-        `"${(r.somaticState || '').replace(/"/g, '""')}"`,
-        `"${(r.doorIntention || '').replace(/"/g, '""')}"`,
-        r.phaseDnaAssigned || ''
-      ]);
+      const rows = roundups.map(r => {
+        const steps = r.dailySteps as { mon: number; tue: number; wed: number; thu: number; fri: number; sat: number; sun: number } | null;
+        return [
+          r.weekNumber,
+          r.year,
+          r.createdAt.toISOString().split('T')[0],
+          `"${(r.weatherReport || '').replace(/"/g, '""')}"`,
+          r.studioHours,
+          `"${(r.worksMade || '').replace(/"/g, '""')}"`,
+          r.jesterActivity,
+          r.energyLevel,
+          r.walkingEngineUsed ? 'Yes' : 'No',
+          `"${(r.walkingInsights || '').replace(/"/g, '""')}"`,
+          `"${(r.partnershipTemperature || '').replace(/"/g, '""')}"`,
+          `"${(r.thingWorked || '').replace(/"/g, '""')}"`,
+          `"${(r.thingResisted || '').replace(/"/g, '""')}"`,
+          `"${(r.somaticState || '').replace(/"/g, '""')}"`,
+          `"${(r.doorIntention || '').replace(/"/g, '""')}"`,
+          r.phaseDnaAssigned || '',
+          r.weeklyStepTotal || 0,
+          r.dailyStepAverage || 0,
+          steps?.mon || 0,
+          steps?.tue || 0,
+          steps?.wed || 0,
+          steps?.thu || 0,
+          steps?.fri || 0,
+          steps?.sat || 0,
+          steps?.sun || 0
+        ];
+      });
       
       const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
       return { csv, filename: `neon-signs-export-${new Date().toISOString().split('T')[0]}.csv` };
+    }),
+
+    // Generate PDF report data
+    pdfData: protectedProcedure.query(async ({ ctx }) => {
+      const roundups = await getAllWeeklyRoundups(ctx.user.id, 1000, 0);
+      const settings = await getUserSettings(ctx.user.id);
+      const totalStudioHours = await getTotalStudioHours(ctx.user.id);
+      const avgJester = await getAverageJesterActivity(ctx.user.id);
+      const energyDist = await getEnergyLevelDistribution(ctx.user.id);
+      
+      // Calculate step totals
+      let totalSteps = 0;
+      let weeksWithSteps = 0;
+      for (const r of roundups) {
+        if (r.weeklyStepTotal && r.weeklyStepTotal > 0) {
+          totalSteps += r.weeklyStepTotal;
+          weeksWithSteps++;
+        }
+      }
+      const avgWeeklySteps = weeksWithSteps > 0 ? Math.round(totalSteps / weeksWithSteps) : 0;
+      
+      return {
+        userName: ctx.user.name || 'Artist',
+        crucibleYear: settings?.currentCycle || 1,
+        startDate: settings?.crucibleStartDate || DEFAULT_CRUCIBLE_START,
+        totalWeeks: roundups.length,
+        totalStudioHours,
+        avgJesterActivity: avgJester,
+        energyDistribution: energyDist,
+        totalSteps,
+        avgWeeklySteps,
+        roundups: roundups.map(r => ({
+          weekNumber: r.weekNumber,
+          year: r.year,
+          date: r.createdAt.toISOString().split('T')[0],
+          weatherReport: r.weatherReport,
+          studioHours: r.studioHours,
+          worksMade: r.worksMade,
+          jesterActivity: r.jesterActivity,
+          energyLevel: r.energyLevel,
+          walkingEngineUsed: r.walkingEngineUsed,
+          walkingInsights: r.walkingInsights,
+          partnershipTemperature: r.partnershipTemperature,
+          thingWorked: r.thingWorked,
+          thingResisted: r.thingResisted,
+          somaticState: r.somaticState,
+          doorIntention: r.doorIntention,
+          phaseDna: r.phaseDnaAssigned,
+          weeklySteps: r.weeklyStepTotal,
+          avgDailySteps: r.dailyStepAverage,
+        })),
+        generatedAt: new Date().toISOString()
+      };
     }),
   }),
 

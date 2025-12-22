@@ -124,3 +124,34 @@
 - [x] Update dashboard stats with gradient progress bars and geometric lines
 - [x] Add intricate tattoo-style decorative borders
 - [x] Verify accessibility and readability
+
+
+## Feature 2: Roundup History Refinement
+- [ ] Replace table view with card-based week browser
+- [ ] Create swipeable/scrollable card layout for mobile
+- [ ] Each card shows: week number, date, energy level, jester activity, studio hours, somatic preview
+- [ ] Add "View Full" button to see complete roundup with Neon's response
+- [ ] Add filters: phase, somatic state, energy level
+- [ ] Add quick-edit modal for past roundups
+- [ ] Highlight current week
+- [ ] Animated transitions between weeks
+- [ ] Desktop grid view with card layout
+
+## Feature 3: CSV + PDF Export
+- [ ] Add "Export Year" button on dashboard
+- [ ] Implement CSV export with all roundup data
+- [ ] Implement PDF export with cover page
+- [ ] PDF Executive Summary page (stats, trends)
+- [ ] PDF Weekly Data section (one page per week)
+- [ ] PDF Trends Analysis pages with charts
+- [ ] Server-side file generation
+- [ ] Proper file naming convention
+
+## Feature 1: Manual Step Tracking
+- [x] Add daily_steps JSON column to weekly_roundups table
+- [x] Create 7-day step input UI on roundup form (Mon-Sun)
+- [x] Calculate weekly total and daily average
+- [x] Auto-suggest Walking Engine yes/no based on threshold (>8000 avg = yes)
+- [x] Display step summary on form
+- [ ] Show step trends in History charts
+- [ ] Include steps in CSV/PDF export

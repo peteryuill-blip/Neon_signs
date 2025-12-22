@@ -22,6 +22,13 @@
       "when": 1766381963157,
       "tag": "0002_opposite_tyrannus",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1766387546541,
+      "tag": "0003_panoramic_goblin_queen",
+      "breakpoints": true
     }
   ]
 }

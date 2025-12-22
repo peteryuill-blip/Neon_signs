@@ -8,14 +8,24 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Loader2, ArrowLeft, Calendar, AlertCircle, CheckCircle2, Save } from "lucide-react";
+import { Loader2, ArrowLeft, Calendar, AlertCircle, CheckCircle2, Save, Footprints } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 
 const DRAFT_KEY = 'neon-signs-roundup-draft';
+
+interface DailySteps {
+  mon: number;
+  tue: number;
+  wed: number;
+  thu: number;
+  fri: number;
+  sat: number;
+  sun: number;
+}
 
 interface FormData {
   weatherReport: string;
@@ -30,7 +40,18 @@ interface FormData {
   thingResisted: string;
   somaticState: string;
   doorIntention: string;
+  dailySteps: DailySteps;
 }
+
+const initialDailySteps: DailySteps = {
+  mon: 0,
+  tue: 0,
+  wed: 0,
+  thu: 0,
+  fri: 0,
+  sat: 0,
+  sun: 0,
+};
 
 const initialFormData: FormData = {
   weatherReport: '',
@@ -45,7 +66,11 @@ const initialFormData: FormData = {
   thingResisted: '',
   somaticState: '',
   doorIntention: '',
+  dailySteps: initialDailySteps,
 };
+
+const STEP_THRESHOLD_HIGH = 8000;
+const STEP_THRESHOLD_LOW = 5000;
 
 function getJesterColor(value: number): string {
   if (value <= 3) return 'neon-text-cyan';
@@ -78,6 +103,17 @@ function NumberBadge({ num, variant = 'cyan' }: { num: number; variant?: 'cyan' 
   );
 }
 
+// Day labels for step input
+const dayLabels: { key: keyof DailySteps; label: string; short: string }[] = [
+  { key: 'mon', label: 'Monday', short: 'Mon' },
+  { key: 'tue', label: 'Tuesday', short: 'Tue' },
+  { key: 'wed', label: 'Wednesday', short: 'Wed' },
+  { key: 'thu', label: 'Thursday', short: 'Thu' },
+  { key: 'fri', label: 'Friday', short: 'Fri' },
+  { key: 'sat', label: 'Saturday', short: 'Sat' },
+  { key: 'sun', label: 'Sunday', short: 'Sun' },
+];
+
 export default function RoundupForm() {
   const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
@@ -100,12 +136,44 @@ export default function RoundupForm() {
     },
   });
 
+  // Calculate step statistics
+  const stepStats = useMemo(() => {
+    const steps = formData.dailySteps;
+    const values = Object.values(steps);
+    const total = values.reduce((sum, v) => sum + v, 0);
+    const daysWithSteps = values.filter(v => v > 0).length;
+    const average = daysWithSteps > 0 ? Math.round(total / daysWithSteps) : 0;
+    
+    // Auto-suggest walking engine status
+    let suggestion: 'yes' | 'no' | 'neutral' = 'neutral';
+    if (average >= STEP_THRESHOLD_HIGH) {
+      suggestion = 'yes';
+    } else if (average > 0 && average < STEP_THRESHOLD_LOW) {
+      suggestion = 'no';
+    }
+    
+    return { total, average, daysWithSteps, suggestion };
+  }, [formData.dailySteps]);
+
+  // Auto-update walking engine based on step threshold
+  useEffect(() => {
+    if (stepStats.suggestion === 'yes' && !formData.walkingEngineUsed) {
+      setFormData(prev => ({ ...prev, walkingEngineUsed: true }));
+    } else if (stepStats.suggestion === 'no' && formData.walkingEngineUsed) {
+      setFormData(prev => ({ ...prev, walkingEngineUsed: false }));
+    }
+  }, [stepStats.suggestion]);
+
   // Load draft from localStorage
   useEffect(() => {
     const saved = localStorage.getItem(DRAFT_KEY);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+        // Ensure dailySteps has all keys
+        if (parsed.dailySteps) {
+          parsed.dailySteps = { ...initialDailySteps, ...parsed.dailySteps };
+        }
         setFormData(prev => ({ ...prev, ...parsed }));
         toast.info('Draft restored from previous session');
       } catch (e) {
@@ -131,6 +199,13 @@ export default function RoundupForm() {
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
+  };
+
+  const updateSteps = (day: keyof DailySteps, value: number) => {
+    setFormData(prev => ({
+      ...prev,
+      dailySteps: { ...prev.dailySteps, [day]: value },
+    }));
   };
 
   const validateForm = (): boolean => {
@@ -186,6 +261,7 @@ export default function RoundupForm() {
       thingResisted: formData.thingResisted,
       somaticState: formData.somaticState,
       doorIntention: formData.doorIntention || null,
+      dailySteps: formData.dailySteps,
     });
   };
 
@@ -405,13 +481,97 @@ export default function RoundupForm() {
             )}
           </div>
 
-          {/* Walking Engine */}
-          <div className="cyber-card rounded-xl p-5">
-            <div className="flex items-center gap-3 mb-3">
+          {/* Step Tracking - 7 Day Input */}
+          <div className="cyber-form rounded-xl p-6">
+            <div className="flex items-center gap-3 mb-4">
               <NumberBadge num={6} variant="cyan" />
-              <h3 className="font-semibold">Walking Engine</h3>
+              <div className="flex-1">
+                <h3 className="font-semibold neon-text-white">Walking Engine — Step Tracker</h3>
+                <p className="text-sm text-muted-foreground">Enter your daily step count for the week</p>
+              </div>
+              <Footprints className="h-5 w-5 neon-text-cyan" />
             </div>
-            <div className="space-y-4">
+            
+            {/* 7-Day Step Input Grid */}
+            <div className="grid grid-cols-7 gap-2 mb-4">
+              {dayLabels.map(({ key, short }) => (
+                <div key={key} className="text-center">
+                  <Label className="text-xs text-muted-foreground block mb-1">{short}</Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="99999"
+                    value={formData.dailySteps[key] || ''}
+                    onChange={(e) => updateSteps(key, parseInt(e.target.value) || 0)}
+                    placeholder="0"
+                    className="cyber-input rounded-lg text-center text-sm px-1 h-10"
+                    disabled={!canSubmit}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Step Summary */}
+            <div className="bg-[var(--deep-space)] rounded-lg p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Weekly Total</span>
+                <span className="font-bold neon-text-cyan text-lg">
+                  {stepStats.total.toLocaleString()} steps
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Daily Average</span>
+                <span className={`font-bold text-lg ${
+                  stepStats.average >= STEP_THRESHOLD_HIGH 
+                    ? 'neon-text-cyan' 
+                    : stepStats.average >= STEP_THRESHOLD_LOW 
+                      ? 'neon-text-amber' 
+                      : 'neon-text-magenta'
+                }`}>
+                  {stepStats.average.toLocaleString()} steps/day
+                </span>
+              </div>
+              
+              {/* Visual Bar */}
+              <div className="space-y-1">
+                <div className="h-3 bg-[var(--void-black)] rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      stepStats.average >= STEP_THRESHOLD_HIGH 
+                        ? 'bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-cyan)]' 
+                        : stepStats.average >= STEP_THRESHOLD_LOW 
+                          ? 'bg-gradient-to-r from-[var(--neon-amber)] to-[var(--neon-amber)]' 
+                          : 'bg-gradient-to-r from-[var(--neon-magenta)] to-[var(--neon-magenta)]'
+                    }`}
+                    style={{ width: `${Math.min((stepStats.average / 15000) * 100, 100)}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-[10px] text-muted-foreground">
+                  <span>0</span>
+                  <span className="neon-text-magenta">5k (low)</span>
+                  <span className="neon-text-cyan">8k+ (active)</span>
+                  <span>15k</span>
+                </div>
+              </div>
+
+              {/* Auto-suggestion indicator */}
+              {stepStats.daysWithSteps > 0 && (
+                <div className={`text-xs px-3 py-2 rounded-lg ${
+                  stepStats.suggestion === 'yes' 
+                    ? 'bg-[var(--neon-cyan)]/10 neon-text-cyan border border-[var(--neon-cyan)]/30' 
+                    : stepStats.suggestion === 'no'
+                      ? 'bg-[var(--neon-magenta)]/10 neon-text-magenta border border-[var(--neon-magenta)]/30'
+                      : 'bg-muted/10 text-muted-foreground border border-muted/30'
+                }`}>
+                  {stepStats.suggestion === 'yes' && '✓ Walking Engine: Active (avg ≥ 8,000 steps)'}
+                  {stepStats.suggestion === 'no' && '✗ Walking Engine: Low activity (avg < 5,000 steps)'}
+                  {stepStats.suggestion === 'neutral' && '○ Walking Engine: Moderate activity'}
+                </div>
+              )}
+            </div>
+
+            {/* Walking Engine Toggle & Insights */}
+            <div className="mt-4 space-y-4">
               <div className="flex items-center gap-3">
                 <Checkbox
                   id="walkingEngine"
@@ -420,8 +580,8 @@ export default function RoundupForm() {
                   disabled={!canSubmit}
                   className="border-[var(--neon-cyan)] data-[state=checked]:bg-[var(--neon-cyan)] data-[state=checked]:border-[var(--neon-cyan)]"
                 />
-                <Label htmlFor="walkingEngine" className="cursor-pointer">
-                  Did you use the walking engine this week?
+                <Label htmlFor="walkingEngine" className="cursor-pointer text-sm">
+                  Walking Engine active this week (auto-set based on steps, can override)
                 </Label>
               </div>
               {formData.walkingEngineUsed && (

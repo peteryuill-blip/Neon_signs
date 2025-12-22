@@ -42,6 +42,11 @@ export const weeklyRoundups = mysqlTable("weekly_roundups", {
   somaticState: text("somaticState").notNull(),
   doorIntention: text("doorIntention"), // optional
   
+  // Step tracking (7-day data)
+  dailySteps: json("dailySteps").$type<{ mon: number; tue: number; wed: number; thu: number; fri: number; sat: number; sun: number } | null>(),
+  weeklyStepTotal: int("weeklyStepTotal"), // calculated sum
+  dailyStepAverage: int("dailyStepAverage"), // calculated average
+  
   // AI-assigned metadata
   phaseDnaAssigned: varchar("phaseDnaAssigned", { length: 32 }),
   createdDayOfWeek: varchar("createdDayOfWeek", { length: 16 }).notNull(), // Should be "Sunday"
