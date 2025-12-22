@@ -15,6 +15,13 @@
       "when": 1766366855988,
       "tag": "0001_panoramic_king_bedlam",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1766381963157,
+      "tag": "0002_opposite_tyrannus",
+      "breakpoints": true
     }
   ]
 }

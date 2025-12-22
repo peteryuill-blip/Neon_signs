@@ -102,3 +102,11 @@
 
 ## Data Import
 - [x] Import Week 0 baseline roundup from WEEKLY_ROUNDUP_CONTINUOUS_LOG.txt
+
+## Admin Settings & Edit Features
+- [x] Create user_settings database table for Crucible Year configuration
+- [x] Add API endpoints for settings CRUD operations
+- [x] Build Admin Settings page UI (start date, check-in day, timezone)
+- [x] Add edit functionality for past roundups
+- [x] Update week calculation to use user settings instead of hardcoded values
+- [x] Add reset/new cycle option

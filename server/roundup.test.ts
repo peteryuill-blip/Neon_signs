@@ -53,14 +53,16 @@ describe("roundup.canSubmit", () => {
 
     const result = await caller.roundup.canSubmit();
 
-    expect(result).toHaveProperty("isSunday");
+    expect(result).toHaveProperty("isCheckInDay");
     expect(result).toHaveProperty("canSubmit");
     expect(result).toHaveProperty("currentDay");
+    expect(result).toHaveProperty("checkInDay");
     expect(result).toHaveProperty("weekNumber");
     expect(result).toHaveProperty("year");
-    expect(typeof result.isSunday).toBe("boolean");
+    expect(typeof result.isCheckInDay).toBe("boolean");
     expect(typeof result.canSubmit).toBe("boolean");
     expect(typeof result.currentDay).toBe("string");
+    expect(typeof result.checkInDay).toBe("string");
     expect(typeof result.weekNumber).toBe("number");
     expect(typeof result.year).toBe("number");
   });
@@ -111,12 +113,14 @@ describe("stats.dashboard", () => {
     expect(result).toHaveProperty("totalStudioHours");
     expect(result).toHaveProperty("averageJesterActivity");
     expect(result).toHaveProperty("currentWeek");
-    expect(result).toHaveProperty("daysUntilSunday");
+    expect(result).toHaveProperty("daysUntilCheckIn");
+    expect(result).toHaveProperty("checkInDay");
     expect(result).toHaveProperty("archiveEntryCount");
     expect(typeof result.totalRoundups).toBe("number");
     expect(typeof result.totalStudioHours).toBe("number");
     expect(typeof result.currentWeek).toBe("number");
-    expect(typeof result.daysUntilSunday).toBe("number");
+    expect(typeof result.daysUntilCheckIn).toBe("number");
+    expect(typeof result.checkInDay).toBe("string");
     expect(typeof result.archiveEntryCount).toBe("number");
   });
 
@@ -129,14 +133,14 @@ describe("stats.dashboard", () => {
     expect(result.archiveEntryCount).toBe(60);
   });
 
-  it("returns daysUntilSunday between 0 and 6", async () => {
+  it("returns daysUntilCheckIn between 0 and 6", async () => {
     const { ctx } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
 
     const result = await caller.stats.dashboard();
 
-    expect(result.daysUntilSunday).toBeGreaterThanOrEqual(0);
-    expect(result.daysUntilSunday).toBeLessThanOrEqual(6);
+    expect(result.daysUntilCheckIn).toBeGreaterThanOrEqual(0);
+    expect(result.daysUntilCheckIn).toBeLessThanOrEqual(6);
   });
 });
 

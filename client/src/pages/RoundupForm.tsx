@@ -204,8 +204,9 @@ export default function RoundupForm() {
   }
 
   const canSubmit = canSubmitData?.canSubmit ?? false;
-  const isSunday = canSubmitData?.isSunday ?? false;
+  const isCheckInDay = canSubmitData?.isCheckInDay ?? false;
   const alreadySubmitted = canSubmitData?.alreadySubmitted ?? false;
+  const checkInDay = canSubmitData?.checkInDay ?? 'Sunday';
 
   return (
     <div className="min-h-screen bg-background">
@@ -246,7 +247,7 @@ export default function RoundupForm() {
                   <div>
                     <p className="font-medium">Already submitted this week</p>
                     <p className="text-sm text-muted-foreground">
-                      You can view your results or wait until next Sunday.
+                      You can view your results or wait until next {checkInDay}.
                     </p>
                   </div>
                   <Link href={`/results/${canSubmitData?.existingRoundupId}`} className="ml-auto">
@@ -257,9 +258,9 @@ export default function RoundupForm() {
                 <div className="flex items-center gap-3">
                   <Calendar className="h-5 w-5 neon-text-magenta" />
                   <div>
-                    <p className="font-medium">Submissions open on Sundays only</p>
+                    <p className="font-medium">Submissions open on {checkInDay}s only</p>
                     <p className="text-sm text-muted-foreground">
-                      Current day: {canSubmitData?.currentDay} (Bangkok time, UTC+7)
+                      Current day: {canSubmitData?.currentDay}
                     </p>
                   </div>
                 </div>

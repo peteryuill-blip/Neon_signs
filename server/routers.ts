@@ -27,31 +27,62 @@ import {
   getStudioHoursTrend,
   getLastRoundup,
   bulkCreateArchiveEntries,
+  getUserSettings,
+  upsertUserSettings,
+  updateWeeklyRoundup,
 } from "./db";
 import { TRPCError } from "@trpc/server";
 
-// Crucible Year start date: Sunday, December 21, 2025 (Week 0)
-const CRUCIBLE_YEAR_START = new Date('2025-12-21T00:00:00+07:00'); // Bangkok time
+// Default Crucible Year start date: Sunday, December 21, 2025 (Week 0)
+const DEFAULT_CRUCIBLE_START = new Date('2025-12-21T00:00:00+07:00'); // Bangkok time
+const DEFAULT_CHECK_IN_DAY = 'Sunday';
+const DEFAULT_TIMEZONE = 'Asia/Bangkok';
 
-// Helper to get Crucible Year week info
-function getCrucibleWeekInfo(date: Date): { weekNumber: number; crucibleYear: number; totalWeeks: number } {
+// Helper to get timezone offset in ms
+function getTimezoneOffset(timezone: string): number {
+  const offsets: Record<string, number> = {
+    'Asia/Bangkok': 7 * 60 * 60 * 1000,
+    'Asia/Tokyo': 9 * 60 * 60 * 1000,
+    'Asia/Singapore': 8 * 60 * 60 * 1000,
+    'America/New_York': -5 * 60 * 60 * 1000,
+    'America/Los_Angeles': -8 * 60 * 60 * 1000,
+    'Europe/London': 0,
+    'Europe/Paris': 1 * 60 * 60 * 1000,
+    'Australia/Sydney': 11 * 60 * 60 * 1000,
+  };
+  return offsets[timezone] || 7 * 60 * 60 * 1000; // Default to Bangkok
+}
+
+// Helper to get day index from name
+function getDayIndex(day: string): number {
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  return days.indexOf(day);
+}
+
+// Helper to get Crucible Year week info with custom start date
+function getCrucibleWeekInfo(
+  date: Date, 
+  startDate: Date = DEFAULT_CRUCIBLE_START,
+  currentCycle: number = 1
+): { weekNumber: number; crucibleYear: number; totalWeeks: number } {
   const msPerWeek = 7 * 24 * 60 * 60 * 1000;
-  const msSinceStart = date.getTime() - CRUCIBLE_YEAR_START.getTime();
+  const msSinceStart = date.getTime() - startDate.getTime();
   
   if (msSinceStart < 0) {
     // Before Crucible Year started
-    return { weekNumber: 0, crucibleYear: 1, totalWeeks: 52 };
+    return { weekNumber: 0, crucibleYear: currentCycle, totalWeeks: 52 };
   }
   
   const totalWeeksSinceStart = Math.floor(msSinceStart / msPerWeek);
   
   // Calculate which Crucible Year we're in (Year 1 = weeks 0-52, Year 2 = weeks 53-104, etc.)
-  const crucibleYear = Math.floor(totalWeeksSinceStart / 53) + 1;
+  const yearOffset = Math.floor(totalWeeksSinceStart / 53);
+  const crucibleYear = currentCycle + yearOffset;
   
   // Week number within the current Crucible Year (0-52 for Year 1, 1-52 for subsequent years)
   let weekNumber: number;
-  if (crucibleYear === 1) {
-    weekNumber = totalWeeksSinceStart; // 0-52 for first year
+  if (yearOffset === 0) {
+    weekNumber = totalWeeksSinceStart; // 0-52 for first year of this cycle
   } else {
     weekNumber = (totalWeeksSinceStart % 53) + 1; // 1-52 for subsequent years
   }
@@ -59,53 +90,57 @@ function getCrucibleWeekInfo(date: Date): { weekNumber: number; crucibleYear: nu
   return { 
     weekNumber, 
     crucibleYear, 
-    totalWeeks: crucibleYear === 1 ? 52 : 52 
+    totalWeeks: 52 
   };
 }
 
-// Helper to check if it's Sunday in Bangkok time (UTC+7)
-function isSundayInBangkok(): boolean {
+// Helper to check if it's the check-in day in the configured timezone
+function isCheckInDay(checkInDay: string = DEFAULT_CHECK_IN_DAY, timezone: string = DEFAULT_TIMEZONE): boolean {
   const now = new Date();
-  const bangkokOffset = 7 * 60; // UTC+7 in minutes
-  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-  const bangkokMinutes = utcMinutes + bangkokOffset;
+  const offset = getTimezoneOffset(timezone);
+  const localTime = new Date(now.getTime() + offset);
+  const targetDayIndex = getDayIndex(checkInDay);
   
-  // Adjust day if we've crossed midnight
-  let bangkokDay = now.getUTCDay();
-  if (bangkokMinutes >= 24 * 60) {
-    bangkokDay = (bangkokDay + 1) % 7;
-  } else if (bangkokMinutes < 0) {
-    bangkokDay = (bangkokDay + 6) % 7;
-  }
-  
-  return bangkokDay === 0; // 0 = Sunday
+  return localTime.getUTCDay() === targetDayIndex;
 }
 
-// Helper to get Bangkok date info with Crucible Year tracking
-function getBangkokDateInfo(): { 
+// Helper to get date info with Crucible Year tracking using user settings
+function getDateInfoWithSettings(settings?: {
+  crucibleStartDate: Date;
+  checkInDay: string;
+  timezone: string;
+  currentCycle: number;
+} | null): { 
   dayOfWeek: string; 
   date: Date; 
   weekNumber: number; 
   year: number; 
   crucibleYear: number;
   totalWeeks: number;
+  isCheckInDay: boolean;
 } {
+  const startDate = settings?.crucibleStartDate || DEFAULT_CRUCIBLE_START;
+  const timezone = settings?.timezone || DEFAULT_TIMEZONE;
+  const checkInDay = settings?.checkInDay || DEFAULT_CHECK_IN_DAY;
+  const currentCycle = settings?.currentCycle || 1;
+  
   const now = new Date();
-  const bangkokOffset = 7 * 60 * 60 * 1000; // UTC+7 in ms
-  const bangkokTime = new Date(now.getTime() + bangkokOffset);
+  const offset = getTimezoneOffset(timezone);
+  const localTime = new Date(now.getTime() + offset);
   
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  const dayOfWeek = days[bangkokTime.getUTCDay()];
+  const dayOfWeek = days[localTime.getUTCDay()];
   
-  const crucibleInfo = getCrucibleWeekInfo(bangkokTime);
+  const crucibleInfo = getCrucibleWeekInfo(localTime, startDate, currentCycle);
   
   return {
     dayOfWeek,
-    date: bangkokTime,
+    date: localTime,
     weekNumber: crucibleInfo.weekNumber,
-    year: bangkokTime.getUTCFullYear(), // Calendar year for database storage
+    year: localTime.getUTCFullYear(), // Calendar year for database storage
     crucibleYear: crucibleInfo.crucibleYear,
-    totalWeeks: crucibleInfo.totalWeeks
+    totalWeeks: crucibleInfo.totalWeeks,
+    isCheckInDay: dayOfWeek === checkInDay
   };
 }
 
@@ -311,25 +346,28 @@ export const appRouter = router({
 
   // Roundup routes
   roundup: router({
-    // Check if submission is allowed (Sunday in Bangkok)
+    // Check if submission is allowed (check-in day in configured timezone)
     canSubmit: protectedProcedure.query(async ({ ctx }) => {
-      const bangkokInfo = getBangkokDateInfo();
-      const isSunday = bangkokInfo.dayOfWeek === 'Sunday';
+      const settings = await getUserSettings(ctx.user.id);
+      const dateInfo = getDateInfoWithSettings(settings);
       
       // Check if already submitted this week
       const existing = await getWeeklyRoundupByWeekAndYear(
         ctx.user.id,
-        bangkokInfo.weekNumber,
-        bangkokInfo.year
+        dateInfo.weekNumber,
+        dateInfo.year
       );
       
+      const checkInDay = settings?.checkInDay || 'Sunday';
+      
       return {
-        canSubmit: isSunday && !existing,
-        isSunday,
+        canSubmit: dateInfo.isCheckInDay && !existing,
+        isCheckInDay: dateInfo.isCheckInDay,
         alreadySubmitted: !!existing,
-        currentDay: bangkokInfo.dayOfWeek,
-        weekNumber: bangkokInfo.weekNumber,
-        year: bangkokInfo.year,
+        currentDay: dateInfo.dayOfWeek,
+        checkInDay,
+        weekNumber: dateInfo.weekNumber,
+        year: dateInfo.year,
         existingRoundupId: existing?.id
       };
     }),
@@ -351,21 +389,23 @@ export const appRouter = router({
         doorIntention: z.string().nullable(),
       }))
       .mutation(async ({ ctx, input }) => {
-        const bangkokInfo = getBangkokDateInfo();
+        const settings = await getUserSettings(ctx.user.id);
+        const dateInfo = getDateInfoWithSettings(settings);
+        const checkInDay = settings?.checkInDay || 'Sunday';
         
-        // Validate Sunday submission
-        if (bangkokInfo.dayOfWeek !== 'Sunday') {
+        // Validate check-in day submission
+        if (!dateInfo.isCheckInDay) {
           throw new TRPCError({
             code: 'FORBIDDEN',
-            message: `Submissions are only allowed on Sundays (Bangkok time). Current day: ${bangkokInfo.dayOfWeek}`
+            message: `Submissions are only allowed on ${checkInDay}s. Current day: ${dateInfo.dayOfWeek}`
           });
         }
         
         // Check for duplicate submission
         const existing = await getWeeklyRoundupByWeekAndYear(
           ctx.user.id,
-          bangkokInfo.weekNumber,
-          bangkokInfo.year
+          dateInfo.weekNumber,
+          dateInfo.year
         );
         
         if (existing) {
@@ -378,9 +418,9 @@ export const appRouter = router({
         // Create the roundup
         const roundupId = await createWeeklyRoundup({
           userId: ctx.user.id,
-          weekNumber: bangkokInfo.weekNumber,
-          year: bangkokInfo.year,
-          createdDayOfWeek: bangkokInfo.dayOfWeek,
+          weekNumber: dateInfo.weekNumber,
+          year: dateInfo.year,
+          createdDayOfWeek: dateInfo.dayOfWeek,
           ...input
         });
         
@@ -391,8 +431,8 @@ export const appRouter = router({
         return { 
           success: true, 
           roundupId,
-          weekNumber: bangkokInfo.weekNumber,
-          year: bangkokInfo.year,
+          weekNumber: dateInfo.weekNumber,
+          year: dateInfo.year,
           phaseDna
         };
       }),
@@ -561,7 +601,9 @@ export const appRouter = router({
   stats: router({
     // Get dashboard overview
     dashboard: protectedProcedure.query(async ({ ctx }) => {
-      const bangkokInfo = getBangkokDateInfo();
+      const settings = await getUserSettings(ctx.user.id);
+      const dateInfo = getDateInfoWithSettings(settings);
+      const checkInDay = settings?.checkInDay || 'Sunday';
       
       const [
         totalHours,
@@ -581,16 +623,19 @@ export const appRouter = router({
         getArchiveEntryCount()
       ]);
       
-      // Calculate days until next Sunday
+      // Calculate days until next check-in day
       const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      const currentDayIndex = daysOfWeek.indexOf(bangkokInfo.dayOfWeek);
-      const daysUntilSunday = currentDayIndex === 0 ? 0 : 7 - currentDayIndex;
+      const currentDayIndex = daysOfWeek.indexOf(dateInfo.dayOfWeek);
+      const checkInDayIndex = daysOfWeek.indexOf(checkInDay);
+      let daysUntilCheckIn = checkInDayIndex - currentDayIndex;
+      if (daysUntilCheckIn < 0) daysUntilCheckIn += 7;
+      if (daysUntilCheckIn === 0 && !dateInfo.isCheckInDay) daysUntilCheckIn = 7;
       
       return {
-        currentWeek: bangkokInfo.weekNumber,
-        currentYear: bangkokInfo.year,
-        crucibleYear: bangkokInfo.crucibleYear,
-        totalWeeks: bangkokInfo.totalWeeks,
+        currentWeek: dateInfo.weekNumber,
+        currentYear: dateInfo.year,
+        crucibleYear: dateInfo.crucibleYear,
+        totalWeeks: dateInfo.totalWeeks,
         totalRoundups,
         totalStudioHours: Math.round(totalHours * 10) / 10,
         averageJesterActivity: avgJester,
@@ -604,8 +649,9 @@ export const appRouter = router({
           jesterActivity: lastRoundup.jesterActivity,
           energyLevel: lastRoundup.energyLevel
         } : null,
-        daysUntilSunday,
-        currentDay: bangkokInfo.dayOfWeek,
+        daysUntilCheckIn,
+        checkInDay,
+        currentDay: dateInfo.dayOfWeek,
         archiveEntryCount: archiveCount
       };
     }),
@@ -708,6 +754,147 @@ export const appRouter = router({
       const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
       return { csv, filename: `neon-signs-export-${new Date().toISOString().split('T')[0]}.csv` };
     }),
+  }),
+
+  // User Settings routes
+  settings: router({
+    get: protectedProcedure.query(async ({ ctx }) => {
+      const settings = await getUserSettings(ctx.user.id);
+      
+      // Return defaults if no settings exist
+      if (!settings) {
+        return {
+          crucibleStartDate: DEFAULT_CRUCIBLE_START,
+          checkInDay: 'Sunday' as const,
+          timezone: 'Asia/Bangkok',
+          currentCycle: 1,
+        };
+      }
+      
+      return settings;
+    }),
+
+    update: protectedProcedure
+      .input(z.object({
+        crucibleStartDate: z.string().optional(), // ISO date string
+        checkInDay: z.enum(['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']).optional(),
+        timezone: z.string().optional(),
+        currentCycle: z.number().min(1).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const updates: Record<string, unknown> = {};
+        
+        if (input.crucibleStartDate) {
+          updates.crucibleStartDate = new Date(input.crucibleStartDate);
+        }
+        if (input.checkInDay) {
+          updates.checkInDay = input.checkInDay;
+        }
+        if (input.timezone) {
+          updates.timezone = input.timezone;
+        }
+        if (input.currentCycle) {
+          updates.currentCycle = input.currentCycle;
+        }
+        
+        // Get existing settings or create new
+        const existing = await getUserSettings(ctx.user.id);
+        
+        if (existing) {
+          await upsertUserSettings({
+            userId: ctx.user.id,
+            crucibleStartDate: (updates.crucibleStartDate as Date) || existing.crucibleStartDate,
+            checkInDay: (updates.checkInDay as typeof existing.checkInDay) || existing.checkInDay,
+            timezone: (updates.timezone as string) || existing.timezone,
+            currentCycle: (updates.currentCycle as number) || existing.currentCycle,
+          });
+        } else {
+          await upsertUserSettings({
+            userId: ctx.user.id,
+            crucibleStartDate: (updates.crucibleStartDate as Date) || DEFAULT_CRUCIBLE_START,
+            checkInDay: (updates.checkInDay as 'Sunday') || 'Sunday',
+            timezone: (updates.timezone as string) || 'Asia/Bangkok',
+            currentCycle: (updates.currentCycle as number) || 1,
+          });
+        }
+        
+        return { success: true };
+      }),
+
+    // Start a new cycle (soft reset)
+    newCycle: protectedProcedure
+      .input(z.object({
+        newStartDate: z.string(), // ISO date string
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const existing = await getUserSettings(ctx.user.id);
+        const newCycle = (existing?.currentCycle || 1) + 1;
+        
+        await upsertUserSettings({
+          userId: ctx.user.id,
+          crucibleStartDate: new Date(input.newStartDate),
+          checkInDay: existing?.checkInDay || 'Sunday',
+          timezone: existing?.timezone || 'Asia/Bangkok',
+          currentCycle: newCycle,
+        });
+        
+        return { success: true, newCycle };
+      }),
+  }),
+
+  // Roundup edit routes
+  roundupEdit: router({
+    get: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const roundup = await getWeeklyRoundupById(input.id);
+        
+        if (!roundup) {
+          throw new TRPCError({ code: 'NOT_FOUND', message: 'Roundup not found' });
+        }
+        
+        if (roundup.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'FORBIDDEN', message: 'Access denied' });
+        }
+        
+        return roundup;
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        weatherReport: z.string().min(1).optional(),
+        studioHours: z.number().min(0).optional(),
+        worksMade: z.string().optional(),
+        jesterActivity: z.number().min(0).max(10).optional(),
+        energyLevel: z.enum(['hot', 'sustainable', 'depleted']).optional(),
+        walkingEngineUsed: z.boolean().optional(),
+        walkingInsights: z.string().optional(),
+        partnershipTemperature: z.string().optional(),
+        thingWorked: z.string().optional(),
+        thingResisted: z.string().optional(),
+        somaticState: z.string().optional(),
+        doorIntention: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { id, ...updates } = input;
+        
+        // Filter out undefined values
+        const filteredUpdates: Record<string, unknown> = {};
+        for (const [key, value] of Object.entries(updates)) {
+          if (value !== undefined) {
+            filteredUpdates[key] = value;
+          }
+        }
+        
+        if (Object.keys(filteredUpdates).length === 0) {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'No updates provided' });
+        }
+        
+        await updateWeeklyRoundup(id, ctx.user.id, filteredUpdates);
+        
+        return { success: true };
+      }),
   }),
 });
 

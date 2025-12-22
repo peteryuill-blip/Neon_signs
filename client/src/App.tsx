@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import RoundupForm from "./pages/RoundupForm";
 import Results from "./pages/Results";
 import History from "./pages/History";
+import Settings from "./pages/Settings";
+import EditRoundup from "./pages/EditRoundup";
 
 function Router() {
   return (
@@ -16,6 +18,8 @@ function Router() {
       <Route path="/roundup" component={RoundupForm} />
       <Route path="/results/:id" component={Results} />
       <Route path="/history" component={History} />
+      <Route path="/settings" component={Settings} />
+      <Route path="/edit/:id" component={EditRoundup} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

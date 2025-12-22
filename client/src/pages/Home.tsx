@@ -2,7 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, Calendar, Clock, Zap, Activity, TrendingUp, Archive, FileText, ChevronRight } from "lucide-react";
+import { Loader2, Calendar, Clock, Zap, Activity, TrendingUp, Archive, FileText, ChevronRight, Settings } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
@@ -172,6 +172,11 @@ export default function Home() {
                 History
               </Button>
             </Link>
+            <Link href="/settings">
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
+                <Settings className="h-4 w-4" />
+              </Button>
+            </Link>
             <span className="text-sm text-muted-foreground">
               {user?.name || 'Artist'}
             </span>
@@ -206,7 +211,7 @@ export default function Home() {
               </div>
               
               <div className="flex flex-col items-center sm:items-end gap-2">
-                {stats?.daysUntilSunday === 0 ? (
+                {stats?.daysUntilCheckIn === 0 ? (
                   <Link href="/roundup">
                     <Button size="lg" className="neon-glow-cyan bg-primary hover:bg-primary/90 w-full sm:w-auto">
                       <Calendar className="mr-2 h-5 w-5" />
@@ -217,10 +222,10 @@ export default function Home() {
                   <div className="text-center sm:text-right">
                     <p className="text-sm text-muted-foreground">Next check-in in</p>
                     <p className="text-2xl font-bold neon-text-magenta">
-                      {stats?.daysUntilSunday || 0} days
+                      {stats?.daysUntilCheckIn || 0} days
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      (Sunday, Bangkok time)
+                      ({stats?.checkInDay || 'Sunday'})
                     </p>
                   </div>
                 )}
@@ -367,9 +372,9 @@ export default function Home() {
                 <div className="flex-1">
                   <h3 className="font-semibold">Weekly Roundup Form</h3>
                   <p className="text-sm text-muted-foreground">
-                    {stats?.daysUntilSunday === 0 
+                    {stats?.daysUntilCheckIn === 0 
                       ? "Ready to submit today!" 
-                      : `Available in ${stats?.daysUntilSunday || 0} days`}
+                      : `Available in ${stats?.daysUntilCheckIn || 0} days`}
                   </p>
                 </div>
                 <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-foreground transition-colors" />

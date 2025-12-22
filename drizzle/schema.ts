@@ -45,6 +45,9 @@ export const weeklyRoundups = mysqlTable("weekly_roundups", {
   // AI-assigned metadata
   phaseDnaAssigned: varchar("phaseDnaAssigned", { length: 32 }),
   createdDayOfWeek: varchar("createdDayOfWeek", { length: 16 }).notNull(), // Should be "Sunday"
+  
+  // Edit tracking
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
 export type WeeklyRoundup = typeof weeklyRoundups.$inferSelect;
@@ -82,3 +85,25 @@ export const patternMatches = mysqlTable("pattern_matches", {
 
 export type PatternMatch = typeof patternMatches.$inferSelect;
 export type InsertPatternMatch = typeof patternMatches.$inferInsert;
+
+/**
+ * User Settings - configurable Crucible Year settings per user
+ */
+export const userSettings = mysqlTable("user_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().unique(),
+  
+  // Crucible Year Configuration
+  crucibleStartDate: timestamp("crucibleStartDate").notNull(), // When Week 0 begins
+  checkInDay: mysqlEnum("checkInDay", ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]).default("Sunday").notNull(),
+  timezone: varchar("timezone", { length: 64 }).default("Asia/Bangkok").notNull(),
+  
+  // Cycle tracking
+  currentCycle: int("currentCycle").default(1).notNull(), // For multiple Crucible Years
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type UserSettings = typeof userSettings.$inferSelect;
+export type InsertUserSettings = typeof userSettings.$inferInsert;

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, ArrowLeft, Download, Calendar, TrendingUp, BarChart3, Activity } from "lucide-react";
+import { Loader2, ArrowLeft, Download, Calendar, TrendingUp, BarChart3, Activity, Pencil } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
@@ -384,7 +384,7 @@ export default function History() {
                       <TableHead className="w-24 text-right">Jester</TableHead>
                       <TableHead className="w-32">Energy</TableHead>
                       <TableHead className="w-24">Phase-DNA</TableHead>
-                      <TableHead className="w-20"></TableHead>
+                      <TableHead className="w-32 text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -405,10 +405,17 @@ export default function History() {
                         <TableCell>
                           <span className="text-xs neon-text-blue">{roundup.phaseDnaAssigned || '-'}</span>
                         </TableCell>
-                        <TableCell>
-                          <Link href={`/results/${roundup.id}`}>
-                            <Button variant="ghost" size="sm">View</Button>
-                          </Link>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <Link href={`/results/${roundup.id}`}>
+                              <Button variant="ghost" size="sm">View</Button>
+                            </Link>
+                            <Link href={`/edit/${roundup.id}`}>
+                              <Button variant="ghost" size="sm" className="text-neon-cyan hover:text-neon-cyan">
+                                <Pencil className="h-3 w-3" />
+                              </Button>
+                            </Link>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
