@@ -1,7 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, ArrowLeft, Download, Calendar, TrendingUp, BarChart3, Activity, Pencil } from "lucide-react";
 import { getLoginUrl } from "@/const";
@@ -24,14 +22,14 @@ import {
 
 function EnergyBadge({ level }: { level: string }) {
   const config = {
-    hot: { emoji: '🔥', label: 'Hot', color: 'text-orange-400', bg: 'bg-orange-400/10' },
-    sustainable: { emoji: '⚙️', label: 'Sustainable', color: 'text-green-400', bg: 'bg-green-400/10' },
-    depleted: { emoji: '🪫', label: 'Depleted', color: 'text-red-400', bg: 'bg-red-400/10' },
+    hot: { emoji: '🔥', label: 'Hot', className: 'neon-text-amber bg-[var(--neon-amber)]/10' },
+    sustainable: { emoji: '⚡', label: 'Sustainable', className: 'neon-text-cyan bg-[var(--neon-cyan)]/10' },
+    depleted: { emoji: '🌙', label: 'Depleted', className: 'neon-text-purple bg-[var(--neon-purple)]/10' },
   };
-  const { emoji, label, color, bg } = config[level as keyof typeof config] || config.sustainable;
+  const { emoji, label, className } = config[level as keyof typeof config] || config.sustainable;
   
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded ${color} ${bg}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded ${className}`}>
       <span className="text-xs">{emoji}</span>
       <span className="text-xs">{label}</span>
     </span>
@@ -40,10 +38,11 @@ function EnergyBadge({ level }: { level: string }) {
 
 const chartTooltipStyle = {
   contentStyle: {
-    background: 'oklch(0.15 0.02 280)',
-    border: '1px solid oklch(0.28 0.03 280)',
+    background: 'var(--void-black)',
+    border: '1px solid var(--neon-cyan)',
     borderRadius: '8px',
-    color: 'oklch(0.95 0.01 280)',
+    color: 'var(--foreground)',
+    boxShadow: '0 0 20px rgba(0, 240, 255, 0.2)',
   },
 };
 
@@ -65,7 +64,7 @@ export default function History() {
   });
 
   const exportCsv = trpc.export.csv.useQuery(undefined, {
-    enabled: false, // Don't auto-fetch
+    enabled: false,
   });
 
   const handleExport = async () => {
@@ -90,9 +89,12 @@ export default function History() {
 
   if (authLoading || roundupsLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin neon-text-cyan" />
+          <div className="relative">
+            <Loader2 className="h-10 w-10 animate-spin neon-text-cyan" />
+            <div className="absolute inset-0 blur-xl bg-[var(--neon-cyan)] opacity-30" />
+          </div>
           <p className="text-muted-foreground">Loading history...</p>
         </div>
       </div>
@@ -101,16 +103,14 @@ export default function History() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background px-4">
-        <Card className="max-w-md w-full border-border/50 bg-card/50">
-          <CardContent className="pt-6 text-center">
-            <h2 className="text-xl font-semibold mb-2">Authentication Required</h2>
-            <p className="text-muted-foreground mb-4">Please sign in to view history.</p>
-            <Button onClick={() => window.location.href = getLoginUrl()}>
-              Sign In
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="cyber-card max-w-md w-full rounded-xl p-8 text-center">
+          <h2 className="text-xl font-semibold mb-2 neon-text-white">Authentication Required</h2>
+          <p className="text-muted-foreground mb-6">Please sign in to view history.</p>
+          <Button onClick={() => window.location.href = getLoginUrl()} className="cyber-button-primary">
+            Sign In
+          </Button>
+        </div>
       </div>
     );
   }
@@ -121,9 +121,9 @@ export default function History() {
   const energyData = trends?.energyTrend || [];
 
   // Create 52-week timeline data
-  const currentWeek = stats?.currentWeek || 1;
+  const currentWeek = stats?.currentWeek || 0;
   const timelineData = Array.from({ length: 52 }, (_, i) => {
-    const weekNum = i + 1;
+    const weekNum = i;
     const roundup = roundups.find(r => r.weekNumber === weekNum);
     return {
       week: weekNum,
@@ -133,25 +133,30 @@ export default function History() {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-border/50 sticky top-0 bg-background/95 backdrop-blur z-50">
+      <header className="border-b border-[var(--neon-cyan)]/20 sticky top-0 bg-[var(--void-black)]/95 backdrop-blur z-50">
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[var(--neon-cyan)] to-transparent opacity-50" />
         <div className="container py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/">
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-[var(--neon-cyan)] hover:bg-[var(--neon-cyan)]/10">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Dashboard
               </Button>
             </Link>
             <div>
-              <h1 className="text-lg font-semibold">History & Trends</h1>
+              <h1 className="text-lg font-semibold neon-text-white">History & Trends</h1>
               <p className="text-sm text-muted-foreground">
                 {roundups.length} roundups submitted
               </p>
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={handleExport} disabled={roundups.length === 0}>
+          <Button 
+            onClick={handleExport} 
+            disabled={roundups.length === 0}
+            className="cyber-button-secondary"
+          >
             <Download className="h-4 w-4 mr-2" />
             Export CSV
           </Button>
@@ -160,25 +165,23 @@ export default function History() {
 
       <main className="container py-8 space-y-8">
         {/* 52-Week Timeline */}
-        <Card className="border-border/50 bg-card/50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <div className="cyber-card rounded-xl overflow-hidden">
+          <div className="p-6">
+            <div className="flex items-center gap-2 mb-6">
               <Calendar className="h-5 w-5 neon-text-cyan" />
-              52-Week Timeline
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
+              <h2 className="text-lg font-semibold neon-text-white">52-Week Timeline</h2>
+            </div>
             <div className="flex flex-wrap gap-1">
               {timelineData.map((week) => (
                 <div
                   key={week.week}
-                  className={`w-5 h-5 rounded-sm flex items-center justify-center text-[10px] font-medium transition-all
+                  className={`w-5 h-5 rounded-sm flex items-center justify-center text-[10px] font-medium transition-all cursor-default
                     ${week.isCurrent 
-                      ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' 
+                      ? 'ring-2 ring-[var(--neon-cyan)] ring-offset-2 ring-offset-[var(--void-black)] shadow-[0_0_10px_var(--neon-cyan)]' 
                       : ''}
                     ${week.submitted 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted text-muted-foreground'}
+                      ? 'bg-[var(--neon-cyan)] text-[var(--void-black)] shadow-[0_0_8px_var(--neon-cyan)]' 
+                      : 'bg-[var(--deep-space)] text-muted-foreground border border-[var(--neon-cyan)]/20'}
                   `}
                   title={`Week ${week.week}${week.isCurrent ? ' (current)' : ''}${week.submitted ? ' - submitted' : ''}`}
                 >
@@ -186,49 +189,47 @@ export default function History() {
                 </div>
               ))}
             </div>
-            <div className="flex items-center gap-4 mt-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-6 mt-6 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded-sm bg-primary" />
+                <div className="w-4 h-4 rounded-sm bg-[var(--neon-cyan)] shadow-[0_0_8px_var(--neon-cyan)]" />
                 <span>Submitted</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded-sm bg-muted" />
+                <div className="w-4 h-4 rounded-sm bg-[var(--deep-space)] border border-[var(--neon-cyan)]/20" />
                 <span>Not submitted</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 rounded-sm ring-2 ring-primary ring-offset-1 ring-offset-background" />
+                <div className="w-4 h-4 rounded-sm ring-2 ring-[var(--neon-cyan)] ring-offset-1 ring-offset-[var(--void-black)]" />
                 <span>Current week</span>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Charts */}
         <Tabs defaultValue="jester" className="space-y-4">
-          <TabsList className="bg-muted">
-            <TabsTrigger value="jester" className="data-[state=active]:bg-background">
+          <TabsList className="bg-[var(--deep-space)] border border-[var(--neon-cyan)]/20">
+            <TabsTrigger value="jester" className="data-[state=active]:bg-[var(--neon-magenta)]/20 data-[state=active]:text-[var(--neon-magenta)]">
               <Activity className="h-4 w-4 mr-2" />
               Jester Activity
             </TabsTrigger>
-            <TabsTrigger value="studio" className="data-[state=active]:bg-background">
+            <TabsTrigger value="studio" className="data-[state=active]:bg-[var(--neon-cyan)]/20 data-[state=active]:text-[var(--neon-cyan)]">
               <BarChart3 className="h-4 w-4 mr-2" />
               Studio Hours
             </TabsTrigger>
-            <TabsTrigger value="energy" className="data-[state=active]:bg-background">
+            <TabsTrigger value="energy" className="data-[state=active]:bg-[var(--neon-amber)]/20 data-[state=active]:text-[var(--neon-amber)]">
               <TrendingUp className="h-4 w-4 mr-2" />
               Energy Levels
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="jester">
-            <Card className="border-border/50 bg-card/50">
-              <CardHeader>
-                <CardTitle>Jester Activity Trend</CardTitle>
-                <p className="text-sm text-muted-foreground">
+            <div className="cyber-card rounded-xl overflow-hidden">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold neon-text-magenta mb-1">Jester Activity Trend</h3>
+                <p className="text-sm text-muted-foreground mb-6">
                   0 = fully present, 10 = fully performing
                 </p>
-              </CardHeader>
-              <CardContent>
                 {jesterData.length === 0 ? (
                   <div className="h-64 flex items-center justify-center text-muted-foreground">
                     No data yet. Submit your first roundup to see trends.
@@ -236,43 +237,42 @@ export default function History() {
                 ) : (
                   <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={jesterData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.28 0.03 280)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0, 240, 255, 0.1)" />
                       <XAxis 
                         dataKey="weekNumber" 
-                        stroke="oklch(0.65 0.02 280)"
-                        tick={{ fill: 'oklch(0.65 0.02 280)' }}
+                        stroke="rgba(255, 255, 255, 0.3)"
+                        tick={{ fill: 'rgba(255, 255, 255, 0.5)' }}
                       />
                       <YAxis 
                         domain={[0, 10]} 
-                        stroke="oklch(0.65 0.02 280)"
-                        tick={{ fill: 'oklch(0.65 0.02 280)' }}
+                        stroke="rgba(255, 255, 255, 0.3)"
+                        tick={{ fill: 'rgba(255, 255, 255, 0.5)' }}
                       />
                       <Tooltip {...chartTooltipStyle} />
-                      <ReferenceLine y={5} stroke="oklch(0.5 0.02 280)" strokeDasharray="5 5" />
+                      <ReferenceLine y={5} stroke="rgba(255, 255, 255, 0.2)" strokeDasharray="5 5" />
                       <Line
                         type="monotone"
                         dataKey="jesterActivity"
                         stroke="var(--neon-magenta)"
-                        strokeWidth={2}
-                        dot={{ fill: 'var(--neon-magenta)', strokeWidth: 0 }}
-                        activeDot={{ r: 6, fill: 'var(--neon-magenta)' }}
+                        strokeWidth={3}
+                        dot={{ fill: 'var(--neon-magenta)', strokeWidth: 0, r: 4 }}
+                        activeDot={{ r: 8, fill: 'var(--neon-magenta)', filter: 'drop-shadow(0 0 8px var(--neon-magenta))' }}
+                        style={{ filter: 'drop-shadow(0 0 4px var(--neon-magenta))' }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="studio">
-            <Card className="border-border/50 bg-card/50">
-              <CardHeader>
-                <CardTitle>Studio Hours per Week</CardTitle>
-                <p className="text-sm text-muted-foreground">
+            <div className="cyber-card rounded-xl overflow-hidden">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold neon-text-cyan mb-1">Studio Hours per Week</h3>
+                <p className="text-sm text-muted-foreground mb-6">
                   Total: {stats?.totalStudioHours || 0} hours
                 </p>
-              </CardHeader>
-              <CardContent>
                 {studioData.length === 0 ? (
                   <div className="h-64 flex items-center justify-center text-muted-foreground">
                     No data yet. Submit your first roundup to see trends.
@@ -280,31 +280,34 @@ export default function History() {
                 ) : (
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={studioData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.28 0.03 280)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0, 240, 255, 0.1)" />
                       <XAxis 
                         dataKey="weekNumber" 
-                        stroke="oklch(0.65 0.02 280)"
-                        tick={{ fill: 'oklch(0.65 0.02 280)' }}
+                        stroke="rgba(255, 255, 255, 0.3)"
+                        tick={{ fill: 'rgba(255, 255, 255, 0.5)' }}
                       />
                       <YAxis 
-                        stroke="oklch(0.65 0.02 280)"
-                        tick={{ fill: 'oklch(0.65 0.02 280)' }}
+                        stroke="rgba(255, 255, 255, 0.3)"
+                        tick={{ fill: 'rgba(255, 255, 255, 0.5)' }}
                       />
                       <Tooltip {...chartTooltipStyle} />
-                      <Bar dataKey="studioHours" fill="var(--neon-cyan)" radius={[4, 4, 0, 0]} />
+                      <Bar 
+                        dataKey="studioHours" 
+                        fill="var(--neon-cyan)" 
+                        radius={[4, 4, 0, 0]}
+                        style={{ filter: 'drop-shadow(0 0 4px var(--neon-cyan))' }}
+                      />
                     </BarChart>
                   </ResponsiveContainer>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </TabsContent>
 
           <TabsContent value="energy">
-            <Card className="border-border/50 bg-card/50">
-              <CardHeader>
-                <CardTitle>Energy Level Distribution</CardTitle>
-              </CardHeader>
-              <CardContent>
+            <div className="cyber-card rounded-xl overflow-hidden">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold neon-text-amber mb-6">Energy Level Distribution</h3>
                 {energyData.length === 0 ? (
                   <div className="h-64 flex items-center justify-center text-muted-foreground">
                     No data yet. Submit your first roundup to see trends.
@@ -312,15 +315,15 @@ export default function History() {
                 ) : (
                   <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={energyData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="oklch(0.28 0.03 280)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(0, 240, 255, 0.1)" />
                       <XAxis 
                         dataKey="weekNumber" 
-                        stroke="oklch(0.65 0.02 280)"
-                        tick={{ fill: 'oklch(0.65 0.02 280)' }}
+                        stroke="rgba(255, 255, 255, 0.3)"
+                        tick={{ fill: 'rgba(255, 255, 255, 0.5)' }}
                       />
                       <YAxis 
-                        stroke="oklch(0.65 0.02 280)"
-                        tick={{ fill: 'oklch(0.65 0.02 280)' }}
+                        stroke="rgba(255, 255, 255, 0.3)"
+                        tick={{ fill: 'rgba(255, 255, 255, 0.5)' }}
                         domain={[0, 3]}
                         ticks={[1, 2, 3]}
                         tickFormatter={(value) => {
@@ -331,21 +334,22 @@ export default function History() {
                       <Tooltip 
                         {...chartTooltipStyle}
                         formatter={(value: string) => {
-                          const labels = { hot: '🔥 Hot', sustainable: '⚙️ Sustainable', depleted: '🪫 Depleted' };
+                          const labels = { hot: '🔥 Hot', sustainable: '⚡ Sustainable', depleted: '🌙 Depleted' };
                           return [labels[value as keyof typeof labels] || value, 'Energy'];
                         }}
                       />
                       <Bar dataKey="energyLevel" radius={[4, 4, 0, 0]}>
                         {energyData.map((entry, index) => {
                           const colors = {
-                            hot: 'oklch(0.7 0.15 50)',
-                            sustainable: 'oklch(0.7 0.15 145)',
-                            depleted: 'oklch(0.6 0.2 25)',
+                            hot: 'var(--neon-amber)',
+                            sustainable: 'var(--neon-cyan)',
+                            depleted: 'var(--neon-purple)',
                           };
                           return (
                             <Cell 
                               key={`cell-${index}`} 
                               fill={colors[entry.energyLevel as keyof typeof colors] || colors.sustainable}
+                              style={{ filter: `drop-shadow(0 0 4px ${colors[entry.energyLevel as keyof typeof colors] || colors.sustainable})` }}
                             />
                           );
                         })}
@@ -353,79 +357,95 @@ export default function History() {
                     </BarChart>
                   </ResponsiveContainer>
                 )}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
 
         {/* Week-by-Week Table */}
-        <Card className="border-border/50 bg-card/50">
-          <CardHeader>
-            <CardTitle>All Roundups</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="cyber-card rounded-xl overflow-hidden">
+          <div className="p-6">
+            <h3 className="text-lg font-semibold neon-text-white mb-6">All Roundups</h3>
             {roundups.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-12 text-muted-foreground">
                 <p>No roundups submitted yet.</p>
                 <Link href="/roundup">
-                  <Button variant="outline" className="mt-4">
+                  <Button className="cyber-button-primary mt-4">
                     Submit Your First Roundup
                   </Button>
                 </Link>
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-20">Week</TableHead>
-                      <TableHead>Weather Summary</TableHead>
-                      <TableHead className="w-24 text-right">Hours</TableHead>
-                      <TableHead className="w-24 text-right">Jester</TableHead>
-                      <TableHead className="w-32">Energy</TableHead>
-                      <TableHead className="w-24">Phase-DNA</TableHead>
-                      <TableHead className="w-32 text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-[var(--neon-cyan)]/20">
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Week</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Weather Summary</th>
+                      <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Hours</th>
+                      <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Jester</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Energy</th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">Phase-DNA</th>
+                      <th className="text-right py-3 px-4 text-sm font-medium text-muted-foreground">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
                     {roundups.map((roundup) => (
-                      <TableRow key={roundup.id} className="hover:bg-muted/50">
-                        <TableCell className="font-medium">
-                          W{roundup.weekNumber}
-                        </TableCell>
-                        <TableCell className="max-w-xs truncate">
-                          {roundup.weatherReport.substring(0, 60)}
-                          {roundup.weatherReport.length > 60 ? '...' : ''}
-                        </TableCell>
-                        <TableCell className="text-right">{roundup.studioHours}h</TableCell>
-                        <TableCell className="text-right">{roundup.jesterActivity}/10</TableCell>
-                        <TableCell>
+                      <tr 
+                        key={roundup.id} 
+                        className="border-b border-[var(--neon-cyan)]/10 hover:bg-[var(--neon-cyan)]/5 transition-colors"
+                      >
+                        <td className="py-3 px-4">
+                          <span className="font-medium neon-text-cyan">W{roundup.weekNumber}</span>
+                        </td>
+                        <td className="py-3 px-4 max-w-xs">
+                          <span className="text-foreground/80 truncate block">
+                            {roundup.weatherReport.substring(0, 60)}
+                            {roundup.weatherReport.length > 60 ? '...' : ''}
+                          </span>
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          <span className="neon-text-cyan">{roundup.studioHours}h</span>
+                        </td>
+                        <td className="py-3 px-4 text-right">
+                          <span className="neon-text-magenta">{roundup.jesterActivity}/10</span>
+                        </td>
+                        <td className="py-3 px-4">
                           <EnergyBadge level={roundup.energyLevel} />
-                        </TableCell>
-                        <TableCell>
-                          <span className="text-xs neon-text-blue">{roundup.phaseDnaAssigned || '-'}</span>
-                        </TableCell>
-                        <TableCell className="text-right">
+                        </td>
+                        <td className="py-3 px-4">
+                          <span className="text-xs neon-text-purple">{roundup.phaseDnaAssigned || '-'}</span>
+                        </td>
+                        <td className="py-3 px-4 text-right">
                           <div className="flex items-center justify-end gap-1">
                             <Link href={`/results/${roundup.id}`}>
-                              <Button variant="ghost" size="sm">View</Button>
+                              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-[var(--neon-cyan)] hover:bg-[var(--neon-cyan)]/10">
+                                View
+                              </Button>
                             </Link>
                             <Link href={`/edit/${roundup.id}`}>
-                              <Button variant="ghost" size="sm" className="text-neon-cyan hover:text-neon-cyan">
+                              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-[var(--neon-magenta)] hover:bg-[var(--neon-magenta)]/10">
                                 <Pencil className="h-3 w-3" />
                               </Button>
                             </Link>
                           </div>
-                        </TableCell>
-                      </TableRow>
+                        </td>
+                      </tr>
                     ))}
-                  </TableBody>
-                </Table>
+                  </tbody>
+                </table>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </main>
+
+      {/* Footer */}
+      <footer className="py-8 mt-8">
+        <div className="container">
+          <div className="tattoo-line" />
+        </div>
+      </footer>
     </div>
   );
 }

@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -105,57 +104,62 @@ export default function EditRoundup() {
   
   if (authLoading || roundupLoading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-neon-cyan" />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative">
+            <Loader2 className="h-10 w-10 animate-spin neon-text-cyan" />
+            <div className="absolute inset-0 blur-xl bg-[var(--neon-cyan)] opacity-30" />
+          </div>
+          <p className="text-muted-foreground">Loading roundup...</p>
+        </div>
       </div>
     );
   }
   
   if (!user) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="border-neon-magenta/30">
-          <CardContent className="p-6">
-            <p className="text-muted-foreground">Please log in to edit roundups.</p>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="cyber-card max-w-md w-full rounded-xl p-8 text-center">
+          <h2 className="text-xl font-semibold mb-2 neon-text-magenta">Access Denied</h2>
+          <p className="text-muted-foreground">Please log in to edit roundups.</p>
+        </div>
       </div>
     );
   }
   
   if (error || !roundup) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Card className="border-destructive/30">
-          <CardContent className="p-6">
-            <p className="text-destructive">Roundup not found or access denied.</p>
-            <Link href="/history">
-              <Button variant="outline" className="mt-4">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to History
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="cyber-card max-w-md w-full rounded-xl p-8 text-center">
+          <h2 className="text-xl font-semibold mb-2 neon-text-magenta">Roundup Not Found</h2>
+          <p className="text-muted-foreground mb-6">This roundup doesn't exist or access denied.</p>
+          <Link href="/history">
+            <Button className="cyber-button-secondary">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to History
+            </Button>
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-border/50 bg-card/50 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b border-[var(--neon-cyan)]/20 sticky top-0 bg-[var(--void-black)]/95 backdrop-blur z-50">
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[var(--neon-cyan)] to-transparent opacity-50" />
         <div className="container py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/history">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <ArrowLeft className="h-4 w-4" />
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-[var(--neon-cyan)] hover:bg-[var(--neon-cyan)]/10">
+                  <ArrowLeft className="h-4 w-4 mr-2" />
                   Back
                 </Button>
               </Link>
               <div>
-                <h1 className="text-xl font-bold text-foreground">
+                <h1 className="text-xl font-bold neon-text-white">
                   Edit Week {roundup.weekNumber}
                 </h1>
                 <p className="text-sm text-muted-foreground">
@@ -170,7 +174,7 @@ export default function EditRoundup() {
             <Button 
               onClick={handleSave}
               disabled={updateRoundup.isPending}
-              className="bg-neon-cyan hover:bg-neon-cyan/80 text-background"
+              className="cyber-button-primary"
             >
               <Save className="h-4 w-4 mr-2" />
               {updateRoundup.isPending ? "Saving..." : "Save Changes"}
@@ -182,77 +186,69 @@ export default function EditRoundup() {
       <main className="container py-8 max-w-2xl">
         <div className="space-y-6">
           {/* Weather Report */}
-          <Card className="border-neon-cyan/20 bg-card/50">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Cloud className="h-5 w-5 text-neon-cyan" />
-                Weather Report
-              </CardTitle>
-              <CardDescription>
+          <div className="cyber-card rounded-xl overflow-hidden">
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Cloud className="h-5 w-5 neon-text-cyan" />
+                <h3 className="text-lg font-semibold neon-text-cyan">Weather Report</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
                 How are you feeling? What's the emotional weather this week?
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
               <Textarea
                 value={weatherReport}
                 onChange={(e) => setWeatherReport(e.target.value)}
                 placeholder="Describe your internal weather..."
-                className="min-h-[100px] bg-background border-border"
+                className="cyber-input min-h-[100px]"
               />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Studio Hours & Works Made */}
           <div className="grid gap-6 md:grid-cols-2">
-            <Card className="border-border/50 bg-card/50">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Clock className="h-5 w-5 text-neon-magenta" />
-                  Studio Hours
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+            <div className="cyber-card rounded-xl overflow-hidden">
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Clock className="h-5 w-5 neon-text-magenta" />
+                  <h3 className="text-lg font-semibold neon-text-magenta">Studio Hours</h3>
+                </div>
                 <Input
                   type="number"
                   min="0"
                   step="0.5"
                   value={studioHours}
                   onChange={(e) => setStudioHours(parseFloat(e.target.value) || 0)}
-                  className="bg-background border-border"
+                  className="cyber-input"
                 />
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card className="border-border/50 bg-card/50">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <Palette className="h-5 w-5 text-neon-blue" />
-                  Works Made
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+            <div className="cyber-card rounded-xl overflow-hidden">
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <Palette className="h-5 w-5 neon-text-purple" />
+                  <h3 className="text-lg font-semibold neon-text-purple">Works Made</h3>
+                </div>
                 <Input
                   value={worksMade}
                   onChange={(e) => setWorksMade(e.target.value)}
                   placeholder="Started: X / Finished: Y"
-                  className="bg-background border-border"
+                  className="cyber-input"
                 />
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
           {/* Jester Activity */}
-          <Card className="border-neon-magenta/20 bg-card/50">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Sparkles className="h-5 w-5 text-neon-magenta" />
-                Jester Activity
-              </CardTitle>
-              <CardDescription>
+          <div className="cyber-card rounded-xl overflow-hidden" style={{ borderColor: 'rgba(255, 20, 147, 0.3)' }}>
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Sparkles className="h-5 w-5 neon-text-magenta" />
+                <h3 className="text-lg font-semibold neon-text-magenta">Jester Activity</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mb-6">
                 0 = fully present, 10 = fully performing
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
+              </p>
               <Slider
                 value={[jesterActivity]}
                 onValueChange={([v]) => setJesterActivity(v)}
@@ -261,172 +257,175 @@ export default function EditRoundup() {
                 step={1}
                 className="py-4"
               />
-              <div className="flex justify-between text-sm text-muted-foreground">
+              <div className="flex justify-between text-sm text-muted-foreground mt-2">
                 <span>Present</span>
-                <span className="text-2xl font-bold text-neon-magenta">{jesterActivity}</span>
+                <span className="text-3xl font-bold neon-text-magenta">{jesterActivity}</span>
                 <span>Performing</span>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Energy Level */}
-          <Card className="border-border/50 bg-card/50">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Zap className="h-5 w-5 text-yellow-500" />
-                Energy Level
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="cyber-card rounded-xl overflow-hidden">
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Zap className="h-5 w-5 neon-text-amber" />
+                <h3 className="text-lg font-semibold neon-text-amber">Energy Level</h3>
+              </div>
               <Select value={energyLevel} onValueChange={(v) => setEnergyLevel(v as typeof energyLevel)}>
-                <SelectTrigger className="bg-background border-border">
+                <SelectTrigger className="cyber-input">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="hot">🔥 Hot (high energy, sustainable)</SelectItem>
-                  <SelectItem value="sustainable">⚡ Sustainable (balanced)</SelectItem>
-                  <SelectItem value="depleted">💨 Depleted (low energy)</SelectItem>
+                <SelectContent className="bg-[var(--void-black)] border-[var(--neon-cyan)]/30">
+                  <SelectItem value="hot" className="hover:bg-[var(--neon-amber)]/10 focus:bg-[var(--neon-amber)]/10">
+                    🔥 Hot (high energy, sustainable)
+                  </SelectItem>
+                  <SelectItem value="sustainable" className="hover:bg-[var(--neon-cyan)]/10 focus:bg-[var(--neon-cyan)]/10">
+                    ⚡ Sustainable (balanced)
+                  </SelectItem>
+                  <SelectItem value="depleted" className="hover:bg-[var(--neon-purple)]/10 focus:bg-[var(--neon-purple)]/10">
+                    🌙 Depleted (low energy)
+                  </SelectItem>
                 </SelectContent>
               </Select>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Walking Engine */}
-          <Card className="border-border/50 bg-card/50">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Footprints className="h-5 w-5 text-green-500" />
-                Walking Engine
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="walking-toggle">Did you use the walking engine this week?</Label>
-                <Switch
-                  id="walking-toggle"
-                  checked={walkingEngineUsed}
-                  onCheckedChange={setWalkingEngineUsed}
-                />
+          <div className="cyber-card rounded-xl overflow-hidden">
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Footprints className="h-5 w-5 neon-text-cyan" />
+                <h3 className="text-lg font-semibold neon-text-cyan">Walking Engine</h3>
               </div>
-              {walkingEngineUsed && (
-                <Textarea
-                  value={walkingInsights}
-                  onChange={(e) => setWalkingInsights(e.target.value)}
-                  placeholder="What insights emerged from walking?"
-                  className="bg-background border-border"
-                />
-              )}
-            </CardContent>
-          </Card>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="walking-toggle" className="text-foreground/80">
+                    Did you use the walking engine this week?
+                  </Label>
+                  <Switch
+                    id="walking-toggle"
+                    checked={walkingEngineUsed}
+                    onCheckedChange={setWalkingEngineUsed}
+                  />
+                </div>
+                {walkingEngineUsed && (
+                  <Textarea
+                    value={walkingInsights}
+                    onChange={(e) => setWalkingInsights(e.target.value)}
+                    placeholder="What insights emerged from walking?"
+                    className="cyber-input"
+                  />
+                )}
+              </div>
+            </div>
+          </div>
 
           {/* Partnership Temperature */}
-          <Card className="border-border/50 bg-card/50">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Heart className="h-5 w-5 text-pink-500" />
-                Partnership/Solitude Temperature
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+          <div className="cyber-card rounded-xl overflow-hidden">
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Heart className="h-5 w-5 neon-text-magenta" />
+                <h3 className="text-lg font-semibold neon-text-magenta">Partnership/Solitude Temperature</h3>
+              </div>
               <Textarea
                 value={partnershipTemperature}
                 onChange={(e) => setPartnershipTemperature(e.target.value)}
                 placeholder="How are you feeling about connection vs. solitude?"
-                className="bg-background border-border"
+                className="cyber-input"
               />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Thing Worked / Resisted */}
           <div className="grid gap-6 md:grid-cols-2">
-            <Card className="border-green-500/20 bg-card/50">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <CheckCircle className="h-5 w-5 text-green-500" />
-                  One Thing That Worked
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+            <div className="cyber-card rounded-xl overflow-hidden" style={{ borderColor: 'rgba(0, 240, 255, 0.3)' }}>
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <CheckCircle className="h-5 w-5 neon-text-cyan" />
+                  <h3 className="text-lg font-semibold neon-text-cyan">One Thing That Worked</h3>
+                </div>
                 <Textarea
                   value={thingWorked}
                   onChange={(e) => setThingWorked(e.target.value)}
                   placeholder="What worked well this week?"
-                  className="bg-background border-border min-h-[80px]"
+                  className="cyber-input min-h-[80px]"
                 />
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card className="border-red-500/20 bg-card/50">
-              <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  <XCircle className="h-5 w-5 text-red-500" />
-                  One Thing That Resisted
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+            <div className="cyber-card rounded-xl overflow-hidden" style={{ borderColor: 'rgba(255, 20, 147, 0.3)' }}>
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <XCircle className="h-5 w-5 neon-text-magenta" />
+                  <h3 className="text-lg font-semibold neon-text-magenta">One Thing That Resisted</h3>
+                </div>
                 <Textarea
                   value={thingResisted}
                   onChange={(e) => setThingResisted(e.target.value)}
                   placeholder="What resisted or blocked you?"
-                  className="bg-background border-border min-h-[80px]"
+                  className="cyber-input min-h-[80px]"
                 />
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
           {/* Somatic State */}
-          <Card className="border-border/50 bg-card/50">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <Activity className="h-5 w-5 text-purple-500" />
-                Somatic State
-              </CardTitle>
-              <CardDescription>
+          <div className="cyber-card rounded-xl overflow-hidden">
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Activity className="h-5 w-5 neon-text-purple" />
+                <h3 className="text-lg font-semibold neon-text-purple">Somatic State</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
                 How did the week feel in your body?
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
               <Textarea
                 value={somaticState}
                 onChange={(e) => setSomaticState(e.target.value)}
                 placeholder="Describe physical sensations, tension, energy..."
-                className="bg-background border-border"
+                className="cyber-input"
               />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Door Intention */}
-          <Card className="border-neon-cyan/20 bg-card/50">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <DoorOpen className="h-5 w-5 text-neon-cyan" />
-                Door Intention (Optional)
-              </CardTitle>
-              <CardDescription>
+          <div className="cyber-card rounded-xl overflow-hidden">
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-2">
+                <DoorOpen className="h-5 w-5 neon-text-cyan" />
+                <h3 className="text-lg font-semibold neon-text-cyan">Door Intention (Optional)</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
                 A soft hold for the week ahead
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
               <Textarea
                 value={doorIntention}
                 onChange={(e) => setDoorIntention(e.target.value)}
                 placeholder="What intention do you carry forward?"
-                className="bg-background border-border"
+                className="cyber-input"
               />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Save Button */}
           <Button 
             onClick={handleSave}
             disabled={updateRoundup.isPending}
-            className="w-full bg-neon-cyan hover:bg-neon-cyan/80 text-background py-6 text-lg"
+            className="w-full cyber-button-primary py-6 text-lg"
           >
             <Save className="h-5 w-5 mr-2" />
             {updateRoundup.isPending ? "Saving Changes..." : "Save Changes"}
           </Button>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="py-8 mt-8">
+        <div className="container max-w-2xl">
+          <div className="tattoo-line" />
+        </div>
+      </footer>
     </div>
   );
 }
