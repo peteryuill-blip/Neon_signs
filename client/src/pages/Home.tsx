@@ -153,7 +153,7 @@ export default function Home() {
   }
 
   // Authenticated Dashboard
-  const weekProgress = stats ? (stats.totalRoundups / 52) * 100 : 0;
+  const weekProgress = stats ? (stats.currentWeek / (stats.totalWeeks || 52)) * 100 : 0;
   const jesterTrendData = stats?.jesterTrend?.map(t => ({
     weekNumber: t.weekNumber,
     jesterActivity: t.jesterActivity
@@ -187,12 +187,16 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
               <div className="space-y-4 flex-1">
                 <div>
-                  <p className="text-sm text-muted-foreground mb-1">Crucible Year Progress</p>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    {stats?.crucibleYear && stats.crucibleYear > 1 
+                      ? `Crucible Year ${stats.crucibleYear}` 
+                      : 'Crucible Year Progress'}
+                  </p>
                   <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-bold neon-text-cyan">
-                      Week {stats?.currentWeek || 1}
+                      Week {stats?.currentWeek ?? 0}
                     </span>
-                    <span className="text-muted-foreground">of 52</span>
+                    <span className="text-muted-foreground">of {stats?.totalWeeks || 52}</span>
                   </div>
                 </div>
                 <Progress value={weekProgress} className="h-2 bg-secondary" />

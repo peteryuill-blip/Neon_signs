@@ -30,11 +30,37 @@ import {
 } from "./db";
 import { TRPCError } from "@trpc/server";
 
-// Helper to get current week number
-function getWeekNumber(date: Date): number {
-  const startOfYear = new Date(date.getFullYear(), 0, 1);
-  const days = Math.floor((date.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000));
-  return Math.ceil((days + startOfYear.getDay() + 1) / 7);
+// Crucible Year start date: Sunday, December 21, 2025 (Week 0)
+const CRUCIBLE_YEAR_START = new Date('2025-12-21T00:00:00+07:00'); // Bangkok time
+
+// Helper to get Crucible Year week info
+function getCrucibleWeekInfo(date: Date): { weekNumber: number; crucibleYear: number; totalWeeks: number } {
+  const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+  const msSinceStart = date.getTime() - CRUCIBLE_YEAR_START.getTime();
+  
+  if (msSinceStart < 0) {
+    // Before Crucible Year started
+    return { weekNumber: 0, crucibleYear: 1, totalWeeks: 52 };
+  }
+  
+  const totalWeeksSinceStart = Math.floor(msSinceStart / msPerWeek);
+  
+  // Calculate which Crucible Year we're in (Year 1 = weeks 0-52, Year 2 = weeks 53-104, etc.)
+  const crucibleYear = Math.floor(totalWeeksSinceStart / 53) + 1;
+  
+  // Week number within the current Crucible Year (0-52 for Year 1, 1-52 for subsequent years)
+  let weekNumber: number;
+  if (crucibleYear === 1) {
+    weekNumber = totalWeeksSinceStart; // 0-52 for first year
+  } else {
+    weekNumber = (totalWeeksSinceStart % 53) + 1; // 1-52 for subsequent years
+  }
+  
+  return { 
+    weekNumber, 
+    crucibleYear, 
+    totalWeeks: crucibleYear === 1 ? 52 : 52 
+  };
 }
 
 // Helper to check if it's Sunday in Bangkok time (UTC+7)
@@ -55,8 +81,15 @@ function isSundayInBangkok(): boolean {
   return bangkokDay === 0; // 0 = Sunday
 }
 
-// Helper to get Bangkok date info
-function getBangkokDateInfo(): { dayOfWeek: string; date: Date; weekNumber: number; year: number } {
+// Helper to get Bangkok date info with Crucible Year tracking
+function getBangkokDateInfo(): { 
+  dayOfWeek: string; 
+  date: Date; 
+  weekNumber: number; 
+  year: number; 
+  crucibleYear: number;
+  totalWeeks: number;
+} {
   const now = new Date();
   const bangkokOffset = 7 * 60 * 60 * 1000; // UTC+7 in ms
   const bangkokTime = new Date(now.getTime() + bangkokOffset);
@@ -64,11 +97,15 @@ function getBangkokDateInfo(): { dayOfWeek: string; date: Date; weekNumber: numb
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const dayOfWeek = days[bangkokTime.getUTCDay()];
   
+  const crucibleInfo = getCrucibleWeekInfo(bangkokTime);
+  
   return {
     dayOfWeek,
     date: bangkokTime,
-    weekNumber: getWeekNumber(bangkokTime),
-    year: bangkokTime.getUTCFullYear()
+    weekNumber: crucibleInfo.weekNumber,
+    year: bangkokTime.getUTCFullYear(), // Calendar year for database storage
+    crucibleYear: crucibleInfo.crucibleYear,
+    totalWeeks: crucibleInfo.totalWeeks
   };
 }
 
@@ -552,6 +589,8 @@ export const appRouter = router({
       return {
         currentWeek: bangkokInfo.weekNumber,
         currentYear: bangkokInfo.year,
+        crucibleYear: bangkokInfo.crucibleYear,
+        totalWeeks: bangkokInfo.totalWeeks,
         totalRoundups,
         totalStudioHours: Math.round(totalHours * 10) / 10,
         averageJesterActivity: avgJester,

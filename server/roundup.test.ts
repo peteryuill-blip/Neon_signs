@@ -71,7 +71,8 @@ describe("roundup.canSubmit", () => {
 
     const result = await caller.roundup.canSubmit();
 
-    expect(result.weekNumber).toBeGreaterThanOrEqual(1);
+    // Crucible Year starts at Week 0, so valid range is 0-52
+    expect(result.weekNumber).toBeGreaterThanOrEqual(0);
     expect(result.weekNumber).toBeLessThanOrEqual(52);
   });
 });

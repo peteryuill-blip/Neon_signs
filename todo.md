@@ -96,3 +96,6 @@
 - [x] Create seed script for new historical entries
 - [x] Load enriched archive into database
 - [x] Verify data integrity and counts
+
+## Bug Fixes
+- [x] Fix week counter to show Crucible Year progress (Week 0/1) instead of calendar year (Week 52)
