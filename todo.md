@@ -99,3 +99,6 @@
 
 ## Bug Fixes
 - [x] Fix week counter to show Crucible Year progress (Week 0/1) instead of calendar year (Week 52)
+
+## Data Import
+- [x] Import Week 0 baseline roundup from WEEKLY_ROUNDUP_CONTINUOUS_LOG.txt
