@@ -206,3 +206,25 @@
 - [x] Add step data display to History roundup cards (mini bar chart)
 - [x] Add step trend line chart to History trends section (Steps tab)
 - [x] Color-code step values based on thresholds (cyan 8k+, amber 5k+, magenta below)
+
+
+## Feature: Quick Notes Scratchpad
+- [x] Add quickNotes table to database schema (userId, content, createdAt)
+- [x] Create CRUD API endpoints for quick notes
+- [x] Add Quick Notes widget to Dashboard with add/view/delete functionality
+- [ ] Auto-populate notes into roundup form Weather Report field
+
+## Feature: Weather Integration
+- [x] Add city field to roundup form
+- [x] Add weatherData JSON field to weekly_roundups table (temp, conditions, humidity)
+- [x] Integrate weather API to fetch real weather data based on city (Open-Meteo, free)
+- [x] Display weather data in Results page
+- [ ] Display weather data in History cards
+- [ ] Store default city in user settings
+
+### Feature: Comparison View
+- [x] Add "This Week vs Last Week" comparison section to Dashboard
+- [x] Compare studio hours, jester activity, energy level, steps
+- [x] Show delta indicators (up/down arrows) for changes
+- [x] Show change summary badges
+- [x] Handle case when no previous week data exists

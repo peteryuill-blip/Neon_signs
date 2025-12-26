@@ -1,6 +1,6 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft, Calendar, Clock, Zap, Activity, Footprints, Heart, Sparkles, Archive, MessageSquare } from "lucide-react";
+import { Loader2, ArrowLeft, Calendar, Clock, Zap, Activity, Footprints, Heart, Sparkles, Archive, MessageSquare, MapPin, Thermometer, Droplets } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Link, useParams } from "wouter";
@@ -203,10 +203,40 @@ export default function Results() {
 
                 {/* Weather Report - Large */}
                 <div className="p-6 rounded-lg bg-[var(--void-black)]/50 border border-[var(--neon-cyan)]/20 mb-6">
-                  <p className="text-sm text-muted-foreground mb-2">Weather Report</p>
+                  <div className="flex items-start justify-between mb-2">
+                    <p className="text-sm text-muted-foreground">Weather Report</p>
+                    {roundup.city && roundup.weatherData && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <MapPin className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-muted-foreground">{roundup.city}</span>
+                      </div>
+                    )}
+                  </div>
                   <p className="text-xl font-neon-mirror italic leading-relaxed neon-text-white" style={{ textShadow: '0 0 20px rgba(0, 240, 255, 0.2)' }}>
                     "{roundup.weatherReport}"
                   </p>
+                  
+                  {/* Real Weather Data */}
+                  {roundup.weatherData && (
+                    <div className="mt-4 pt-4 border-t border-[var(--neon-cyan)]/10">
+                      <p className="text-xs text-muted-foreground mb-2">Actual Weather Conditions</p>
+                      <div className="flex items-center gap-4 flex-wrap">
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl">{(roundup.weatherData as { icon: string }).icon}</span>
+                          <span className="text-sm neon-text-cyan">{(roundup.weatherData as { conditions: string }).conditions}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Thermometer className="h-4 w-4 text-[var(--neon-amber)]" />
+                          <span className="text-sm">{(roundup.weatherData as { temp: number }).temp}°C</span>
+                          <span className="text-xs text-muted-foreground">(feels {(roundup.weatherData as { feelsLike: number }).feelsLike}°C)</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Droplets className="h-4 w-4 text-[var(--neon-cyan)]" />
+                          <span className="text-sm">{(roundup.weatherData as { humidity: number }).humidity}%</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Data Points Grid */}

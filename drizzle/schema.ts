@@ -51,6 +51,10 @@ export const weeklyRoundups = mysqlTable("weekly_roundups", {
   weeklyStepTotal: int("weeklyStepTotal"), // calculated sum
   dailyStepAverage: int("dailyStepAverage"), // calculated average
   
+  // Weather data
+  city: varchar("city", { length: 100 }), // City for weather lookup
+  weatherData: json("weatherData").$type<WeatherData | null>(), // Fetched weather info
+  
   // AI-assigned metadata
   phaseDnaAssigned: varchar("phaseDnaAssigned", { length: 32 }),
   createdDayOfWeek: varchar("createdDayOfWeek", { length: 16 }).notNull(), // Day of week when entry was created
@@ -58,6 +62,16 @@ export const weeklyRoundups = mysqlTable("weekly_roundups", {
   // Edit tracking
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
+
+// Weather data type
+export type WeatherData = {
+  temp: number; // Temperature in Celsius
+  feelsLike: number;
+  humidity: number;
+  conditions: string; // e.g., "Sunny", "Cloudy", "Rainy"
+  icon: string; // Weather icon code
+  fetchedAt: number; // Timestamp when fetched
+};
 
 export type WeeklyRoundup = typeof weeklyRoundups.$inferSelect;
 export type InsertWeeklyRoundup = typeof weeklyRoundups.$inferInsert;
@@ -130,3 +144,17 @@ export const userSettings = mysqlTable("user_settings", {
 
 export type UserSettings = typeof userSettings.$inferSelect;
 export type InsertUserSettings = typeof userSettings.$inferInsert;
+
+/**
+ * Quick Notes - scratchpad for capturing thoughts throughout the week
+ */
+export const quickNotes = mysqlTable("quick_notes", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  content: text("content").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  usedInRoundupId: int("usedInRoundupId"), // Links to roundup when note is used
+});
+
+export type QuickNote = typeof quickNotes.$inferSelect;
+export type InsertQuickNote = typeof quickNotes.$inferInsert;

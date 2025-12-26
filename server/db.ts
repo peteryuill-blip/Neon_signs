@@ -5,7 +5,8 @@ import {
   weeklyRoundups, InsertWeeklyRoundup, WeeklyRoundup,
   archiveEntries, InsertArchiveEntry, ArchiveEntry,
   patternMatches, InsertPatternMatch, PatternMatch,
-  userSettings, InsertUserSettings, UserSettings
+  userSettings, InsertUserSettings, UserSettings,
+  quickNotes, InsertQuickNote, QuickNote
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -467,4 +468,83 @@ export async function updateWeeklyRoundup(
   await db.update(weeklyRoundups)
     .set(updates)
     .where(eq(weeklyRoundups.id, id));
+}
+
+
+// ============ QUICK NOTES QUERIES ============
+
+export async function createQuickNote(note: InsertQuickNote): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(quickNotes).values(note);
+  return result[0].insertId;
+}
+
+export async function getQuickNotes(userId: number, limit = 20): Promise<QuickNote[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(quickNotes)
+    .where(eq(quickNotes.userId, userId))
+    .orderBy(desc(quickNotes.createdAt))
+    .limit(limit);
+}
+
+export async function getUnusedQuickNotes(userId: number): Promise<QuickNote[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  return db.select().from(quickNotes)
+    .where(and(
+      eq(quickNotes.userId, userId),
+      sql`${quickNotes.usedInRoundupId} IS NULL`
+    ))
+    .orderBy(desc(quickNotes.createdAt));
+}
+
+export async function deleteQuickNote(id: number, userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.delete(quickNotes)
+    .where(and(
+      eq(quickNotes.id, id),
+      eq(quickNotes.userId, userId)
+    ));
+}
+
+export async function markNotesAsUsed(noteIds: number[], roundupId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  for (const id of noteIds) {
+    await db.update(quickNotes)
+      .set({ usedInRoundupId: roundupId })
+      .where(eq(quickNotes.id, id));
+  }
+}
+
+// Get roundups for two specific weeks (for comparison)
+export async function getRoundupsForWeeks(
+  userId: number, 
+  weeks: Array<{ weekNumber: number; year: number }>
+): Promise<WeeklyRoundup[]> {
+  const db = await getDb();
+  if (!db || weeks.length === 0) return [];
+  
+  // Build OR conditions for each week
+  const conditions = weeks.map(w => 
+    and(
+      eq(weeklyRoundups.userId, userId),
+      eq(weeklyRoundups.weekNumber, w.weekNumber),
+      eq(weeklyRoundups.year, w.year)
+    )
+  );
+  
+  const result = await db.select().from(weeklyRoundups)
+    .where(or(...conditions))
+    .orderBy(desc(weeklyRoundups.year), desc(weeklyRoundups.weekNumber), desc(weeklyRoundups.entryNumber));
+  
+  return result;
 }

@@ -45,6 +45,7 @@ interface WorkEntry {
 
 interface FormData {
   weatherReport: string;
+  city: string; // City for weather lookup
   studioHours: number;
   worksMade: string;
   jesterActivity: number;
@@ -86,6 +87,7 @@ const createEmptyWorkEntry = (): WorkEntry => ({
 
 const initialFormData: FormData = {
   weatherReport: '',
+  city: '',
   studioHours: 0,
   worksMade: '',
   jesterActivity: 5,
@@ -593,6 +595,7 @@ export default function RoundupForm() {
       doorIntention: formData.doorIntention || null,
       dailySteps: formData.dailySteps,
       worksData: worksDataToSubmit,
+      city: formData.city || null,
     });
   };
 
@@ -720,6 +723,20 @@ export default function RoundupForm() {
                 <p className="text-sm text-muted-foreground">Emotional/atmospheric summary of your week</p>
               </div>
             </div>
+            
+            {/* City Input for Weather Tracking */}
+            <div className="mb-4">
+              <Label className="text-sm text-muted-foreground mb-2 block">Location (for weather tracking)</Label>
+              <Input
+                value={formData.city}
+                onChange={(e) => updateField('city', e.target.value)}
+                placeholder="e.g., Bangkok, Tokyo, London"
+                className="cyber-input rounded-lg"
+                disabled={!canSubmit}
+              />
+              <p className="text-xs text-muted-foreground mt-1">Track real weather patterns alongside your mood</p>
+            </div>
+            
             <Textarea
               value={formData.weatherReport}
               onChange={(e) => updateField('weatherReport', e.target.value)}

@@ -33,8 +33,15 @@ import {
   getEntryCountForWeek,
   hasSundayEntryForWeek,
   getAllEntriesForWeek,
+  createQuickNote,
+  getQuickNotes,
+  getUnusedQuickNotes,
+  deleteQuickNote,
+  markNotesAsUsed,
+  getRoundupsForWeeks,
 } from "./db";
 import { TRPCError } from "@trpc/server";
+import { fetchWeather } from "./_core/weather";
 
 // Default Crucible Year start date: Sunday, December 21, 2025 (Week 0)
 const DEFAULT_CRUCIBLE_START = new Date('2025-12-21T00:00:00+07:00'); // Bangkok time
@@ -465,6 +472,7 @@ export const appRouter = router({
           technicalNote: z.string().optional(),
           abandonmentReason: z.string().optional(),
         })).optional(),
+        city: z.string().nullable().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const settings = await getUserSettings(ctx.user.id);
@@ -515,6 +523,12 @@ export const appRouter = router({
         // Calculate entry number (1-7)
         const entryNumber = entryCount + 1;
         
+        // Fetch weather data if city is provided
+        let weatherData = null;
+        if (input.city) {
+          weatherData = await fetchWeather(input.city);
+        }
+        
         // Create the roundup
         const roundupId = await createWeeklyRoundup({
           userId: ctx.user.id,
@@ -538,6 +552,8 @@ export const appRouter = router({
           somaticState: input.somaticState,
           doorIntention: input.doorIntention,
           worksData: input.worksData || null,
+          city: input.city || null,
+          weatherData: weatherData,
         });
         
         // Detect and assign phase-DNA
@@ -876,6 +892,71 @@ export const appRouter = router({
           energyTrend
         };
       }),
+    
+    // Get comparison data: this week vs last week
+    comparison: protectedProcedure.query(async ({ ctx }) => {
+      const settings = await getUserSettings(ctx.user.id);
+      const dateInfo = getDateInfoWithSettings(settings);
+      
+      // Calculate last week's week number
+      let lastWeekNumber = dateInfo.weekNumber - 1;
+      let lastWeekYear = dateInfo.year;
+      if (lastWeekNumber < 0) {
+        lastWeekNumber = 51; // Wrap to previous year
+        lastWeekYear = dateInfo.year - 1;
+      }
+      
+      // Get roundups for both weeks
+      const roundups = await getRoundupsForWeeks(ctx.user.id, [
+        { weekNumber: dateInfo.weekNumber, year: dateInfo.year },
+        { weekNumber: lastWeekNumber, year: lastWeekYear }
+      ]);
+      
+      // Separate this week and last week
+      const thisWeekRoundups = roundups.filter(r => r.weekNumber === dateInfo.weekNumber && r.year === dateInfo.year);
+      const lastWeekRoundups = roundups.filter(r => r.weekNumber === lastWeekNumber && r.year === lastWeekYear);
+      
+      // Aggregate stats for each week
+      const aggregateWeek = (entries: typeof roundups) => {
+        if (entries.length === 0) return null;
+        
+        const totalSteps = entries.reduce((sum, r) => sum + (r.weeklyStepTotal || 0), 0);
+        const avgSteps = entries.length > 0 ? Math.round(totalSteps / entries.length) : 0;
+        const totalStudioHours = entries.reduce((sum, r) => sum + r.studioHours, 0);
+        const avgJester = entries.length > 0 
+          ? Math.round(entries.reduce((sum, r) => sum + r.jesterActivity, 0) / entries.length * 10) / 10 
+          : 0;
+        
+        // Get most common energy level
+        const energyCounts: Record<string, number> = {};
+        entries.forEach(r => {
+          energyCounts[r.energyLevel] = (energyCounts[r.energyLevel] || 0) + 1;
+        });
+        const dominantEnergy = Object.entries(energyCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'sustainable';
+        
+        return {
+          entryCount: entries.length,
+          totalStudioHours,
+          avgJester,
+          avgSteps,
+          dominantEnergy,
+          latestEntry: entries[0] // Most recent entry
+        };
+      };
+      
+      return {
+        thisWeek: {
+          weekNumber: dateInfo.weekNumber,
+          year: dateInfo.year,
+          stats: aggregateWeek(thisWeekRoundups)
+        },
+        lastWeek: {
+          weekNumber: lastWeekNumber,
+          year: lastWeekYear,
+          stats: aggregateWeek(lastWeekRoundups)
+        }
+      };
+    }),
   }),
 
   // Archive management
@@ -1178,6 +1259,53 @@ export const appRouter = router({
         
         await updateWeeklyRoundup(id, ctx.user.id, filteredUpdates);
         
+        return { success: true };
+      }),
+  }),
+
+  // Quick Notes for capturing thoughts throughout the week
+  quickNotes: router({
+    // Get all notes for current user
+    getAll: protectedProcedure
+      .input(z.object({ limit: z.number().min(1).max(100).default(20) }).optional())
+      .query(async ({ ctx, input }) => {
+        return getQuickNotes(ctx.user.id, input?.limit || 20);
+      }),
+
+    // Get unused notes (not yet linked to a roundup)
+    getUnused: protectedProcedure.query(async ({ ctx }) => {
+      return getUnusedQuickNotes(ctx.user.id);
+    }),
+
+    // Create a new quick note
+    create: protectedProcedure
+      .input(z.object({ content: z.string().min(1).max(2000) }))
+      .mutation(async ({ ctx, input }) => {
+        const id = await createQuickNote({
+          userId: ctx.user.id,
+          content: input.content,
+        });
+        return { id };
+      }),
+
+    // Delete a quick note
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await deleteQuickNote(input.id, ctx.user.id);
+        return { success: true };
+      }),
+
+    // Mark notes as used in a roundup
+    markUsed: protectedProcedure
+      .input(z.object({ noteIds: z.array(z.number()), roundupId: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        // Verify roundup belongs to user
+        const roundup = await getWeeklyRoundupById(input.roundupId);
+        if (!roundup || roundup.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+        await markNotesAsUsed(input.noteIds, input.roundupId);
         return { success: true };
       }),
   }),

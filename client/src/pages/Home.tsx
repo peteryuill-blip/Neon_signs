@@ -2,7 +2,10 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, Calendar, Clock, Zap, Activity, TrendingUp, Archive, FileText, ChevronRight, Settings, Footprints } from "lucide-react";
+import { Loader2, Calendar, Clock, Zap, Activity, TrendingUp, Archive, FileText, ChevronRight, Settings, Footprints, StickyNote, Plus, X, Send, ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
+import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
@@ -85,6 +88,280 @@ function GeoDecoration({ className = "" }: { className?: string }) {
       <circle cx="12" cy="12" r="6" />
       <path d="M12 2 L22 17 L2 17 Z" />
     </svg>
+  );
+}
+
+// Quick Notes Widget for capturing thoughts throughout the week
+function QuickNotesWidget() {
+  const [newNote, setNewNote] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
+  const utils = trpc.useUtils();
+  
+  const { data: notes, isLoading } = trpc.quickNotes.getUnused.useQuery();
+  
+  const createNote = trpc.quickNotes.create.useMutation({
+    onSuccess: () => {
+      setNewNote("");
+      utils.quickNotes.getUnused.invalidate();
+      toast.success("Note saved!");
+    },
+    onError: () => {
+      toast.error("Failed to save note");
+    }
+  });
+  
+  const deleteNote = trpc.quickNotes.delete.useMutation({
+    onSuccess: () => {
+      utils.quickNotes.getUnused.invalidate();
+    }
+  });
+
+  const handleSubmit = () => {
+    if (newNote.trim()) {
+      createNote.mutate({ content: newNote.trim() });
+    }
+  };
+
+  return (
+    <div className="cyber-card rounded-xl overflow-hidden">
+      <div className="p-4 border-b border-[var(--neon-amber)]/20">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <StickyNote className="h-5 w-5 neon-text-amber" />
+            <h3 className="font-semibold neon-text-amber">Quick Notes</h3>
+            {notes && notes.length > 0 && (
+              <span className="text-xs bg-[var(--neon-amber)]/20 text-[var(--neon-amber)] px-2 py-0.5 rounded-full">
+                {notes.length}
+              </span>
+            )}
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="text-muted-foreground hover:text-[var(--neon-amber)]"
+          >
+            {isExpanded ? "Collapse" : "Expand"}
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          Capture thoughts throughout the week for your next roundup
+        </p>
+      </div>
+      
+      <div className="p-4 space-y-3">
+        {/* New note input */}
+        <div className="flex gap-2">
+          <Textarea
+            placeholder="Quick thought, insight, or observation..."
+            value={newNote}
+            onChange={(e) => setNewNote(e.target.value)}
+            className="cyber-input min-h-[60px] resize-none text-sm"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+                handleSubmit();
+              }
+            }}
+          />
+          <Button
+            onClick={handleSubmit}
+            disabled={!newNote.trim() || createNote.isPending}
+            className="cyber-button-primary h-auto px-3"
+          >
+            {createNote.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4" />
+            )}
+          </Button>
+        </div>
+        
+        {/* Notes list */}
+        {isExpanded && (
+          <div className="space-y-2 max-h-[200px] overflow-y-auto">
+            {isLoading ? (
+              <div className="text-center py-4">
+                <Loader2 className="h-4 w-4 animate-spin mx-auto text-muted-foreground" />
+              </div>
+            ) : notes && notes.length > 0 ? (
+              notes.map((note) => (
+                <div
+                  key={note.id}
+                  className="group flex items-start gap-2 p-2 rounded-lg bg-[var(--neon-amber)]/5 border border-[var(--neon-amber)]/10"
+                >
+                  <p className="flex-1 text-sm text-foreground/80">{note.content}</p>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => deleteNote.mutate({ id: note.id })}
+                    className="h-6 w-6 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-400 transition-opacity"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              ))
+            ) : (
+              <p className="text-center text-sm text-muted-foreground py-4">
+                No notes yet. Start capturing your thoughts!
+              </p>
+            )}
+          </div>
+        )}
+        
+        {/* Collapsed preview */}
+        {!isExpanded && notes && notes.length > 0 && (
+          <div className="text-xs text-muted-foreground">
+            Latest: "{notes[0].content.slice(0, 50)}{notes[0].content.length > 50 ? '...' : ''}"
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Week Comparison Widget - This week vs last week
+function ComparisonWidget() {
+  const { data: comparison, isLoading } = trpc.stats.comparison.useQuery();
+  
+  if (isLoading) {
+    return (
+      <div className="cyber-card rounded-xl p-6">
+        <div className="flex items-center justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      </div>
+    );
+  }
+  
+  if (!comparison?.thisWeek.stats && !comparison?.lastWeek.stats) {
+    return null; // Don't show if no data
+  }
+  
+  const thisWeek = comparison?.thisWeek.stats;
+  const lastWeek = comparison?.lastWeek.stats;
+  
+  // Calculate deltas
+  const getDelta = (current: number | undefined, previous: number | undefined) => {
+    if (current === undefined || previous === undefined) return null;
+    return current - previous;
+  };
+  
+  const studioHoursDelta = getDelta(thisWeek?.totalStudioHours, lastWeek?.totalStudioHours);
+  const jesterDelta = getDelta(thisWeek?.avgJester, lastWeek?.avgJester);
+  const stepsDelta = getDelta(thisWeek?.avgSteps, lastWeek?.avgSteps);
+  
+  const DeltaIndicator = ({ delta, inverted = false }: { delta: number | null; inverted?: boolean }) => {
+    if (delta === null) return <Minus className="h-4 w-4 text-muted-foreground" />;
+    const isPositive = inverted ? delta < 0 : delta > 0;
+    const isNegative = inverted ? delta > 0 : delta < 0;
+    
+    if (delta === 0) return <Minus className="h-4 w-4 text-muted-foreground" />;
+    if (isPositive) return <ArrowUpRight className="h-4 w-4 text-[var(--neon-cyan)]" />;
+    if (isNegative) return <ArrowDownRight className="h-4 w-4 text-[var(--neon-magenta)]" />;
+    return <Minus className="h-4 w-4 text-muted-foreground" />;
+  };
+  
+  const formatDelta = (delta: number | null, suffix: string = '') => {
+    if (delta === null) return '-';
+    const sign = delta > 0 ? '+' : '';
+    return `${sign}${delta}${suffix}`;
+  };
+  
+  return (
+    <div className="cyber-card rounded-xl overflow-hidden">
+      <div className="p-4 border-b border-[var(--neon-purple)]/20">
+        <div className="flex items-center gap-2">
+          <TrendingUp className="h-5 w-5 neon-text-purple" />
+          <h3 className="font-semibold neon-text-purple">Week Comparison</h3>
+        </div>
+        <p className="text-xs text-muted-foreground mt-1">
+          Week {comparison?.thisWeek.weekNumber} vs Week {comparison?.lastWeek.weekNumber}
+        </p>
+      </div>
+      
+      <div className="p-4">
+        <div className="grid grid-cols-2 gap-4">
+          {/* This Week Column */}
+          <div>
+            <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider">This Week</p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Studio</span>
+                <span className="font-medium neon-text-cyan">{thisWeek?.totalStudioHours ?? '-'}h</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Jester</span>
+                <span className="font-medium neon-text-magenta">{thisWeek?.avgJester ?? '-'}/10</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Steps</span>
+                <span className="font-medium neon-text-amber">{thisWeek?.avgSteps ? (thisWeek.avgSteps / 1000).toFixed(1) + 'k' : '-'}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Entries</span>
+                <span className="font-medium">{thisWeek?.entryCount ?? 0}</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Last Week Column */}
+          <div className="border-l border-[var(--neon-purple)]/20 pl-4">
+            <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wider">Last Week</p>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Studio</span>
+                <div className="flex items-center gap-1">
+                  <span className="font-medium">{lastWeek?.totalStudioHours ?? '-'}h</span>
+                  <DeltaIndicator delta={studioHoursDelta} />
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Jester</span>
+                <div className="flex items-center gap-1">
+                  <span className="font-medium">{lastWeek?.avgJester ?? '-'}/10</span>
+                  <DeltaIndicator delta={jesterDelta} inverted />
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Steps</span>
+                <div className="flex items-center gap-1">
+                  <span className="font-medium">{lastWeek?.avgSteps ? (lastWeek.avgSteps / 1000).toFixed(1) + 'k' : '-'}</span>
+                  <DeltaIndicator delta={stepsDelta} />
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Entries</span>
+                <span className="font-medium">{lastWeek?.entryCount ?? 0}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Delta Summary */}
+        {(studioHoursDelta !== null || jesterDelta !== null || stepsDelta !== null) && (
+          <div className="mt-4 pt-4 border-t border-[var(--neon-purple)]/20">
+            <p className="text-xs text-muted-foreground mb-2">Changes from last week:</p>
+            <div className="flex flex-wrap gap-3">
+              {studioHoursDelta !== null && studioHoursDelta !== 0 && (
+                <span className={`text-xs px-2 py-1 rounded-full ${studioHoursDelta > 0 ? 'bg-[var(--neon-cyan)]/20 neon-text-cyan' : 'bg-[var(--neon-magenta)]/20 neon-text-magenta'}`}>
+                  {formatDelta(studioHoursDelta, 'h')} studio
+                </span>
+              )}
+              {jesterDelta !== null && jesterDelta !== 0 && (
+                <span className={`text-xs px-2 py-1 rounded-full ${jesterDelta < 0 ? 'bg-[var(--neon-cyan)]/20 neon-text-cyan' : 'bg-[var(--neon-magenta)]/20 neon-text-magenta'}`}>
+                  {formatDelta(jesterDelta)} jester
+                </span>
+              )}
+              {stepsDelta !== null && Math.abs(stepsDelta) >= 100 && (
+                <span className={`text-xs px-2 py-1 rounded-full ${stepsDelta > 0 ? 'bg-[var(--neon-cyan)]/20 neon-text-cyan' : 'bg-[var(--neon-magenta)]/20 neon-text-magenta'}`}>
+                  {formatDelta(Math.round(stepsDelta / 1000), 'k')} steps
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -445,6 +722,12 @@ export default function Home() {
             )}
           </div>
         </div>
+
+        {/* Quick Notes Widget */}
+        <QuickNotesWidget />
+
+        {/* Week Comparison Widget */}
+        <ComparisonWidget />
 
         {/* Navigation Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -43,6 +43,13 @@
       "when": 1766392600787,
       "tag": "0005_dry_celestials",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1766784163825,
+      "tag": "0006_flimsy_sinister_six",
+      "breakpoints": true
     }
   ]
 }
