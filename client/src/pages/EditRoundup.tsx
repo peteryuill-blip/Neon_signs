@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Link, useParams, useLocation } from "wouter";
@@ -26,6 +25,39 @@ import {
   DoorOpen,
   Loader2
 } from "lucide-react";
+
+interface DailySteps {
+  mon: number;
+  tue: number;
+  wed: number;
+  thu: number;
+  fri: number;
+  sat: number;
+  sun: number;
+}
+
+const initialDailySteps: DailySteps = {
+  mon: 0,
+  tue: 0,
+  wed: 0,
+  thu: 0,
+  fri: 0,
+  sat: 0,
+  sun: 0,
+};
+
+const dayLabels: { key: keyof DailySteps; label: string; short: string }[] = [
+  { key: 'mon', label: 'Monday', short: 'Mon' },
+  { key: 'tue', label: 'Tuesday', short: 'Tue' },
+  { key: 'wed', label: 'Wednesday', short: 'Wed' },
+  { key: 'thu', label: 'Thursday', short: 'Thu' },
+  { key: 'fri', label: 'Friday', short: 'Fri' },
+  { key: 'sat', label: 'Saturday', short: 'Sat' },
+  { key: 'sun', label: 'Sunday', short: 'Sun' },
+];
+
+const STEP_THRESHOLD_HIGH = 8000;
+const STEP_THRESHOLD_LOW = 5000;
 
 export default function EditRoundup() {
   const { id } = useParams<{ id: string }>();
@@ -58,13 +90,13 @@ export default function EditRoundup() {
   const [worksMade, setWorksMade] = useState("");
   const [jesterActivity, setJesterActivity] = useState(5);
   const [energyLevel, setEnergyLevel] = useState<"hot" | "sustainable" | "depleted">("sustainable");
-  const [walkingEngineUsed, setWalkingEngineUsed] = useState(false);
   const [walkingInsights, setWalkingInsights] = useState("");
   const [partnershipTemperature, setPartnershipTemperature] = useState("");
   const [thingWorked, setThingWorked] = useState("");
   const [thingResisted, setThingResisted] = useState("");
   const [somaticState, setSomaticState] = useState("");
   const [doorIntention, setDoorIntention] = useState("");
+  const [dailySteps, setDailySteps] = useState<DailySteps>(initialDailySteps);
   
   // Initialize form when roundup loads
   useEffect(() => {
@@ -74,15 +106,31 @@ export default function EditRoundup() {
       setWorksMade(roundup.worksMade || "");
       setJesterActivity(roundup.jesterActivity || 5);
       setEnergyLevel(roundup.energyLevel || "sustainable");
-      setWalkingEngineUsed(roundup.walkingEngineUsed || false);
       setWalkingInsights(roundup.walkingInsights || "");
       setPartnershipTemperature(roundup.partnershipTemperature || "");
       setThingWorked(roundup.thingWorked || "");
       setThingResisted(roundup.thingResisted || "");
       setSomaticState(roundup.somaticState || "");
       setDoorIntention(roundup.doorIntention || "");
+      // Load daily steps
+      if (roundup.dailySteps) {
+        setDailySteps({ ...initialDailySteps, ...(roundup.dailySteps as DailySteps) });
+      }
     }
   }, [roundup]);
+
+  // Calculate step statistics
+  const stepStats = useMemo(() => {
+    const values = Object.values(dailySteps);
+    const total = values.reduce((sum, v) => sum + v, 0);
+    const daysWithSteps = values.filter(v => v > 0).length;
+    const average = daysWithSteps > 0 ? Math.round(total / daysWithSteps) : 0;
+    return { total, average, daysWithSteps };
+  }, [dailySteps]);
+
+  const updateSteps = (day: keyof DailySteps, value: number) => {
+    setDailySteps(prev => ({ ...prev, [day]: value }));
+  };
   
   const handleSave = () => {
     updateRoundup.mutate({
@@ -92,13 +140,14 @@ export default function EditRoundup() {
       worksMade,
       jesterActivity,
       energyLevel,
-      walkingEngineUsed,
-      walkingInsights: walkingEngineUsed ? walkingInsights : undefined,
+      walkingEngineUsed: stepStats.average >= STEP_THRESHOLD_HIGH, // Auto-set based on steps
+      walkingInsights: walkingInsights || undefined,
       partnershipTemperature,
       thingWorked,
       thingResisted,
       somaticState,
       doorIntention: doorIntention || undefined,
+      dailySteps,
     });
   };
   
@@ -291,33 +340,97 @@ export default function EditRoundup() {
             </div>
           </div>
 
-          {/* Walking Engine */}
+          {/* Step Tracking - 7 Day Input */}
           <div className="cyber-card rounded-xl overflow-hidden">
             <div className="p-6">
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-2 mb-2">
                 <Footprints className="h-5 w-5 neon-text-cyan" />
-                <h3 className="text-lg font-semibold neon-text-cyan">Walking Engine</h3>
+                <h3 className="text-lg font-semibold neon-text-cyan">Step Tracker</h3>
               </div>
-              <div className="space-y-4">
+              <p className="text-sm text-muted-foreground mb-4">
+                Enter your daily step count for the week
+              </p>
+              
+              {/* 7-Day Step Input Grid */}
+              <div className="grid grid-cols-7 gap-2 mb-4">
+                {dayLabels.map(({ key, short }) => (
+                  <div key={key} className="text-center">
+                    <Label className="text-xs text-muted-foreground block mb-1">{short}</Label>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="99999"
+                      value={dailySteps[key] || ''}
+                      onChange={(e) => updateSteps(key, parseInt(e.target.value) || 0)}
+                      placeholder="0"
+                      className="cyber-input rounded-lg text-center text-sm px-1 h-10"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Step Summary */}
+              <div className="bg-[var(--deep-space)] rounded-lg p-4 space-y-3">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="walking-toggle" className="text-foreground/80">
-                    Did you use the walking engine this week?
-                  </Label>
-                  <Switch
-                    id="walking-toggle"
-                    checked={walkingEngineUsed}
-                    onCheckedChange={setWalkingEngineUsed}
-                  />
+                  <span className="text-sm text-muted-foreground">Weekly Total</span>
+                  <span className="font-bold neon-text-cyan text-lg">
+                    {stepStats.total.toLocaleString()} steps
+                  </span>
                 </div>
-                {walkingEngineUsed && (
-                  <Textarea
-                    value={walkingInsights}
-                    onChange={(e) => setWalkingInsights(e.target.value)}
-                    placeholder="What insights emerged from walking?"
-                    className="cyber-input"
-                  />
-                )}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Daily Average</span>
+                  <span className={`font-bold text-lg ${
+                    stepStats.average >= STEP_THRESHOLD_HIGH 
+                      ? 'neon-text-cyan' 
+                      : stepStats.average >= STEP_THRESHOLD_LOW 
+                        ? 'neon-text-amber' 
+                        : 'neon-text-magenta'
+                  }`}>
+                    {stepStats.average.toLocaleString()} steps/day
+                  </span>
+                </div>
+                
+                {/* Visual Bar */}
+                <div className="space-y-1">
+                  <div className="h-3 bg-[var(--void-black)] rounded-full overflow-hidden">
+                    <div 
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        stepStats.average >= STEP_THRESHOLD_HIGH 
+                          ? 'bg-gradient-to-r from-[var(--neon-cyan)] to-[var(--neon-cyan)]' 
+                          : stepStats.average >= STEP_THRESHOLD_LOW 
+                            ? 'bg-gradient-to-r from-[var(--neon-amber)] to-[var(--neon-amber)]' 
+                            : 'bg-gradient-to-r from-[var(--neon-magenta)] to-[var(--neon-magenta)]'
+                      }`}
+                      style={{ width: `${Math.min((stepStats.average / 15000) * 100, 100)}%` }}
+                    />
+                  </div>
+                  <div className="flex justify-between text-[10px] text-muted-foreground">
+                    <span>0</span>
+                    <span className="neon-text-magenta">5k</span>
+                    <span className="neon-text-cyan">8k+</span>
+                    <span>15k</span>
+                  </div>
+                </div>
               </div>
+            </div>
+          </div>
+
+          {/* Walking Insights */}
+          <div className="cyber-card rounded-xl overflow-hidden">
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Footprints className="h-5 w-5 neon-text-cyan" />
+                <h3 className="text-lg font-semibold neon-text-cyan">Walking Insights</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                What insights emerged from walking this week?
+              </p>
+              <Textarea
+                value={walkingInsights}
+                onChange={(e) => setWalkingInsights(e.target.value)}
+                placeholder="Thoughts, ideas, or realizations that came while walking..."
+                className="cyber-input"
+              />
             </div>
           </div>
 

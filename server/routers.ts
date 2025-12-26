@@ -1137,6 +1137,15 @@ export const appRouter = router({
         thingResisted: z.string().optional(),
         somaticState: z.string().optional(),
         doorIntention: z.string().optional(),
+        dailySteps: z.object({
+          mon: z.number().min(0),
+          tue: z.number().min(0),
+          wed: z.number().min(0),
+          thu: z.number().min(0),
+          fri: z.number().min(0),
+          sat: z.number().min(0),
+          sun: z.number().min(0),
+        }).optional(),
         worksData: z.array(z.object({
           id: z.string(),
           workTitle: z.string().optional(),

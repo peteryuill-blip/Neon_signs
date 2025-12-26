@@ -191,3 +191,10 @@
 - [x] Ensure step data is saved correctly to database
 - [x] Display step data in Results page after submission
 - [x] Show weekly total and daily average in results
+
+
+## Bug Fix: Step Counter Edit & Walking Engine Toggle
+- [x] Add step counter inputs to Edit Roundup page
+- [x] Remove "Did you use the walking engine" toggle switch
+- [x] Keep step tracking always active (no optional switch needed)
+- [x] Update Walking Insights to be a simple text field without toggle dependency

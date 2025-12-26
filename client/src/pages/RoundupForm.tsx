@@ -438,14 +438,6 @@ export default function RoundupForm() {
     }
   }, [formData.worksData, formData.worksExpanded]);
 
-  // Auto-update walking engine based on step threshold
-  useEffect(() => {
-    if (stepStats.suggestion === 'yes' && !formData.walkingEngineUsed) {
-      setFormData(prev => ({ ...prev, walkingEngineUsed: true }));
-    } else if (stepStats.suggestion === 'no' && formData.walkingEngineUsed) {
-      setFormData(prev => ({ ...prev, walkingEngineUsed: false }));
-    }
-  }, [stepStats.suggestion]);
 
   // Load draft from localStorage
   useEffect(() => {
@@ -592,7 +584,7 @@ export default function RoundupForm() {
       worksMade: formData.worksMade,
       jesterActivity: formData.jesterActivity,
       energyLevel: formData.energyLevel as 'hot' | 'sustainable' | 'depleted',
-      walkingEngineUsed: formData.walkingEngineUsed,
+      walkingEngineUsed: stepStats.average >= STEP_THRESHOLD_HIGH, // Auto-set based on step average
       walkingInsights: formData.walkingInsights || null,
       partnershipTemperature: formData.partnershipTemperature,
       thingWorked: formData.thingWorked,
@@ -990,29 +982,16 @@ export default function RoundupForm() {
               )}
             </div>
 
-            {/* Walking Engine Toggle & Insights */}
-            <div className="mt-4 space-y-4">
-              <div className="flex items-center gap-3">
-                <Checkbox
-                  id="walkingEngine"
-                  checked={formData.walkingEngineUsed}
-                  onCheckedChange={(checked) => updateField('walkingEngineUsed', !!checked)}
-                  disabled={!canSubmit}
-                  className="border-[var(--neon-cyan)] data-[state=checked]:bg-[var(--neon-cyan)] data-[state=checked]:border-[var(--neon-cyan)]"
-                />
-                <Label htmlFor="walkingEngine" className="cursor-pointer text-sm">
-                  Walking Engine active this week (auto-set based on steps, can override)
-                </Label>
-              </div>
-              {formData.walkingEngineUsed && (
-                <Textarea
-                  value={formData.walkingInsights}
-                  onChange={(e) => updateField('walkingInsights', e.target.value)}
-                  placeholder="What surfaced during your walks?"
-                  className="cyber-input min-h-[80px] rounded-lg"
-                  disabled={!canSubmit}
-                />
-              )}
+            {/* Walking Insights */}
+            <div className="mt-4">
+              <Label className="text-sm text-muted-foreground mb-2 block">Walking Insights</Label>
+              <Textarea
+                value={formData.walkingInsights}
+                onChange={(e) => updateField('walkingInsights', e.target.value)}
+                placeholder="What surfaced during your walks? Thoughts, ideas, realizations..."
+                className="cyber-input min-h-[80px] rounded-lg"
+                disabled={!canSubmit}
+              />
             </div>
           </div>
 
