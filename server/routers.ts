@@ -842,7 +842,9 @@ export const appRouter = router({
           year: lastRoundup.year,
           createdAt: lastRoundup.createdAt,
           jesterActivity: lastRoundup.jesterActivity,
-          energyLevel: lastRoundup.energyLevel
+          energyLevel: lastRoundup.energyLevel,
+          dailySteps: lastRoundup.dailySteps,
+          studioHours: lastRoundup.studioHours
         } : null,
         daysUntilCheckIn,
         checkInDay,

@@ -198,3 +198,11 @@
 - [x] Remove "Did you use the walking engine" toggle switch
 - [x] Keep step tracking always active (no optional switch needed)
 - [x] Update Walking Insights to be a simple text field without toggle dependency
+
+
+## Feature: Step Counter Visual Display
+- [x] Add step stats card to Dashboard (total steps this week, daily average)
+- [x] Add step trend sparkline/chart to Dashboard (7-day bar chart)
+- [x] Add step data display to History roundup cards (mini bar chart)
+- [x] Add step trend line chart to History trends section (Steps tab)
+- [x] Color-code step values based on thresholds (cyan 8k+, amber 5k+, magenta below)

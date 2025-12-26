@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { 
   Loader2, ArrowLeft, Download, Calendar, TrendingUp, BarChart3, Activity, 
   Pencil, ChevronLeft, ChevronRight, Eye, Clock, Sparkles, Zap, Filter, X,
-  FileText
+  FileText, Footprints
 } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
@@ -357,6 +357,7 @@ interface RoundupCardProps {
     phaseDnaAssigned: string | null;
     entryNumber?: number;
     entriesInWeek?: number;
+    dailySteps?: { mon: number; tue: number; wed: number; thu: number; fri: number; sat: number; sun: number } | null;
   };
   isCurrent: boolean;
   onViewFull: () => void;
@@ -417,6 +418,56 @@ function RoundupCard({ roundup, isCurrent, onViewFull, onEdit }: RoundupCardProp
           <JesterIndicator value={roundup.jesterActivity} />
         </div>
       </div>
+
+      {/* Step Counter Mini Display */}
+      {roundup.dailySteps && (
+        <div className="mb-4">
+          <div className="flex items-center gap-1 text-xs text-muted-foreground mb-2">
+            <Footprints className="h-3 w-3" />
+            <span>Steps</span>
+          </div>
+          <div className="flex gap-1">
+            {(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const).map((day) => {
+              const steps = roundup.dailySteps?.[day] || 0;
+              const barHeight = Math.min((steps / 15000) * 100, 100);
+              return (
+                <div key={day} className="flex-1">
+                  <div className="h-8 bg-[var(--void-black)] rounded-sm relative overflow-hidden">
+                    <div 
+                      className={`absolute bottom-0 left-0 right-0 transition-all ${
+                        steps >= 8000 ? 'bg-[var(--neon-cyan)]' : 
+                        steps >= 5000 ? 'bg-[var(--neon-amber)]' : 
+                        steps > 0 ? 'bg-[var(--neon-magenta)]' : 'bg-muted/20'
+                      }`}
+                      style={{ height: `${barHeight}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="flex justify-between mt-1">
+            <span className="text-[10px] text-muted-foreground">
+              {Object.values(roundup.dailySteps).reduce((a, b) => a + b, 0).toLocaleString()} total
+            </span>
+            {(() => {
+              const values = Object.values(roundup.dailySteps);
+              const daysWithSteps = values.filter(v => v > 0).length;
+              const total = values.reduce((a, b) => a + b, 0);
+              const avg = daysWithSteps > 0 ? Math.round(total / daysWithSteps) : 0;
+              return (
+                <span className={`text-[10px] font-medium ${
+                  avg >= 8000 ? 'neon-text-cyan' : 
+                  avg >= 5000 ? 'neon-text-amber' : 
+                  'neon-text-magenta'
+                }`}>
+                  {avg > 0 ? `${(avg / 1000).toFixed(1)}k/day` : '-'}
+                </span>
+              );
+            })()}
+          </div>
+        </div>
+      )}
 
       {/* Somatic Preview */}
       <div className="mb-4">
@@ -897,6 +948,10 @@ export default function History() {
               <TrendingUp className="h-4 w-4 mr-2" />
               Energy
             </TabsTrigger>
+            <TabsTrigger value="steps" className="data-[state=active]:bg-[var(--neon-purple)]/20 data-[state=active]:text-[var(--neon-purple)]">
+              <Footprints className="h-4 w-4 mr-2" />
+              Steps
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="jester">
@@ -1032,6 +1087,83 @@ export default function History() {
                     </BarChart>
                   </ResponsiveContainer>
                 )}
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="steps">
+            <div className="cyber-card rounded-xl overflow-hidden">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold neon-text-purple mb-1">Weekly Step Totals</h3>
+                <p className="text-sm text-muted-foreground mb-6">
+                  Daily average targets: 8k+ (cyan), 5k+ (amber)
+                </p>
+                {(() => {
+                  const stepsData = roundups
+                    .filter(r => r.dailySteps)
+                    .map(r => {
+                      const steps = r.dailySteps as { mon: number; tue: number; wed: number; thu: number; fri: number; sat: number; sun: number };
+                      const total = Object.values(steps).reduce((a, b) => a + b, 0);
+                      const daysWithSteps = Object.values(steps).filter(v => v > 0).length;
+                      const avg = daysWithSteps > 0 ? Math.round(total / daysWithSteps) : 0;
+                      return {
+                        weekNumber: r.weekNumber,
+                        total,
+                        average: avg,
+                        avgK: avg / 1000
+                      };
+                    })
+                    .reverse();
+                  
+                  if (stepsData.length === 0) {
+                    return (
+                      <div className="h-64 flex items-center justify-center text-muted-foreground">
+                        No step data yet. Add steps to your roundups to see trends.
+                      </div>
+                    );
+                  }
+                  
+                  return (
+                    <ResponsiveContainer width="100%" height={300}>
+                      <BarChart data={stepsData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(0, 240, 255, 0.1)" />
+                        <XAxis 
+                          dataKey="weekNumber" 
+                          stroke="rgba(255, 255, 255, 0.3)"
+                          tick={{ fill: 'rgba(255, 255, 255, 0.5)' }}
+                        />
+                        <YAxis 
+                          stroke="rgba(255, 255, 255, 0.3)"
+                          tick={{ fill: 'rgba(255, 255, 255, 0.5)' }}
+                          tickFormatter={(value) => `${(value / 1000).toFixed(0)}k`}
+                        />
+                        <Tooltip 
+                          {...chartTooltipStyle}
+                          formatter={(value: number, name: string) => {
+                            if (name === 'average') return [`${value.toLocaleString()} steps/day`, 'Daily Avg'];
+                            return [`${value.toLocaleString()} steps`, 'Weekly Total'];
+                          }}
+                        />
+                        <ReferenceLine y={56000} stroke="var(--neon-cyan)" strokeDasharray="5 5" label={{ value: '8k/day', fill: 'var(--neon-cyan)', fontSize: 10 }} />
+                        <ReferenceLine y={35000} stroke="var(--neon-amber)" strokeDasharray="5 5" label={{ value: '5k/day', fill: 'var(--neon-amber)', fontSize: 10 }} />
+                        <Bar dataKey="total" radius={[4, 4, 0, 0]}>
+                          {stepsData.map((entry, index) => {
+                            const color = entry.average >= 8000 ? 'var(--neon-cyan)' : 
+                                         entry.average >= 5000 ? 'var(--neon-amber)' : 
+                                         'var(--neon-magenta)';
+                            return (
+                              <Cell 
+                                key={`cell-${index}`} 
+                                fill={color}
+                                style={{ filter: `drop-shadow(0 0 4px ${color})` }}
+                              />
+                            );
+                          })}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  );
+                })()}
               </div>
             </div>
           </TabsContent>

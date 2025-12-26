@@ -2,7 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, Calendar, Clock, Zap, Activity, TrendingUp, Archive, FileText, ChevronRight, Settings } from "lucide-react";
+import { Loader2, Calendar, Clock, Zap, Activity, TrendingUp, Archive, FileText, ChevronRight, Settings, Footprints } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
@@ -314,6 +314,76 @@ export default function Home() {
             <p className="text-xs text-muted-foreground mt-1">entries searchable</p>
           </div>
         </div>
+
+        {/* Step Counter Stats */}
+        {stats?.lastRoundup?.dailySteps && (
+          <div className="cyber-card rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Footprints className="h-5 w-5 neon-text-cyan" />
+              <h3 className="text-lg font-semibold">Step Tracker — Last Week</h3>
+            </div>
+            <div className="grid grid-cols-7 gap-2 mb-4">
+              {(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const).map((day) => {
+                const steps = (stats.lastRoundup?.dailySteps as Record<string, number>)?.[day] || 0;
+                const dayLabel = day.charAt(0).toUpperCase() + day.slice(1);
+                const barHeight = Math.min((steps / 15000) * 100, 100);
+                return (
+                  <div key={day} className="text-center">
+                    <div className="h-20 bg-[var(--void-black)] rounded-lg relative overflow-hidden mb-1">
+                      <div 
+                        className={`absolute bottom-0 left-0 right-0 rounded-t-sm transition-all duration-500 ${
+                          steps >= 8000 ? 'bg-[var(--neon-cyan)]' : 
+                          steps >= 5000 ? 'bg-[var(--neon-amber)]' : 
+                          steps > 0 ? 'bg-[var(--neon-magenta)]' : 'bg-muted/20'
+                        }`}
+                        style={{ 
+                          height: `${barHeight}%`,
+                          boxShadow: steps >= 8000 ? '0 0 10px var(--neon-cyan)' : 
+                                     steps >= 5000 ? '0 0 10px var(--neon-amber)' : 
+                                     steps > 0 ? '0 0 10px var(--neon-magenta)' : 'none'
+                        }}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">{dayLabel}</p>
+                    <p className={`text-xs font-medium ${
+                      steps >= 8000 ? 'neon-text-cyan' : 
+                      steps >= 5000 ? 'neon-text-amber' : 
+                      steps > 0 ? 'neon-text-magenta' : 'text-muted-foreground'
+                    }`}>
+                      {steps > 0 ? (steps / 1000).toFixed(1) + 'k' : '-'}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="flex justify-between items-center pt-3 border-t border-[var(--neon-cyan)]/20">
+              <div>
+                <p className="text-xs text-muted-foreground">Weekly Total</p>
+                <p className="text-xl font-bold neon-text-cyan">
+                  {Object.values(stats.lastRoundup.dailySteps as Record<string, number>).reduce((a, b) => a + b, 0).toLocaleString()} steps
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-muted-foreground">Daily Average</p>
+                {(() => {
+                  const values = Object.values(stats.lastRoundup?.dailySteps as Record<string, number> || {});
+                  const daysWithSteps = values.filter(v => v > 0).length;
+                  const total = values.reduce((a, b) => a + b, 0);
+                  const avg = daysWithSteps > 0 ? Math.round(total / daysWithSteps) : 0;
+                  return (
+                    <p className={`text-xl font-bold ${
+                      avg >= 8000 ? 'neon-text-cyan' : 
+                      avg >= 5000 ? 'neon-text-amber' : 
+                      'neon-text-magenta'
+                    }`}>
+                      {avg.toLocaleString()} steps/day
+                    </p>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Jester Trend & Last Roundup */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
