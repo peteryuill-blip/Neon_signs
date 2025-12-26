@@ -260,6 +260,53 @@ export default function Results() {
                   </div>
                 </div>
 
+                {/* Step Tracking Data */}
+                {roundup.dailySteps && (
+                  <div className="cyber-stat-card rounded-lg p-4 mb-6">
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm mb-3">
+                      <Footprints className="h-4 w-4 neon-text-cyan" />
+                      <span className="font-medium">Weekly Step Tracking</span>
+                    </div>
+                    <div className="grid grid-cols-7 gap-2 mb-4">
+                      {(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const).map((day) => {
+                        const steps = (roundup.dailySteps as Record<string, number>)?.[day] || 0;
+                        const dayLabel = day.charAt(0).toUpperCase() + day.slice(1);
+                        return (
+                          <div key={day} className="text-center">
+                            <p className="text-xs text-muted-foreground mb-1">{dayLabel}</p>
+                            <p className={`text-sm font-bold ${
+                              steps >= 8000 ? 'neon-text-cyan' : 
+                              steps >= 5000 ? 'neon-text-amber' : 
+                              steps > 0 ? 'neon-text-magenta' : 'text-muted-foreground'
+                            }`}>
+                              {steps > 0 ? steps.toLocaleString() : '-'}
+                            </p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div className="flex justify-between items-center pt-3 border-t border-[var(--neon-cyan)]/20">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Weekly Total</p>
+                        <p className="text-lg font-bold neon-text-cyan">
+                          {Object.values(roundup.dailySteps as Record<string, number>).reduce((a, b) => a + b, 0).toLocaleString()} steps
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-muted-foreground">Daily Average</p>
+                        <p className="text-lg font-bold neon-text-cyan">
+                          {(() => {
+                            const values = Object.values(roundup.dailySteps as Record<string, number>);
+                            const daysWithSteps = values.filter(v => v > 0).length;
+                            const total = values.reduce((a, b) => a + b, 0);
+                            return daysWithSteps > 0 ? Math.round(total / daysWithSteps).toLocaleString() : 0;
+                          })()} steps/day
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Additional Details */}
                 <div className="tattoo-line mb-4" />
                 <div className="space-y-4">

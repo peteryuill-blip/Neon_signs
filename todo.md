@@ -184,3 +184,10 @@
 - [x] Update History to group/display multiple entries per week
 - [x] Update Results page to show entry number (e.g., "Week 3, Entry 2")
 - [x] Test multi-entry submission flow (17 tests passing)
+
+
+## Bug Fix: Step Counter Feature
+- [x] Verify daily step inputs (Mon-Sun) are visible on RoundupForm
+- [x] Ensure step data is saved correctly to database
+- [x] Display step data in Results page after submission
+- [x] Show weekly total and daily average in results
