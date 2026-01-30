@@ -2,14 +2,15 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, Calendar, Clock, Zap, Activity, TrendingUp, Archive, FileText, ChevronRight, Settings, Footprints, StickyNote, Plus, X, Send, ArrowUpRight, ArrowDownRight, Minus, Flame, Layers, BarChart3 } from "lucide-react";
+import { Loader2, Calendar, Clock, Zap, Activity, TrendingUp, Archive, FileText, ChevronRight, Settings, Footprints, StickyNote, Plus, X, Send, ArrowUpRight, ArrowDownRight, Minus, Flame, Layers, BarChart3, Palette, FlaskConical } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
-import { LineChart, Line, ResponsiveContainer, Tooltip } from "recharts";
+import { LineChart, Line, ResponsiveContainer, Tooltip as RechartsTooltip } from "recharts";
 
 function NeonLogo() {
   return (
@@ -40,7 +41,7 @@ function JesterSparkline({ data }: { data: { weekNumber: number; jesterActivity:
   return (
     <ResponsiveContainer width="100%" height={48}>
       <LineChart data={data}>
-        <Tooltip
+        <RechartsTooltip
           contentStyle={{
             background: '#050508',
             border: '1px solid var(--neon-magenta)',
@@ -48,7 +49,7 @@ function JesterSparkline({ data }: { data: { weekNumber: number; jesterActivity:
             boxShadow: '0 0 20px rgba(255, 20, 147, 0.3)',
           }}
           formatter={(value: number) => [`${value}/10`, 'Jester']}
-          labelFormatter={(label) => `Week ${label}`}
+          labelFormatter={(label: number) => `Week ${label}`}
         />
         <Line
           type="monotone"
@@ -466,36 +467,88 @@ export default function Home() {
       {/* Header */}
       <header className="border-b border-[var(--neon-magenta)]/20 sticky top-0 bg-[var(--void-black)]/95 backdrop-blur z-50">
         <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[var(--neon-magenta)] to-transparent opacity-50" />
-        <div className="container py-4 flex items-center justify-between">
-          <NeonLogo />
-          <nav className="flex items-center gap-4">
-            <Link href="/history">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-[var(--neon-cyan)] hover:bg-[var(--neon-cyan)]/10 transition-all">
-                <FileText className="h-4 w-4 mr-2" />
-                History
-              </Button>
-            </Link>
-            <Link href="/materials">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-[var(--neon-amber)] hover:bg-[var(--neon-amber)]/10 transition-all">
-                <Layers className="h-4 w-4 mr-2" />
-                Materials
-              </Button>
-            </Link>
-            <Link href="/crucible/analytics">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-[var(--neon-purple)] hover:bg-[var(--neon-purple)]/10 transition-all">
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Analytics
-              </Button>
-            </Link>
-            <Link href="/settings">
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-[var(--neon-cyan)] hover:bg-[var(--neon-cyan)]/10 transition-all">
-                <Settings className="h-4 w-4" />
-              </Button>
-            </Link>
-            <span className="text-sm text-muted-foreground px-2">
-              {user?.name || 'Artist'}
-            </span>
-          </nav>
+        <div className="container py-3 sm:py-4 flex items-center justify-between">
+          <Link href="/">
+            <NeonLogo />
+          </Link>
+          <TooltipProvider delayDuration={300}>
+            <nav className="flex items-center gap-1.5 sm:gap-2">
+              {/* History */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="/history">
+                    <button className="nav-icon-btn group" aria-label="History">
+                      <FileText className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--neon-cyan)] group-hover:drop-shadow-[0_0_8px_var(--neon-cyan)]" />
+                    </button>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="bg-black border-[var(--neon-cyan)]/50">
+                  <p className="text-xs">History</p>
+                </TooltipContent>
+              </Tooltip>
+
+              {/* Materials */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="/materials">
+                    <button className="nav-icon-btn group" aria-label="Materials">
+                      <Palette className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--neon-amber)] group-hover:drop-shadow-[0_0_8px_var(--neon-amber)]" />
+                    </button>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="bg-black border-[var(--neon-amber)]/50">
+                  <p className="text-xs">Materials</p>
+                </TooltipContent>
+              </Tooltip>
+
+              {/* Crucible Intake */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="/crucible/intake">
+                    <button className="nav-icon-btn group" aria-label="Crucible Intake">
+                      <FlaskConical className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--neon-magenta)] group-hover:drop-shadow-[0_0_8px_var(--neon-magenta)]" />
+                    </button>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="bg-black border-[var(--neon-magenta)]/50">
+                  <p className="text-xs">Crucible Intake</p>
+                </TooltipContent>
+              </Tooltip>
+
+              {/* Analytics */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="/crucible/analytics">
+                    <button className="nav-icon-btn group" aria-label="Analytics">
+                      <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--neon-purple)] group-hover:drop-shadow-[0_0_8px_var(--neon-purple)]" />
+                    </button>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="bg-black border-[var(--neon-purple)]/50">
+                  <p className="text-xs">Analytics</p>
+                </TooltipContent>
+              </Tooltip>
+
+              {/* Settings */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="/settings">
+                    <button className="nav-icon-btn group" aria-label="Settings">
+                      <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 group-hover:text-[var(--neon-cyan)] group-hover:drop-shadow-[0_0_8px_var(--neon-cyan)]" />
+                    </button>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="bg-black border-[var(--neon-cyan)]/50">
+                  <p className="text-xs">Settings</p>
+                </TooltipContent>
+              </Tooltip>
+
+              {/* User name - hidden on mobile */}
+              <span className="hidden sm:block text-xs text-muted-foreground pl-2 border-l border-gray-700 ml-1">
+                {user?.name || 'Artist'}
+              </span>
+            </nav>
+          </TooltipProvider>
         </div>
       </header>
 

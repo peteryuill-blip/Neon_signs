@@ -305,6 +305,53 @@
       var(--glow-cyan),
       0 0 60px rgba(255, 20, 147, 0.2);
   }
+
+  /* Navigation icon buttons - matching N logo style */
+  .nav-icon-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.1) 0%, rgba(255, 20, 147, 0.1) 100%);
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .nav-icon-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    background: var(--neon-cyan);
+    opacity: 0;
+    filter: blur(12px);
+    transition: opacity 0.3s ease;
+    z-index: -1;
+  }
+
+  .nav-icon-btn:hover {
+    border-color: rgba(0, 240, 255, 0.6);
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.2) 0%, rgba(255, 20, 147, 0.15) 100%);
+    transform: translateY(-1px);
+  }
+
+  .nav-icon-btn:hover::before {
+    opacity: 0.4;
+  }
+
+  .nav-icon-btn:active {
+    transform: translateY(0);
+  }
+
+  @media (min-width: 640px) {
+    .nav-icon-btn {
+      width: 40px;
+      height: 40px;
+    }
+  }
   
   /* Form container with magenta glow border */
   .cyber-form {
