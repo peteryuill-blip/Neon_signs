@@ -72,7 +72,7 @@ export default function CrucibleAnalytics() {
           <Card className="bg-black/40 border-purple-500/30">
             <CardContent className="p-4 text-center">
               <TrendingUp className="w-6 h-6 text-purple-400 mx-auto mb-2" />
-              <div className="text-3xl font-bold text-purple-400">{summary?.weeklyAvg?.toFixed(1) || 0}</div>
+              <div className="text-3xl font-bold text-purple-400">{typeof summary?.weeklyAvg === 'number' ? summary.weeklyAvg.toFixed(1) : '0.0'}</div>
               <div className="text-sm text-gray-400">Weekly Avg</div>
             </CardContent>
           </Card>
@@ -91,7 +91,7 @@ export default function CrucibleAnalytics() {
             <CardContent>
               <div className="text-center py-4">
                 <div className="text-5xl font-bold text-cyan-400">
-                  {velocity?.trashRate?.toFixed(0) || 0}%
+                  {typeof velocity?.trashRate === 'number' ? velocity.trashRate.toFixed(0) : '0'}%
                 </div>
                 <div className="text-sm text-gray-400 mt-2">
                   {velocity?.trashCount || 0} of {velocity?.totalWorks || 0} trials trashed
@@ -122,7 +122,7 @@ export default function CrucibleAnalytics() {
             <CardContent>
               <div className="text-center py-4">
                 <div className="text-5xl font-bold text-magenta-400">
-                  {discovery?.density?.toFixed(0) || 0}%
+                  {typeof discovery?.density === 'number' ? discovery.density.toFixed(0) : '0'}%
                 </div>
                 <div className="text-sm text-gray-400 mt-2">
                   {discovery?.withDiscovery || 0} of {discovery?.total || 0} trials have discoveries
@@ -164,12 +164,12 @@ export default function CrucibleAnalytics() {
                       </div>
                       <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
                         <span>{pair.count} trials</span>
-                        <span>{pair.trashRate?.toFixed(0)}% trash</span>
+                        <span>{typeof pair.trashRate === 'number' ? pair.trashRate.toFixed(0) : '0'}% trash</span>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="text-lg font-bold text-purple-400">
-                        {pair.avgRating?.toFixed(1)}
+                        {typeof pair.avgRating === 'number' ? pair.avgRating.toFixed(1) : '0.0'}
                       </div>
                       <div className="text-xs text-gray-500">avg rating</div>
                     </div>

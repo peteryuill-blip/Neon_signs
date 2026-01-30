@@ -222,10 +222,7 @@ export const worksCore = mysqlTable("works_core", {
   code: varchar("code", { length: 16 }).notNull().unique(), // Auto-generated: T_001, T_002...
   date: timestamp("date").notNull(),
   
-  // Material references
-  surfaceId: int("surfaceId").notNull(), // FK to materials
-  mediumId: int("mediumId").notNull(), // FK to materials
-  toolId: int("toolId"), // FK to materials (optional)
+  // Material references moved to junction tables (workSurfaces, workMediums, workTools)
   
   // Work details
   technicalIntent: varchar("technicalIntent", { length: 140 }), // Pre-action hypothesis

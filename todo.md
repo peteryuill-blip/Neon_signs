@@ -344,3 +344,9 @@
 - [x] Add hours input to Crucible Intake form (step 0.25, displays "X hours")
 - [ ] Display hours in work detail/analytics views
 - [x] Update API to accept hours field
+
+## Bug Fix: Log Trial Button Not Working
+- [x] Remove old single-material columns (surfaceId, mediumId, toolId) from works_core schema
+- [x] Complete database migration for multi-material support via junction tables
+- [x] Test Log Trial button with full form submission
+- [x] Fix Analytics page toFixed errors for number type checking
