@@ -1514,9 +1514,9 @@ export const appRouter = router({
     create: protectedProcedure
       .input(z.object({
         date: z.string().optional(), // ISO date, defaults to today
-        surfaceId: z.number(),
-        mediumId: z.number(),
-        toolId: z.number().optional(),
+        surfaceIds: z.array(z.number()).min(1),
+        mediumIds: z.array(z.number()).min(1),
+        toolIds: z.array(z.number()).optional(),
         technicalIntent: z.string().max(140).optional(),
         discovery: z.string().max(280).optional(),
         rating: z.number().min(1).max(5),
@@ -1527,42 +1527,51 @@ export const appRouter = router({
         photoKey: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        // Verify materials belong to user
-        const surface = await getMaterialById(input.surfaceId);
-        const medium = await getMaterialById(input.mediumId);
+        // Verify all materials belong to user
+        for (const surfaceId of input.surfaceIds) {
+          const surface = await getMaterialById(surfaceId);
+          if (!surface || surface.userId !== ctx.user.id || surface.materialType !== 'Surface') {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid surface' });
+          }
+        }
         
-        if (!surface || surface.userId !== ctx.user.id || surface.materialType !== 'Surface') {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid surface' });
+        for (const mediumId of input.mediumIds) {
+          const medium = await getMaterialById(mediumId);
+          if (!medium || medium.userId !== ctx.user.id || medium.materialType !== 'Medium') {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid medium' });
+          }
         }
-        if (!medium || medium.userId !== ctx.user.id || medium.materialType !== 'Medium') {
-          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid medium' });
-        }
-        if (input.toolId) {
-          const tool = await getMaterialById(input.toolId);
-          if (!tool || tool.userId !== ctx.user.id || tool.materialType !== 'Tool') {
-            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid tool' });
+        
+        if (input.toolIds) {
+          for (const toolId of input.toolIds) {
+            const tool = await getMaterialById(toolId);
+            if (!tool || tool.userId !== ctx.user.id || tool.materialType !== 'Tool') {
+              throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid tool' });
+            }
           }
         }
         
         const code = await getNextWorkCode(ctx.user.id);
         const date = input.date ? new Date(input.date) : new Date();
         
-        const id = await createWork({
-          userId: ctx.user.id,
-          code,
-          date,
-          surfaceId: input.surfaceId,
-          mediumId: input.mediumId,
-          toolId: input.toolId,
-          technicalIntent: input.technicalIntent,
-          discovery: input.discovery,
-          rating: input.rating,
-          disposition: input.disposition,
-          heightCm: input.heightCm,
-          widthCm: input.widthCm,
-          photoUrl: input.photoUrl,
-          photoKey: input.photoKey,
-        });
+        const id = await createWork(
+          {
+            userId: ctx.user.id,
+            code,
+            date,
+            technicalIntent: input.technicalIntent,
+            discovery: input.discovery,
+            rating: input.rating,
+            disposition: input.disposition,
+            heightCm: input.heightCm,
+            widthCm: input.widthCm,
+            photoUrl: input.photoUrl,
+            photoKey: input.photoKey,
+          },
+          input.surfaceIds,
+          input.mediumIds,
+          input.toolIds
+        );
         
         return { id, code };
       }),

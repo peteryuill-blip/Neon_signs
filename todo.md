@@ -315,3 +315,19 @@
 - [x] Complete photo upload for Crucible Intake with optimization
 - [ ] Display photos in material cards and work detail views
 - [x] Ensure all uploaded images are compressed and saved as .webp
+
+
+## Bug Fix: Material Dropdown Sorting
+- [x] Fix material dropdowns to sort by custom code (S1, S2, MB2) in ascending numerical order
+- [x] Display code prominently in dropdown options
+- [x] Implement natural sort (S1, S2, S10 not S1, S10, S2)
+
+## Feature: Multi-Select Materials per Artwork
+- [x] Update database schema to support multiple surfaces per work (junction table)
+- [x] Update database schema to support multiple mediums per work (junction table)
+- [x] Update database schema to support multiple tools per work (junction table)
+- [x] Add multi-select UI for surfaces in Crucible Intake (checkbox list)
+- [x] Add multi-select UI for mediums in Crucible Intake (checkbox list)
+- [x] Add multi-select UI for tools in Crucible Intake (checkbox list)
+- [x] Optimize multi-select for mobile (touch-friendly, scrollable max-h-48)
+- [ ] Display all selected materials in work detail/analytics views

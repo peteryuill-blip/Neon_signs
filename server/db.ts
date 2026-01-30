@@ -8,7 +8,8 @@ import {
   userSettings, InsertUserSettings, UserSettings,
   quickNotes, InsertQuickNote, QuickNote,
   materials, InsertMaterial, Material,
-  worksCore, InsertWorkCore, WorkCore
+  worksCore, InsertWorkCore, WorkCore,
+  workSurfaces, workMediums, workTools
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -643,20 +644,41 @@ export async function incrementMaterialUsage(id: number): Promise<void> {
 
 // ============ WORKS CORE QUERIES ============
 
-export async function createWork(work: InsertWorkCore): Promise<number> {
+export async function createWork(
+  work: Omit<InsertWorkCore, 'surfaceId' | 'mediumId' | 'toolId'>,
+  surfaceIds: number[],
+  mediumIds: number[],
+  toolIds?: number[]
+): Promise<number> {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   
-  const result = await db.insert(worksCore).values(work);
+  // Insert work without material IDs (they go in junction tables)
+  // Cast to any to bypass type checking since we're intentionally omitting fields
+  const result = await db.insert(worksCore).values(work as any);
+  const workId = result[0].insertId;
   
-  // Increment usage counts for materials
-  await incrementMaterialUsage(work.surfaceId);
-  await incrementMaterialUsage(work.mediumId);
-  if (work.toolId) {
-    await incrementMaterialUsage(work.toolId);
+  // Insert surface relationships
+  for (const surfaceId of surfaceIds) {
+    await db.insert(workSurfaces).values({ workId, surfaceId });
+    await incrementMaterialUsage(surfaceId);
   }
   
-  return result[0].insertId;
+  // Insert medium relationships
+  for (const mediumId of mediumIds) {
+    await db.insert(workMediums).values({ workId, mediumId });
+    await incrementMaterialUsage(mediumId);
+  }
+  
+  // Insert tool relationships if provided
+  if (toolIds && toolIds.length > 0) {
+    for (const toolId of toolIds) {
+      await db.insert(workTools).values({ workId, toolId });
+      await incrementMaterialUsage(toolId);
+    }
+  }
+  
+  return workId;
 }
 
 export async function getWorkById(id: number): Promise<WorkCore | undefined> {

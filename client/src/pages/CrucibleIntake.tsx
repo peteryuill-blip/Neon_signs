@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Camera, Flame, Star, Trash2, HelpCircle, Check, Upload, Calendar, Ruler } from 'lucide-react';
+import { naturalSortByCode } from '@shared/naturalSort';
 // Photo upload will be handled via server-side tRPC mutation
 
 // Rating descriptions from spec
@@ -29,10 +30,10 @@ export default function CrucibleIntake() {
   const [, navigate] = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  // Form state
-  const [surfaceId, setSurfaceId] = useState<number | null>(null);
-  const [mediumId, setMediumId] = useState<number | null>(null);
-  const [toolId, setToolId] = useState<number | null>(null);
+  // Form state - now supports multiple materials
+  const [surfaceIds, setSurfaceIds] = useState<number[]>([]);
+  const [mediumIds, setMediumIds] = useState<number[]>([]);
+  const [toolIds, setToolIds] = useState<number[]>([]);
   const [technicalIntent, setTechnicalIntent] = useState('');
   const [discovery, setDiscovery] = useState('');
   const [rating, setRating] = useState<number>(3);
@@ -50,9 +51,14 @@ export default function CrucibleIntake() {
   const [widthCm, setWidthCm] = useState<string>('');
   
   // Fetch materials
-  const { data: surfaces } = trpc.materials.getByType.useQuery({ type: 'Surface' });
-  const { data: mediums } = trpc.materials.getByType.useQuery({ type: 'Medium' });
-  const { data: tools } = trpc.materials.getByType.useQuery({ type: 'Tool' });
+  const { data: surfacesRaw } = trpc.materials.getByType.useQuery({ type: 'Surface' });
+  const { data: mediumsRaw } = trpc.materials.getByType.useQuery({ type: 'Medium' });
+  const { data: toolsRaw } = trpc.materials.getByType.useQuery({ type: 'Tool' });
+  
+  // Sort materials by code (S1, S2, S10 not S1, S10, S2)
+  const surfaces = surfacesRaw ? naturalSortByCode(surfacesRaw) : [];
+  const mediums = mediumsRaw ? naturalSortByCode(mediumsRaw) : [];
+  const tools = toolsRaw ? naturalSortByCode(toolsRaw) : [];
   const { data: nextCodeData } = trpc.works.getNextCode.useQuery();
   
   const createMutation = trpc.works.create.useMutation({
@@ -95,8 +101,8 @@ export default function CrucibleIntake() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!surfaceId || !mediumId) {
-      alert('Please select a surface and medium');
+    if (surfaceIds.length === 0 || mediumIds.length === 0) {
+      alert('Please select at least one surface and one medium');
       return;
     }
     
@@ -104,9 +110,9 @@ export default function CrucibleIntake() {
       // Create work first
       const work = await createMutation.mutateAsync({
         date: workDate,
-        surfaceId,
-        mediumId,
-        toolId: toolId || undefined,
+        surfaceIds,
+        mediumIds,
+        toolIds: toolIds.length > 0 ? toolIds : undefined,
         technicalIntent: technicalIntent || undefined,
         discovery: discovery || undefined,
         rating,
@@ -140,7 +146,7 @@ export default function CrucibleIntake() {
   };
   
   const isSubmitting = createMutation.isPending || isUploading;
-  const canSubmit = surfaceId && mediumId && !isSubmitting;
+  const canSubmit = surfaceIds.length > 0 && mediumIds.length > 0 && !isSubmitting;
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white">
@@ -235,82 +241,99 @@ export default function CrucibleIntake() {
               <CardTitle className="text-cyan-400 text-lg">Materials</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Surface */}
+              {/* Surfaces (multi-select) */}
               <div>
-                <Label className="text-amber-400">Surface *</Label>
-                <Select
-                  value={surfaceId?.toString() || ''}
-                  onValueChange={(v) => setSurfaceId(parseInt(v))}
-                >
-                  <SelectTrigger className="mt-1 bg-black/50 border-amber-500/30">
-                    <SelectValue placeholder="Select surface..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {surfaces?.map((s) => (
-                      <SelectItem key={s.id} value={s.id.toString()}>
-                        <span className="font-mono text-xs text-gray-500 mr-2">{s.materialId}</span>
-                        {s.displayName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {(!surfaces || surfaces.length === 0) && (
-                  <Link href="/materials">
-                    <span className="text-xs text-amber-400 hover:underline cursor-pointer">
-                      + Add surfaces first
-                    </span>
-                  </Link>
-                )}
+                <Label className="text-amber-400">Surfaces * (select one or more)</Label>
+                <div className="mt-2 space-y-2 max-h-48 overflow-y-auto border border-amber-500/30 rounded-lg p-3 bg-black/50">
+                  {surfaces.length === 0 ? (
+                    <Link href="/materials">
+                      <span className="text-xs text-amber-400 hover:underline cursor-pointer">
+                        + Add surfaces first
+                      </span>
+                    </Link>
+                  ) : (
+                    surfaces.map((s) => (
+                      <label key={s.id} className="flex items-center gap-2 cursor-pointer hover:bg-cyan-500/10 p-2 rounded">
+                        <input
+                          type="checkbox"
+                          checked={surfaceIds.includes(s.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSurfaceIds([...surfaceIds, s.id]);
+                            } else {
+                              setSurfaceIds(surfaceIds.filter(id => id !== s.id));
+                            }
+                          }}
+                          className="w-4 h-4 accent-cyan-400"
+                        />
+                        <span className="font-mono text-xs font-bold text-cyan-400">{s.code || s.materialId}</span>
+                        <span className="text-sm">{s.displayName}</span>
+                      </label>
+                    ))
+                  )}
+                </div>
               </div>
               
-              {/* Medium */}
+              {/* Mediums (multi-select) */}
               <div>
-                <Label className="text-magenta-400">Medium *</Label>
-                <Select
-                  value={mediumId?.toString() || ''}
-                  onValueChange={(v) => setMediumId(parseInt(v))}
-                >
-                  <SelectTrigger className="mt-1 bg-black/50 border-magenta-500/30">
-                    <SelectValue placeholder="Select medium..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {mediums?.map((m) => (
-                      <SelectItem key={m.id} value={m.id.toString()}>
-                        <span className="font-mono text-xs text-gray-500 mr-2">{m.materialId}</span>
-                        {m.displayName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {(!mediums || mediums.length === 0) && (
-                  <Link href="/materials">
-                    <span className="text-xs text-magenta-400 hover:underline cursor-pointer">
-                      + Add mediums first
-                    </span>
-                  </Link>
-                )}
+                <Label className="text-magenta-400">Mediums * (select one or more)</Label>
+                <div className="mt-2 space-y-2 max-h-48 overflow-y-auto border border-magenta-500/30 rounded-lg p-3 bg-black/50">
+                  {mediums.length === 0 ? (
+                    <Link href="/materials">
+                      <span className="text-xs text-magenta-400 hover:underline cursor-pointer">
+                        + Add mediums first
+                      </span>
+                    </Link>
+                  ) : (
+                    mediums.map((m) => (
+                      <label key={m.id} className="flex items-center gap-2 cursor-pointer hover:bg-magenta-500/10 p-2 rounded">
+                        <input
+                          type="checkbox"
+                          checked={mediumIds.includes(m.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setMediumIds([...mediumIds, m.id]);
+                            } else {
+                              setMediumIds(mediumIds.filter(id => id !== m.id));
+                            }
+                          }}
+                          className="w-4 h-4 accent-magenta-400"
+                        />
+                        <span className="font-mono text-xs font-bold text-magenta-400">{m.code || m.materialId}</span>
+                        <span className="text-sm">{m.displayName}</span>
+                      </label>
+                    ))
+                  )}
+                </div>
               </div>
               
-              {/* Tool (optional) */}
+              {/* Tools (multi-select, optional) */}
               <div>
-                <Label className="text-cyan-400">Tool (optional)</Label>
-                <Select
-                  value={toolId?.toString() || 'none'}
-                  onValueChange={(v) => setToolId(v === 'none' ? null : parseInt(v))}
-                >
-                  <SelectTrigger className="mt-1 bg-black/50 border-cyan-500/30">
-                    <SelectValue placeholder="Select tool..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">None</SelectItem>
-                    {tools?.map((t) => (
-                      <SelectItem key={t.id} value={t.id.toString()}>
-                        <span className="font-mono text-xs text-gray-500 mr-2">{t.materialId}</span>
-                        {t.displayName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label className="text-cyan-400">Tools (optional, select one or more)</Label>
+                <div className="mt-2 space-y-2 max-h-48 overflow-y-auto border border-cyan-500/30 rounded-lg p-3 bg-black/50">
+                  {tools.length === 0 ? (
+                    <span className="text-xs text-gray-500">No tools added yet</span>
+                  ) : (
+                    tools.map((t) => (
+                      <label key={t.id} className="flex items-center gap-2 cursor-pointer hover:bg-amber-500/10 p-2 rounded">
+                        <input
+                          type="checkbox"
+                          checked={toolIds.includes(t.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setToolIds([...toolIds, t.id]);
+                            } else {
+                              setToolIds(toolIds.filter(id => id !== t.id));
+                            }
+                          }}
+                          className="w-4 h-4 accent-amber-400"
+                        />
+                        <span className="font-mono text-xs font-bold text-amber-400">{t.code || t.materialId}</span>
+                        <span className="text-sm">{t.displayName}</span>
+                      </label>
+                    ))
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>

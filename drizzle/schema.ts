@@ -250,3 +250,42 @@ export const worksCore = mysqlTable("works_core", {
 
 export type WorkCore = typeof worksCore.$inferSelect;
 export type InsertWorkCore = typeof worksCore.$inferInsert;
+
+/**
+ * Work Surfaces - junction table for multiple surfaces per work
+ */
+export const workSurfaces = mysqlTable("work_surfaces", {
+  id: int("id").autoincrement().primaryKey(),
+  workId: int("workId").notNull(),
+  surfaceId: int("surfaceId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type WorkSurface = typeof workSurfaces.$inferSelect;
+export type InsertWorkSurface = typeof workSurfaces.$inferInsert;
+
+/**
+ * Work Mediums - junction table for multiple mediums per work
+ */
+export const workMediums = mysqlTable("work_mediums", {
+  id: int("id").autoincrement().primaryKey(),
+  workId: int("workId").notNull(),
+  mediumId: int("mediumId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type WorkMedium = typeof workMediums.$inferSelect;
+export type InsertWorkMedium = typeof workMediums.$inferInsert;
+
+/**
+ * Work Tools - junction table for multiple tools per work
+ */
+export const workTools = mysqlTable("work_tools", {
+  id: int("id").autoincrement().primaryKey(),
+  workId: int("workId").notNull(),
+  toolId: int("toolId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type WorkTool = typeof workTools.$inferSelect;
+export type InsertWorkTool = typeof workTools.$inferInsert;
