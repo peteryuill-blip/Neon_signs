@@ -61,6 +61,13 @@ function MaterialForm({
   // Behavioral properties
   const [fields, setFields] = useState<Record<string, string>>(initialData || {});
   
+  // Photo upload
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(initialData?.photoUrl || null);
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  
+  const uploadPhotoMutation = trpc.materials.uploadPhoto.useMutation();
+  
   const utils = trpc.useUtils();
   const createMutation = trpc.materials.create.useMutation({
     onSuccess: () => {
@@ -80,7 +87,38 @@ function MaterialForm({
   
   const dynamicFields = type === 'Surface' ? SURFACE_FIELDS : type === 'Medium' ? MEDIUM_FIELDS : TOOL_FIELDS;
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setIsOptimizing(true);
+    
+    try {
+      // Import optimization utility dynamically
+      const { optimizeImageForUpload } = await import('@shared/imageOptimization');
+      
+      // Optimize image
+      const optimizedFile = await optimizeImageForUpload(file, {
+        maxWidth: 1200,
+        maxHeight: 1200,
+        quality: 0.85,
+      });
+      
+      setPhoto(optimizedFile);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => setPhotoPreview(e.target?.result as string);
+      reader.readAsDataURL(optimizedFile);
+    } catch (error) {
+      console.error('Failed to optimize image:', error);
+      alert('Failed to process image. Please try again.');
+    } finally {
+      setIsOptimizing(false);
+    }
+  };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const data = {
@@ -96,10 +134,37 @@ function MaterialForm({
       ...fields,
     };
     
-    if (initialData?.id) {
-      updateMutation.mutate({ id: initialData.id, ...data });
-    } else {
-      createMutation.mutate(data as any);
+    try {
+      let materialId = initialData?.id;
+      
+      // Create or update material first
+      if (initialData?.id) {
+        await updateMutation.mutateAsync({ id: initialData.id, ...data });
+      } else {
+        const result = await createMutation.mutateAsync(data as any);
+        materialId = result.id;
+      }
+      
+      // Upload photo if present
+      if (photo && materialId) {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const photoData = e.target?.result as string;
+          await uploadPhotoMutation.mutateAsync({
+            materialId,
+            photoData,
+            fileName: photo.name.replace(/\.[^/.]+$/, ''),
+          });
+          utils.materials.getAll.invalidate();
+          utils.materials.getByType.invalidate();
+          onSuccess();
+        };
+        reader.readAsDataURL(photo);
+      } else {
+        onSuccess();
+      }
+    } catch (error) {
+      console.error('Failed to save material:', error);
     }
   };
   
@@ -200,6 +265,31 @@ function MaterialForm({
             placeholder="Additional notes"
             className="mt-1 bg-black/50 border-cyan-500/30 text-sm h-16"
           />
+        </div>
+        
+        {/* Photo Upload */}
+        <div>
+          <Label htmlFor="photo" className="text-xs text-gray-400">PHOTO (Optional)</Label>
+          <Input
+            id="photo"
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            disabled={isOptimizing}
+            className="mt-1 bg-black/50 border-cyan-500/30 text-sm h-9 file:mr-2 file:px-3 file:py-1 file:rounded file:border-0 file:bg-cyan-500/20 file:text-cyan-400 file:text-xs hover:file:bg-cyan-500/30"
+          />
+          {isOptimizing && (
+            <p className="text-xs text-cyan-400 mt-1">Optimizing image...</p>
+          )}
+          {photoPreview && (
+            <div className="mt-2">
+              <img
+                src={photoPreview}
+                alt="Material preview"
+                className="w-32 h-32 object-cover rounded border border-cyan-500/30"
+              />
+            </div>
+          )}
         </div>
       </div>
       

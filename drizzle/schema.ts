@@ -182,6 +182,10 @@ export const materials = mysqlTable("materials", {
   firstUsedDate: timestamp("firstUsedDate"),
   usedInWorksCount: int("usedInWorksCount").default(0).notNull(), // Track usage for immutability
   
+  // Photo
+  photoUrl: varchar("photoUrl", { length: 500 }), // S3 URL
+  photoKey: varchar("photoKey", { length: 500 }), // S3 key for deletion
+  
   // Surface-specific fields
   reactivityProfile: mysqlEnum("reactivityProfile", ["Stable", "Responsive", "Volatile", "Chaotic"]),
   edgeBehavior: mysqlEnum("edgeBehavior", ["Sharp", "Feathered", "Blooming", "Fractured"]),

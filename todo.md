@@ -305,3 +305,13 @@
 - [x] Improve touch targets and spacing for mobile (smaller h-9 inputs, compact spacing)
 - [x] Reduce unnecessary re-renders (removed complex logic)
 - [x] Simplify material form layout for smaller screens (single column behavioral properties)
+
+
+## Feature: Photo Upload with Automatic Optimization
+- [x] Add photoUrl and photoKey fields to materials table
+- [x] Create image optimization utility (compress + convert to WebP)
+- [x] Add photo upload to Materials form with preview
+- [x] Implement S3 upload for material photos with optimization
+- [x] Complete photo upload for Crucible Intake with optimization
+- [ ] Display photos in material cards and work detail views
+- [x] Ensure all uploaded images are compressed and saved as .webp

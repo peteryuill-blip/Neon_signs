@@ -61,6 +61,7 @@ import {
 } from "./db";
 import { TRPCError } from "@trpc/server";
 import { fetchWeather } from "./_core/weather";
+import { uploadPhoto } from "./uploadPhoto";
 
 // Default Crucible Year start date: Sunday, December 21, 2025 (Week 0)
 const DEFAULT_CRUCIBLE_START = new Date('2025-12-21T00:00:00+07:00'); // Bangkok time
@@ -1449,6 +1450,37 @@ export const appRouter = router({
         await updateMaterial(id, updates);
         return { success: true };
       }),
+
+    // Upload material photo
+    uploadPhoto: protectedProcedure
+      .input(z.object({
+        materialId: z.number(),
+        photoData: z.string(), // base64 encoded WebP
+        fileName: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const material = await getMaterialById(input.materialId);
+        if (!material || material.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+
+        // Convert base64 to buffer
+        const base64Data = input.photoData.replace(/^data:image\/\w+;base64,/, '');
+        const buffer = Buffer.from(base64Data, 'base64');
+
+        // Upload to S3
+        const { url, key } = await uploadPhoto(
+          ctx.user.id,
+          buffer,
+          input.fileName,
+          'material'
+        );
+
+        // Update material with photo URL and key
+        await updateMaterial(input.materialId, { photoUrl: url, photoKey: key });
+
+        return { url, key };
+      }),
   }),
 
   // Works Core (Crucible Trials)
@@ -1555,6 +1587,37 @@ export const appRouter = router({
         const { id, ...updates } = input;
         await updateWork(id, updates);
         return { success: true };
+      }),
+
+    // Upload work photo
+    uploadPhoto: protectedProcedure
+      .input(z.object({
+        workId: z.number(),
+        photoData: z.string(), // base64 encoded WebP
+        fileName: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const work = await getWorkById(input.workId);
+        if (!work || work.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+
+        // Convert base64 to buffer
+        const base64Data = input.photoData.replace(/^data:image\/\w+;base64,/, '');
+        const buffer = Buffer.from(base64Data, 'base64');
+
+        // Upload to S3
+        const { url, key } = await uploadPhoto(
+          ctx.user.id,
+          buffer,
+          input.fileName,
+          'work'
+        );
+
+        // Update work with photo URL and key
+        await updateWork(input.workId, { photoUrl: url, photoKey: key });
+
+        return { url, key };
       }),
   }),
 

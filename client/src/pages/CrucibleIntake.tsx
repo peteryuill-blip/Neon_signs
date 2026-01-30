@@ -40,6 +40,9 @@ export default function CrucibleIntake() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  
+  const uploadPhotoMutation = trpc.works.uploadPhoto.useMutation();
   
   // Date and size
   const [workDate, setWorkDate] = useState<string>(new Date().toISOString().split('T')[0]);
@@ -58,15 +61,34 @@ export default function CrucibleIntake() {
     },
   });
   
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setPhotoFile(file);
+    if (!file) return;
+    
+    setIsOptimizing(true);
+    
+    try {
+      // Import optimization utility dynamically
+      const { optimizeImageForUpload } = await import('@shared/imageOptimization');
+      
+      // Optimize image
+      const optimizedFile = await optimizeImageForUpload(file, {
+        maxWidth: 1920,
+        maxHeight: 1920,
+        quality: 0.85,
+      });
+      
+      setPhotoFile(optimizedFile);
+      
+      // Create preview
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      reader.onload = (e) => setPhotoPreview(e.target?.result as string);
+      reader.readAsDataURL(optimizedFile);
+    } catch (error) {
+      console.error('Failed to optimize image:', error);
+      alert('Failed to process image. Please try again.');
+    } finally {
+      setIsOptimizing(false);
     }
   };
   
@@ -78,30 +100,43 @@ export default function CrucibleIntake() {
       return;
     }
     
-    let photoUrl: string | undefined;
-    let photoKey: string | undefined;
-    
-    // Photo upload placeholder - will be implemented with server-side upload
-    // For now, photos are not uploaded but the UI is ready
-    if (photoFile) {
-      // TODO: Implement photo upload via server endpoint
-      console.log('Photo selected:', photoFile.name);
+    try {
+      // Create work first
+      const work = await createMutation.mutateAsync({
+        date: workDate,
+        surfaceId,
+        mediumId,
+        toolId: toolId || undefined,
+        technicalIntent: technicalIntent || undefined,
+        discovery: discovery || undefined,
+        rating,
+        disposition,
+        heightCm: heightCm ? parseFloat(heightCm) : undefined,
+        widthCm: widthCm ? parseFloat(widthCm) : undefined,
+      });
+      
+      // Upload photo if present
+      if (photoFile && work.id) {
+        setIsUploading(true);
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const photoData = e.target?.result as string;
+          await uploadPhotoMutation.mutateAsync({
+            workId: work.id,
+            photoData,
+            fileName: photoFile.name.replace(/\.[^/.]+$/, ''),
+          });
+          setIsUploading(false);
+          navigate(`/crucible/work/${work.id}`);
+        };
+        reader.readAsDataURL(photoFile);
+      } else {
+        navigate(`/crucible/work/${work.id}`);
+      }
+    } catch (error) {
+      console.error('Failed to create work:', error);
+      setIsUploading(false);
     }
-    
-    createMutation.mutate({
-      date: workDate,
-      surfaceId,
-      mediumId,
-      toolId: toolId || undefined,
-      technicalIntent: technicalIntent || undefined,
-      discovery: discovery || undefined,
-      rating,
-      disposition,
-      heightCm: heightCm ? parseFloat(heightCm) : undefined,
-      widthCm: widthCm ? parseFloat(widthCm) : undefined,
-      photoUrl,
-      photoKey,
-    });
   };
   
   const isSubmitting = createMutation.isPending || isUploading;
@@ -391,7 +426,14 @@ export default function CrucibleIntake() {
                 className="hidden"
               />
               
-              {photoPreview ? (
+              {isOptimizing && (
+                <div className="text-center py-4">
+                  <Upload className="w-8 h-8 text-cyan-400 mx-auto mb-2 animate-pulse" />
+                  <p className="text-sm text-cyan-400">Optimizing image...</p>
+                </div>
+              )}
+              
+              {photoPreview && !isOptimizing ? (
                 <div className="relative">
                   <img 
                     src={photoPreview} 
@@ -413,10 +455,12 @@ export default function CrucibleIntake() {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-8 border-2 border-dashed border-cyan-500/30 rounded-lg hover:border-cyan-400 transition-colors"
+                  disabled={isOptimizing}
+                  className="w-full py-8 border-2 border-dashed border-cyan-500/30 rounded-lg hover:border-cyan-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Camera className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
                   <div className="text-sm text-gray-400">Tap to add photo</div>
+                  <div className="text-xs text-gray-500 mt-1">Auto-compressed to WebP</div>
                 </button>
               )}
             </CardContent>
