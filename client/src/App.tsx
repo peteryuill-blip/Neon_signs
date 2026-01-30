@@ -10,6 +10,9 @@ import Results from "./pages/Results";
 import History from "./pages/History";
 import Settings from "./pages/Settings";
 import EditRoundup from "./pages/EditRoundup";
+import Materials from "./pages/Materials";
+import CrucibleIntake from "./pages/CrucibleIntake";
+import CrucibleAnalytics from "./pages/CrucibleAnalytics";
 
 function Router() {
   return (
@@ -20,6 +23,10 @@ function Router() {
       <Route path="/history" component={History} />
       <Route path="/settings" component={Settings} />
       <Route path="/edit/:id" component={EditRoundup} />
+      {/* Crucible Artwork Module */}
+      <Route path="/materials" component={Materials} />
+      <Route path="/crucible/intake" component={CrucibleIntake} />
+      <Route path="/crucible/analytics" component={CrucibleAnalytics} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

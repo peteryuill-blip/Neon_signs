@@ -158,3 +158,78 @@ export const quickNotes = mysqlTable("quick_notes", {
 
 export type QuickNote = typeof quickNotes.$inferSelect;
 export type InsertQuickNote = typeof quickNotes.$inferInsert;
+
+/**
+ * Materials Library - surfaces, mediums, and tools for artwork trials
+ */
+export const materials = mysqlTable("materials", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  materialId: varchar("materialId", { length: 32 }).notNull().unique(), // Auto-generated: S_001, M_001, T_001
+  materialType: mysqlEnum("materialType", ["Surface", "Medium", "Tool"]).notNull(),
+  displayName: varchar("displayName", { length: 100 }).notNull(),
+  aliases: json("aliases").$type<string[] | null>(),
+  firstUsedDate: timestamp("firstUsedDate"),
+  notes: varchar("notes", { length: 200 }),
+  usedInWorksCount: int("usedInWorksCount").default(0).notNull(), // Track usage for immutability
+  
+  // Surface-specific fields
+  reactivityProfile: mysqlEnum("reactivityProfile", ["Stable", "Responsive", "Volatile", "Chaotic"]),
+  edgeBehavior: mysqlEnum("edgeBehavior", ["Sharp", "Feathered", "Blooming", "Fractured"]),
+  absorptionCurve: mysqlEnum("absorptionCurve", ["Immediate", "Delayed", "Variable"]),
+  consistencyPattern: mysqlEnum("consistencyPattern", ["Reliable", "Variable", "Glitch_Prone"]),
+  practiceRole: mysqlEnum("practiceRole", ["Final_Work", "Exploration", "Anxiety_Discharge", "Conditioning"]),
+  
+  // Medium-specific fields
+  viscosityBand: mysqlEnum("viscosityBand", ["Thin", "Balanced", "Dense"]),
+  chromaticForce: mysqlEnum("chromaticForce", ["Muted", "Balanced", "Aggressive"]),
+  reactivationTendency: mysqlEnum("reactivationTendency", ["Low", "Medium", "High"]),
+  forgivenessWindow: mysqlEnum("forgivenessWindow", ["Narrow", "Medium", "Wide"]),
+  dilutionSensitivity: mysqlEnum("dilutionSensitivity", ["Low", "Medium", "High"]),
+  sedimentationBehavior: mysqlEnum("sedimentationBehavior", ["Stable", "Variable"]),
+  
+  // Tool-specific fields
+  contactMode: mysqlEnum("contactMode", ["Direct", "Indirect", "Mediated", "Mechanical"]),
+  controlBias: mysqlEnum("controlBias", ["Precision", "Balanced", "Chaos"]),
+  repeatability: mysqlEnum("repeatability", ["High", "Medium", "Low"]),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Material = typeof materials.$inferSelect;
+export type InsertMaterial = typeof materials.$inferInsert;
+
+/**
+ * Works Core - individual material trial / work instances
+ */
+export const worksCore = mysqlTable("works_core", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  code: varchar("code", { length: 16 }).notNull().unique(), // Auto-generated: T_001, T_002...
+  date: timestamp("date").notNull(),
+  
+  // Material references
+  surfaceId: int("surfaceId").notNull(), // FK to materials
+  mediumId: int("mediumId").notNull(), // FK to materials
+  toolId: int("toolId"), // FK to materials (optional)
+  
+  // Work details
+  technicalIntent: varchar("technicalIntent", { length: 140 }), // Pre-action hypothesis
+  discovery: varchar("discovery", { length: 280 }), // Post-action observation
+  rating: int("rating").notNull(), // 1-5 (somatic_drill to breakthrough)
+  disposition: mysqlEnum("disposition", ["Trash", "Probably_Trash", "Save"]).notNull(),
+  
+  // Photo
+  photoUrl: text("photoUrl"),
+  photoKey: varchar("photoKey", { length: 256 }), // S3 key for reference
+  
+  // Session linking (optional)
+  sessionId: int("sessionId"), // Could link to a studio session
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type WorkCore = typeof worksCore.$inferSelect;
+export type InsertWorkCore = typeof worksCore.$inferInsert;

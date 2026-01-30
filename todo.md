@@ -228,3 +228,44 @@
 - [x] Show delta indicators (up/down arrows) for changes
 - [x] Show change summary badges
 - [x] Handle case when no previous week data exists
+
+
+## Feature: Crucible Artwork Module
+### Database Schema
+- [x] Create materials table (material_id, material_type, display_name, aliases, first_used_date, notes)
+- [x] Add Surface-specific fields (reactivity_profile, edge_behavior, absorption_curve, consistency_pattern, practice_role)
+- [x] Add Medium-specific fields (viscosity_band, chromatic_force, reactivation_tendency, forgiveness_window, dilution_sensitivity, sedimentation_behavior)
+- [x] Add Tool-specific fields (contact_mode, control_bias, repeatability)
+- [x] Create works_core table (code, date, surface_id, medium_id, tool_id, technical_intent, discovery, rating, disposition, photo_url)
+
+### Materials Library Page
+- [x] Materials list view with filtering by type (Surface/Medium/Tool)
+- [x] Add Material form with dynamic fields based on material_type
+- [x] Searchable dropdown components for material selection
+- [x] No edit/delete after material is used in a work (lock icon shown)
+
+### Crucible Intake Form
+- [x] Auto-generate work code (T_001, T_002...)
+- [x] Date picker (default today via auto-timestamp)
+- [x] Surface dropdown (searchable, shows material ID)
+- [x] Medium dropdown (searchable, shows material ID)
+- [x] Tool dropdown (optional, searchable)
+- [x] Technical Intent text (140 chars max)
+- [x] Discovery notes (280 chars max)
+- [x] Rating selector (1-5 with semantic labels)
+- [x] Disposition selector (Trash/Probably Trash/Save)
+- [x] Photo upload UI ready (S3 integration pending)
+- [x] Quick submit form design (target 60 seconds)
+
+### Crucible Analysis Dashboard
+- [x] Summary stats (total trials, materials counts, weekly average)
+- [x] Trash rate as velocity signal visualization
+- [x] Discovery density percentage
+- [x] Surface-medium pair outcomes table
+- [x] Glitch harvests list (low rating + high discovery)
+
+### Navigation Integration
+- [x] Add Crucible section to main dashboard (action card)
+- [x] Add Materials Library link (header nav)
+- [x] Add Crucible Intake link (action card)
+- [x] Add Crucible Analysis link (header nav)

@@ -2,7 +2,7 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, Calendar, Clock, Zap, Activity, TrendingUp, Archive, FileText, ChevronRight, Settings, Footprints, StickyNote, Plus, X, Send, ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
+import { Loader2, Calendar, Clock, Zap, Activity, TrendingUp, Archive, FileText, ChevronRight, Settings, Footprints, StickyNote, Plus, X, Send, ArrowUpRight, ArrowDownRight, Minus, Flame, Layers, BarChart3 } from "lucide-react";
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
@@ -475,6 +475,18 @@ export default function Home() {
                 History
               </Button>
             </Link>
+            <Link href="/materials">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-[var(--neon-amber)] hover:bg-[var(--neon-amber)]/10 transition-all">
+                <Layers className="h-4 w-4 mr-2" />
+                Materials
+              </Button>
+            </Link>
+            <Link href="/crucible/analytics">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-[var(--neon-purple)] hover:bg-[var(--neon-purple)]/10 transition-all">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Analytics
+              </Button>
+            </Link>
             <Link href="/settings">
               <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-[var(--neon-cyan)] hover:bg-[var(--neon-cyan)]/10 transition-all">
                 <Settings className="h-4 w-4" />
@@ -763,6 +775,23 @@ export default function Home() {
                   </p>
                 </div>
                 <ChevronRight className="h-6 w-6 text-muted-foreground group-hover:text-[var(--neon-magenta)] group-hover:translate-x-1 transition-all" />
+              </div>
+            </div>
+          </Link>
+
+          <Link href="/crucible/intake">
+            <div className="cyber-card rounded-xl p-6 cursor-pointer group hover:border-[var(--neon-amber)] transition-all duration-300">
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-lg bg-[var(--neon-amber)]/10 flex items-center justify-center group-hover:neon-glow-amber transition-shadow">
+                  <Flame className="h-7 w-7 neon-text-amber" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-lg group-hover:neon-text-amber transition-all">Crucible Intake</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Log a material trial — 60 second capture
+                  </p>
+                </div>
+                <ChevronRight className="h-6 w-6 text-muted-foreground group-hover:text-[var(--neon-amber)] group-hover:translate-x-1 transition-all" />
               </div>
             </div>
           </Link>

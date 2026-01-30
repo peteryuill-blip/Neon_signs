@@ -39,6 +39,25 @@ import {
   deleteQuickNote,
   markNotesAsUsed,
   getRoundupsForWeeks,
+  // Crucible imports
+  createMaterial,
+  getMaterialById,
+  getAllMaterials,
+  getMaterialsByType,
+  getNextMaterialCode,
+  updateMaterial,
+  createWork,
+  getWorkById,
+  getAllWorks,
+  getWorksCount,
+  getNextWorkCode,
+  updateWork,
+  getRatingDistributionBySurface,
+  getRatingDistributionByMedium,
+  getSurfaceMediumPairOutcomes,
+  getTrashRateAsVelocitySignal,
+  getDiscoveryDensity,
+  getLowRatingHighDiscoveryPatterns,
 } from "./db";
 import { TRPCError } from "@trpc/server";
 import { fetchWeather } from "./_core/weather";
@@ -1308,6 +1327,270 @@ export const appRouter = router({
         await markNotesAsUsed(input.noteIds, input.roundupId);
         return { success: true };
       }),
+  }),
+
+  // ============ CRUCIBLE ARTWORK MODULE ============
+
+  // Materials Library
+  materials: router({
+    // Get all materials
+    getAll: protectedProcedure.query(async ({ ctx }) => {
+      return getAllMaterials(ctx.user.id);
+    }),
+
+    // Get materials by type
+    getByType: protectedProcedure
+      .input(z.object({ type: z.enum(['Surface', 'Medium', 'Tool']) }))
+      .query(async ({ ctx, input }) => {
+        return getMaterialsByType(ctx.user.id, input.type);
+      }),
+
+    // Get single material
+    get: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const material = await getMaterialById(input.id);
+        if (!material || material.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+        return material;
+      }),
+
+    // Create new material
+    create: protectedProcedure
+      .input(z.object({
+        materialType: z.enum(['Surface', 'Medium', 'Tool']),
+        displayName: z.string().min(1).max(100),
+        aliases: z.array(z.string()).optional(),
+        notes: z.string().max(200).optional(),
+        // Surface fields
+        reactivityProfile: z.enum(['Stable', 'Responsive', 'Volatile', 'Chaotic']).optional(),
+        edgeBehavior: z.enum(['Sharp', 'Feathered', 'Blooming', 'Fractured']).optional(),
+        absorptionCurve: z.enum(['Immediate', 'Delayed', 'Variable']).optional(),
+        consistencyPattern: z.enum(['Reliable', 'Variable', 'Glitch_Prone']).optional(),
+        practiceRole: z.enum(['Final_Work', 'Exploration', 'Anxiety_Discharge', 'Conditioning']).optional(),
+        // Medium fields
+        viscosityBand: z.enum(['Thin', 'Balanced', 'Dense']).optional(),
+        chromaticForce: z.enum(['Muted', 'Balanced', 'Aggressive']).optional(),
+        reactivationTendency: z.enum(['Low', 'Medium', 'High']).optional(),
+        forgivenessWindow: z.enum(['Narrow', 'Medium', 'Wide']).optional(),
+        dilutionSensitivity: z.enum(['Low', 'Medium', 'High']).optional(),
+        sedimentationBehavior: z.enum(['Stable', 'Variable']).optional(),
+        // Tool fields
+        contactMode: z.enum(['Direct', 'Indirect', 'Mediated', 'Mechanical']).optional(),
+        controlBias: z.enum(['Precision', 'Balanced', 'Chaos']).optional(),
+        repeatability: z.enum(['High', 'Medium', 'Low']).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const materialId = await getNextMaterialCode(ctx.user.id, input.materialType);
+        
+        const id = await createMaterial({
+          userId: ctx.user.id,
+          materialId,
+          ...input,
+        });
+        
+        return { id, materialId };
+      }),
+
+    // Update material (only if not used in any works)
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        displayName: z.string().min(1).max(100).optional(),
+        aliases: z.array(z.string()).optional(),
+        notes: z.string().max(200).optional(),
+        // Surface fields
+        reactivityProfile: z.enum(['Stable', 'Responsive', 'Volatile', 'Chaotic']).optional(),
+        edgeBehavior: z.enum(['Sharp', 'Feathered', 'Blooming', 'Fractured']).optional(),
+        absorptionCurve: z.enum(['Immediate', 'Delayed', 'Variable']).optional(),
+        consistencyPattern: z.enum(['Reliable', 'Variable', 'Glitch_Prone']).optional(),
+        practiceRole: z.enum(['Final_Work', 'Exploration', 'Anxiety_Discharge', 'Conditioning']).optional(),
+        // Medium fields
+        viscosityBand: z.enum(['Thin', 'Balanced', 'Dense']).optional(),
+        chromaticForce: z.enum(['Muted', 'Balanced', 'Aggressive']).optional(),
+        reactivationTendency: z.enum(['Low', 'Medium', 'High']).optional(),
+        forgivenessWindow: z.enum(['Narrow', 'Medium', 'Wide']).optional(),
+        dilutionSensitivity: z.enum(['Low', 'Medium', 'High']).optional(),
+        sedimentationBehavior: z.enum(['Stable', 'Variable']).optional(),
+        // Tool fields
+        contactMode: z.enum(['Direct', 'Indirect', 'Mediated', 'Mechanical']).optional(),
+        controlBias: z.enum(['Precision', 'Balanced', 'Chaos']).optional(),
+        repeatability: z.enum(['High', 'Medium', 'Low']).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const material = await getMaterialById(input.id);
+        if (!material || material.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+        
+        if (material.usedInWorksCount > 0) {
+          throw new TRPCError({ 
+            code: 'FORBIDDEN', 
+            message: 'Cannot edit material that has been used in works' 
+          });
+        }
+        
+        const { id, ...updates } = input;
+        await updateMaterial(id, updates);
+        return { success: true };
+      }),
+  }),
+
+  // Works Core (Crucible Trials)
+  works: router({
+    // Get all works
+    getAll: protectedProcedure
+      .input(z.object({ limit: z.number().optional(), offset: z.number().optional() }))
+      .query(async ({ ctx, input }) => {
+        return getAllWorks(ctx.user.id, input.limit || 100, input.offset || 0);
+      }),
+
+    // Get single work
+    get: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const work = await getWorkById(input.id);
+        if (!work || work.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+        return work;
+      }),
+
+    // Get work count and next code
+    getNextCode: protectedProcedure.query(async ({ ctx }) => {
+      const count = await getWorksCount(ctx.user.id);
+      const nextCode = await getNextWorkCode(ctx.user.id);
+      return { count, nextCode };
+    }),
+
+    // Create new work (Crucible Intake)
+    create: protectedProcedure
+      .input(z.object({
+        date: z.string().optional(), // ISO date, defaults to today
+        surfaceId: z.number(),
+        mediumId: z.number(),
+        toolId: z.number().optional(),
+        technicalIntent: z.string().max(140).optional(),
+        discovery: z.string().max(280).optional(),
+        rating: z.number().min(1).max(5),
+        disposition: z.enum(['Trash', 'Probably_Trash', 'Save']),
+        photoUrl: z.string().optional(),
+        photoKey: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        // Verify materials belong to user
+        const surface = await getMaterialById(input.surfaceId);
+        const medium = await getMaterialById(input.mediumId);
+        
+        if (!surface || surface.userId !== ctx.user.id || surface.materialType !== 'Surface') {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid surface' });
+        }
+        if (!medium || medium.userId !== ctx.user.id || medium.materialType !== 'Medium') {
+          throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid medium' });
+        }
+        if (input.toolId) {
+          const tool = await getMaterialById(input.toolId);
+          if (!tool || tool.userId !== ctx.user.id || tool.materialType !== 'Tool') {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid tool' });
+          }
+        }
+        
+        const code = await getNextWorkCode(ctx.user.id);
+        const date = input.date ? new Date(input.date) : new Date();
+        
+        const id = await createWork({
+          userId: ctx.user.id,
+          code,
+          date,
+          surfaceId: input.surfaceId,
+          mediumId: input.mediumId,
+          toolId: input.toolId,
+          technicalIntent: input.technicalIntent,
+          discovery: input.discovery,
+          rating: input.rating,
+          disposition: input.disposition,
+          photoUrl: input.photoUrl,
+          photoKey: input.photoKey,
+        });
+        
+        return { id, code };
+      }),
+
+    // Update work
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        technicalIntent: z.string().max(140).optional(),
+        discovery: z.string().max(280).optional(),
+        rating: z.number().min(1).max(5).optional(),
+        disposition: z.enum(['Trash', 'Probably_Trash', 'Save']).optional(),
+        photoUrl: z.string().optional(),
+        photoKey: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const work = await getWorkById(input.id);
+        if (!work || work.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+        
+        const { id, ...updates } = input;
+        await updateWork(id, updates);
+        return { success: true };
+      }),
+  }),
+
+  // Crucible Analytics
+  crucibleAnalytics: router({
+    // Rating distribution by surface
+    ratingBySurface: protectedProcedure.query(async ({ ctx }) => {
+      return getRatingDistributionBySurface(ctx.user.id);
+    }),
+
+    // Rating distribution by medium
+    ratingByMedium: protectedProcedure.query(async ({ ctx }) => {
+      return getRatingDistributionByMedium(ctx.user.id);
+    }),
+
+    // Surface-medium pair outcomes
+    pairOutcomes: protectedProcedure.query(async ({ ctx }) => {
+      return getSurfaceMediumPairOutcomes(ctx.user.id);
+    }),
+
+    // Trash rate as velocity signal
+    velocitySignal: protectedProcedure.query(async ({ ctx }) => {
+      return getTrashRateAsVelocitySignal(ctx.user.id);
+    }),
+
+    // Discovery density
+    discoveryDensity: protectedProcedure.query(async ({ ctx }) => {
+      return getDiscoveryDensity(ctx.user.id);
+    }),
+
+    // Low rating + high discovery patterns
+    lowRatingHighDiscovery: protectedProcedure.query(async ({ ctx }) => {
+      return getLowRatingHighDiscoveryPatterns(ctx.user.id);
+    }),
+
+    // Dashboard summary
+    summary: protectedProcedure.query(async ({ ctx }) => {
+      const [worksCount, velocity, discovery, surfaces, mediums] = await Promise.all([
+        getWorksCount(ctx.user.id),
+        getTrashRateAsVelocitySignal(ctx.user.id),
+        getDiscoveryDensity(ctx.user.id),
+        getMaterialsByType(ctx.user.id, 'Surface'),
+        getMaterialsByType(ctx.user.id, 'Medium'),
+      ]);
+      
+      return {
+        totalWorks: worksCount,
+        totalSurfaces: surfaces.length,
+        totalMediums: mediums.length,
+        trashRate: velocity.trashRate,
+        weeklyAvg: velocity.weeklyAvg,
+        discoveryDensity: discovery.density,
+      };
+    }),
   }),
 });
 
