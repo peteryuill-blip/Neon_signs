@@ -195,14 +195,14 @@ export default function CrucibleIntake() {
               <div>
                 <Label className="text-cyan-400">Tool (optional)</Label>
                 <Select
-                  value={toolId?.toString() || ''}
-                  onValueChange={(v) => setToolId(v ? parseInt(v) : null)}
+                  value={toolId?.toString() || 'none'}
+                  onValueChange={(v) => setToolId(v === 'none' ? null : parseInt(v))}
                 >
                   <SelectTrigger className="mt-1 bg-black/50 border-cyan-500/30">
                     <SelectValue placeholder="Select tool..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">None</SelectItem>
+                    <SelectItem value="none">None</SelectItem>
                     {tools?.map((t) => (
                       <SelectItem key={t.id} value={t.id.toString()}>
                         <span className="font-mono text-xs text-gray-500 mr-2">{t.materialId}</span>
