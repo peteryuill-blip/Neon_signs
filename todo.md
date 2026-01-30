@@ -363,3 +363,10 @@
 - [x] Allow editing: materials, notes, rating, disposition, photo, size, hours
 - [x] Add navigation link to Works browser in header
 - [x] Test complete flow: browse → view detail → edit → save
+
+## Enhancement: Complete Work Edit Functionality
+- [x] Add photo upload capability to work edit page with WebP optimization
+- [x] Add date picker to allow changing work date
+- [x] Ensure all measurement fields (height, width, hours) are fully editable
+- [x] Reuse photo optimization logic from CrucibleIntake for consistency
+- [x] Test photo upload and replacement in edit mode

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useParams, useLocation } from 'wouter';
 import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Star, Trash2, HelpCircle, Check, Save } from 'lucide-react';
+import { ArrowLeft, Star, Trash2, HelpCircle, Check, Save, Camera, Upload, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const RATING_LABELS: Record<number, string> = {
@@ -50,12 +50,23 @@ export default function WorkEdit() {
     onSuccess: () => {
       toast.success('Materials updated successfully');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(`Failed to update materials: ${error.message}`);
     },
   });
   
+  const uploadPhotoMutation = trpc.works.uploadPhoto.useMutation({
+    onSuccess: () => {
+      toast.success('Photo updated successfully');
+    },
+    onError: (error: any) => {
+      toast.error(`Failed to upload photo: ${error.message}`);
+    },
+  });
+  
   // Form state
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [workDate, setWorkDate] = useState<string>('');
   const [technicalIntent, setTechnicalIntent] = useState('');
   const [discovery, setDiscovery] = useState('');
   const [rating, setRating] = useState(3);
@@ -66,10 +77,15 @@ export default function WorkEdit() {
   const [selectedSurfaces, setSelectedSurfaces] = useState<number[]>([]);
   const [selectedMediums, setSelectedMediums] = useState<number[]>([]);
   const [selectedTools, setSelectedTools] = useState<number[]>([]);
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [isOptimizing, setIsOptimizing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   
   // Initialize form when work loads
   useEffect(() => {
     if (work) {
+      setWorkDate(new Date(work.date).toISOString().split('T')[0]);
       setTechnicalIntent(work.technicalIntent || '');
       setDiscovery(work.discovery || '');
       setRating(work.rating);
@@ -77,6 +93,9 @@ export default function WorkEdit() {
       setHeightCm(work.heightCm || undefined);
       setWidthCm(work.widthCm || undefined);
       setHours(work.hours || undefined);
+      if (work.photoUrl) {
+        setPhotoPreview(work.photoUrl);
+      }
     }
   }, [work]);
   
@@ -98,6 +117,45 @@ export default function WorkEdit() {
     }
   }, [currentTools]);
   
+  const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setIsOptimizing(true);
+    
+    try {
+      // Import optimization utility dynamically
+      const { optimizeImageForUpload } = await import('@shared/imageOptimization');
+      
+      // Optimize image
+      const optimizedFile = await optimizeImageForUpload(file, {
+        maxWidth: 1920,
+        maxHeight: 1920,
+        quality: 0.85,
+      });
+      
+      setPhotoFile(optimizedFile);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => setPhotoPreview(e.target?.result as string);
+      reader.readAsDataURL(optimizedFile);
+    } catch (error) {
+      console.error('Failed to optimize image:', error);
+      toast.error('Failed to process image. Please try again.');
+    } finally {
+      setIsOptimizing(false);
+    }
+  };
+  
+  const handleRemovePhoto = () => {
+    setPhotoFile(null);
+    setPhotoPreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -111,25 +169,50 @@ export default function WorkEdit() {
       return;
     }
     
-    // Update work details
-    await updateMutation.mutateAsync({
-      id: workId,
-      technicalIntent: technicalIntent || undefined,
-      discovery: discovery || undefined,
-      rating,
-      disposition,
-      heightCm: heightCm || undefined,
-      widthCm: widthCm || undefined,
-      hours: hours || undefined,
-    });
-    
-    // Update materials
-    await updateMaterialsMutation.mutateAsync({
-      workId,
-      surfaceIds: selectedSurfaces,
-      mediumIds: selectedMediums,
-      toolIds: selectedTools.length > 0 ? selectedTools : undefined,
-    });
+    try {
+      // Update work details
+      await updateMutation.mutateAsync({
+        id: workId,
+        date: workDate,
+        technicalIntent: technicalIntent || undefined,
+        discovery: discovery || undefined,
+        rating,
+        disposition,
+        heightCm: heightCm || undefined,
+        widthCm: widthCm || undefined,
+        hours: hours || undefined,
+      });
+      
+      // Update materials
+      await updateMaterialsMutation.mutateAsync({
+        workId,
+        surfaceIds: selectedSurfaces,
+        mediumIds: selectedMediums,
+        toolIds: selectedTools.length > 0 ? selectedTools : undefined,
+      });
+      
+      // Upload new photo if changed
+      if (photoFile) {
+        setIsUploading(true);
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const photoData = e.target?.result as string;
+          await uploadPhotoMutation.mutateAsync({
+            workId,
+            photoData,
+            fileName: photoFile.name.replace(/\.[^/.]+$/, ''),
+          });
+          setIsUploading(false);
+          navigate(`/crucible/work/${workId}`);
+        };
+        reader.readAsDataURL(photoFile);
+      } else {
+        navigate(`/crucible/work/${workId}`);
+      }
+    } catch (error) {
+      console.error('Failed to update work:', error);
+      setIsUploading(false);
+    }
   };
   
   if (isLoading) {
@@ -176,12 +259,73 @@ export default function WorkEdit() {
       {/* Form */}
       <main className="container py-8 max-w-4xl">
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Photo Upload */}
+          <Card className="bg-black/40 border-cyan-500/30">
+            <CardHeader>
+              <CardTitle className="text-cyan-400">Photo</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {photoPreview ? (
+                  <div className="relative">
+                    <img
+                      src={photoPreview}
+                      alt="Work preview"
+                      className="w-full h-64 object-cover rounded-lg border border-purple-500/30"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemovePhoto}
+                      className="absolute top-2 right-2 p-2 bg-black/80 rounded-full hover:bg-red-500/20 transition-colors"
+                    >
+                      <X className="w-4 h-4 text-red-400" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="border-2 border-dashed border-purple-500/30 rounded-lg p-8 text-center">
+                    <Camera className="w-12 h-12 mx-auto mb-4 text-gray-500" />
+                    <p className="text-gray-400 mb-2">No photo uploaded</p>
+                  </div>
+                )}
+                
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  className="hidden"
+                />
+                
+                <Button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isOptimizing}
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  {isOptimizing ? 'Optimizing...' : photoPreview ? 'Replace Photo' : 'Upload Photo'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+          
           {/* Date & Size */}
           <Card className="bg-black/40 border-purple-500/30">
             <CardHeader>
               <CardTitle className="text-purple-400">Date & Size</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              <div>
+                <Label className="text-gray-400">Work Date</Label>
+                <Input
+                  type="date"
+                  value={workDate}
+                  onChange={(e) => setWorkDate(e.target.value)}
+                  className="bg-black/50 border-purple-500/30"
+                />
+              </div>
+              
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label className="text-gray-400">Height (cm)</Label>

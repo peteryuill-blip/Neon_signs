@@ -1619,6 +1619,7 @@ export const appRouter = router({
     update: protectedProcedure
       .input(z.object({
         id: z.number(),
+        date: z.string().optional(), // ISO date string
         technicalIntent: z.string().max(140).optional(),
         discovery: z.string().max(280).optional(),
         rating: z.number().min(1).max(5).optional(),
@@ -1635,8 +1636,12 @@ export const appRouter = router({
           throw new TRPCError({ code: 'NOT_FOUND' });
         }
         
-        const { id, ...updates } = input;
-        await updateWork(id, updates);
+        const { id, date, ...updates } = input;
+        const finalUpdates = {
+          ...updates,
+          ...(date ? { date: new Date(date) } : {}),
+        };
+        await updateWork(id, finalUpdates);
         return { success: true };
       }),
 
