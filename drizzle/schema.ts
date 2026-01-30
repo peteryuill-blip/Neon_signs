@@ -220,6 +220,10 @@ export const worksCore = mysqlTable("works_core", {
   rating: int("rating").notNull(), // 1-5 (somatic_drill to breakthrough)
   disposition: mysqlEnum("disposition", ["Trash", "Probably_Trash", "Save"]).notNull(),
   
+  // Size (dimensions in cm)
+  heightCm: float("heightCm"), // Height in centimeters
+  widthCm: float("widthCm"), // Width in centimeters
+  
   // Photo
   photoUrl: text("photoUrl"),
   photoKey: varchar("photoKey", { length: 256 }), // S3 key for reference

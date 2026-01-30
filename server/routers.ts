@@ -1475,6 +1475,8 @@ export const appRouter = router({
         discovery: z.string().max(280).optional(),
         rating: z.number().min(1).max(5),
         disposition: z.enum(['Trash', 'Probably_Trash', 'Save']),
+        heightCm: z.number().positive().optional(), // Height in cm
+        widthCm: z.number().positive().optional(), // Width in cm
         photoUrl: z.string().optional(),
         photoKey: z.string().optional(),
       }))
@@ -1510,6 +1512,8 @@ export const appRouter = router({
           discovery: input.discovery,
           rating: input.rating,
           disposition: input.disposition,
+          heightCm: input.heightCm,
+          widthCm: input.widthCm,
           photoUrl: input.photoUrl,
           photoKey: input.photoKey,
         });

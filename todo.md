@@ -277,3 +277,12 @@
 - [x] Optimize layout for mobile (responsive, compact)
 - [x] Arrange in clean horizontal row
 - [x] Remove text labels, use icons with tooltips
+
+
+## Feature: Crucible Intake Size & Date
+- [x] Add size fields (height_cm, width_cm) to works_core table
+- [x] Add date field to works_core table (already existed)
+- [x] Update API to accept size and date inputs
+- [x] Add size inputs (height x width in cm) to Crucible Intake form
+- [x] Add date picker to Crucible Intake form
+- [ ] Display size and date in analytics/results

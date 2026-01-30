@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Camera, Flame, Star, Trash2, HelpCircle, Check, Upload } from 'lucide-react';
+import { ArrowLeft, Camera, Flame, Star, Trash2, HelpCircle, Check, Upload, Calendar, Ruler } from 'lucide-react';
 // Photo upload will be handled via server-side tRPC mutation
 
 // Rating descriptions from spec
@@ -40,6 +40,11 @@ export default function CrucibleIntake() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  
+  // Date and size
+  const [workDate, setWorkDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [heightCm, setHeightCm] = useState<string>('');
+  const [widthCm, setWidthCm] = useState<string>('');
   
   // Fetch materials
   const { data: surfaces } = trpc.materials.getByType.useQuery({ type: 'Surface' });
@@ -84,6 +89,7 @@ export default function CrucibleIntake() {
     }
     
     createMutation.mutate({
+      date: workDate,
       surfaceId,
       mediumId,
       toolId: toolId || undefined,
@@ -91,6 +97,8 @@ export default function CrucibleIntake() {
       discovery: discovery || undefined,
       rating,
       disposition,
+      heightCm: heightCm ? parseFloat(heightCm) : undefined,
+      widthCm: widthCm ? parseFloat(widthCm) : undefined,
       photoUrl,
       photoKey,
     });
@@ -129,6 +137,63 @@ export default function CrucibleIntake() {
       {/* Form */}
       <main className="container py-8 max-w-2xl">
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Date & Size */}
+          <Card className="bg-black/40 border-purple-500/30">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-purple-400 text-lg flex items-center gap-2">
+                <Calendar className="w-5 h-5" />
+                Date & Size
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Date */}
+              <div>
+                <Label className="text-purple-400">Date</Label>
+                <Input
+                  type="date"
+                  value={workDate}
+                  onChange={(e) => setWorkDate(e.target.value)}
+                  className="mt-1 bg-black/50 border-purple-500/30 text-white"
+                />
+              </div>
+              
+              {/* Size */}
+              <div>
+                <Label className="text-purple-400 flex items-center gap-2">
+                  <Ruler className="w-4 h-4" />
+                  Size (cm)
+                </Label>
+                <div className="flex items-center gap-2 mt-1">
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={heightCm}
+                    onChange={(e) => setHeightCm(e.target.value)}
+                    placeholder="Height"
+                    className="bg-black/50 border-purple-500/30 text-white w-24"
+                  />
+                  <span className="text-gray-500">×</span>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={widthCm}
+                    onChange={(e) => setWidthCm(e.target.value)}
+                    placeholder="Width"
+                    className="bg-black/50 border-purple-500/30 text-white w-24"
+                  />
+                  <span className="text-gray-500 text-sm">cm</span>
+                </div>
+                {heightCm && widthCm && (
+                  <p className="text-xs text-purple-400 mt-1">
+                    {heightCm}cm × {widthCm}cm
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+          
           {/* Materials Selection */}
           <Card className="bg-black/40 border-cyan-500/30">
             <CardHeader className="pb-3">
