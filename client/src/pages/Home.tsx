@@ -515,6 +515,20 @@ export default function Home() {
                 </TooltipContent>
               </Tooltip>
 
+              {/* Works Browser */}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href="/crucible/works">
+                    <button className="nav-icon-btn group" aria-label="Works">
+                      <Layers className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--neon-cyan)] group-hover:drop-shadow-[0_0_8px_var(--neon-cyan)]" />
+                    </button>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="bg-black border-[var(--neon-cyan)]/50">
+                  <p className="text-xs">Works</p>
+                </TooltipContent>
+              </Tooltip>
+
               {/* Analytics */}
               <Tooltip>
                 <TooltipTrigger asChild>

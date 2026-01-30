@@ -863,3 +863,77 @@ export async function getLowRatingHighDiscoveryPatterns(userId: number): Promise
     .orderBy(desc(worksCore.date))
     .limit(20);
 }
+
+export async function getWorkSurfaces(workId: number): Promise<Material[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db.execute(sql`
+    SELECT m.*
+    FROM materials m
+    INNER JOIN work_surfaces ws ON m.id = ws.surfaceId
+    WHERE ws.workId = ${workId}
+  `);
+  
+  return result[0] as unknown as Material[];
+}
+
+export async function getWorkMediums(workId: number): Promise<Material[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db.execute(sql`
+    SELECT m.*
+    FROM materials m
+    INNER JOIN work_mediums wm ON m.id = wm.mediumId
+    WHERE wm.workId = ${workId}
+  `);
+  
+  return result[0] as unknown as Material[];
+}
+
+export async function getWorkTools(workId: number): Promise<Material[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db.execute(sql`
+    SELECT m.*
+    FROM materials m
+    INNER JOIN work_tools wt ON m.id = wt.toolId
+    WHERE wt.workId = ${workId}
+  `);
+  
+  return result[0] as unknown as Material[];
+}
+
+export async function updateWorkMaterials(
+  workId: number,
+  surfaceIds: number[],
+  mediumIds: number[],
+  toolIds?: number[]
+): Promise<void> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  // Delete existing material relationships
+  await db.delete(workSurfaces).where(eq(workSurfaces.workId, workId));
+  await db.delete(workMediums).where(eq(workMediums.workId, workId));
+  await db.delete(workTools).where(eq(workTools.workId, workId));
+  
+  // Insert new surface relationships
+  for (const surfaceId of surfaceIds) {
+    await db.insert(workSurfaces).values({ workId, surfaceId });
+  }
+  
+  // Insert new medium relationships
+  for (const mediumId of mediumIds) {
+    await db.insert(workMediums).values({ workId, mediumId });
+  }
+  
+  // Insert new tool relationships if provided
+  if (toolIds && toolIds.length > 0) {
+    for (const toolId of toolIds) {
+      await db.insert(workTools).values({ workId, toolId });
+    }
+  }
+}

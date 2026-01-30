@@ -350,3 +350,16 @@
 - [x] Complete database migration for multi-material support via junction tables
 - [x] Test Log Trial button with full form submission
 - [x] Fix Analytics page toFixed errors for number type checking
+
+## Feature: Crucible Works Browser & Edit
+- [x] Create Works browser page (/crucible/works) with grid/card view of all trials
+- [x] Display work cards with: code, date, photo thumbnail, rating, disposition, materials used
+- [x] Add filters: by disposition (Trash/Probably Trash/Save), by rating, by date range
+- [x] Add sorting: by date, by rating, by code
+- [x] Create individual work detail page (/crucible/work/:id) with full information
+- [x] Show full-size photo, all materials (surfaces/mediums/tools), technical intent, discovery notes, size, hours
+- [x] Add edit button to work detail page
+- [x] Create edit work form with pre-filled data
+- [x] Allow editing: materials, notes, rating, disposition, photo, size, hours
+- [x] Add navigation link to Works browser in header
+- [x] Test complete flow: browse → view detail → edit → save

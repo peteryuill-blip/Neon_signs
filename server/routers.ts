@@ -58,6 +58,10 @@ import {
   getTrashRateAsVelocitySignal,
   getDiscoveryDensity,
   getLowRatingHighDiscoveryPatterns,
+  getWorkSurfaces,
+  getWorkMediums,
+  getWorkTools,
+  updateWorkMaterials,
 } from "./db";
 import { TRPCError } from "@trpc/server";
 import { fetchWeather } from "./_core/weather";
@@ -1503,6 +1507,39 @@ export const appRouter = router({
         return work;
       }),
 
+    // Get surfaces for a work
+    getSurfaces: protectedProcedure
+      .input(z.object({ workId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const work = await getWorkById(input.workId);
+        if (!work || work.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+        return getWorkSurfaces(input.workId);
+      }),
+
+    // Get mediums for a work
+    getMediums: protectedProcedure
+      .input(z.object({ workId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const work = await getWorkById(input.workId);
+        if (!work || work.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+        return getWorkMediums(input.workId);
+      }),
+
+    // Get tools for a work
+    getTools: protectedProcedure
+      .input(z.object({ workId: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const work = await getWorkById(input.workId);
+        if (!work || work.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+        return getWorkTools(input.workId);
+      }),
+
     // Get work count and next code
     getNextCode: protectedProcedure.query(async ({ ctx }) => {
       const count = await getWorksCount(ctx.user.id);
@@ -1586,6 +1623,9 @@ export const appRouter = router({
         discovery: z.string().max(280).optional(),
         rating: z.number().min(1).max(5).optional(),
         disposition: z.enum(['Trash', 'Probably_Trash', 'Save']).optional(),
+        heightCm: z.number().positive().optional(),
+        widthCm: z.number().positive().optional(),
+        hours: z.number().positive().optional(),
         photoUrl: z.string().optional(),
         photoKey: z.string().optional(),
       }))
@@ -1597,6 +1637,48 @@ export const appRouter = router({
         
         const { id, ...updates } = input;
         await updateWork(id, updates);
+        return { success: true };
+      }),
+
+    // Update work materials
+    updateMaterials: protectedProcedure
+      .input(z.object({
+        workId: z.number(),
+        surfaceIds: z.array(z.number()).min(1),
+        mediumIds: z.array(z.number()).min(1),
+        toolIds: z.array(z.number()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const work = await getWorkById(input.workId);
+        if (!work || work.userId !== ctx.user.id) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+        
+        // Verify all materials belong to user
+        for (const surfaceId of input.surfaceIds) {
+          const surface = await getMaterialById(surfaceId);
+          if (!surface || surface.userId !== ctx.user.id || surface.materialType !== 'Surface') {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid surface' });
+          }
+        }
+        
+        for (const mediumId of input.mediumIds) {
+          const medium = await getMaterialById(mediumId);
+          if (!medium || medium.userId !== ctx.user.id || medium.materialType !== 'Medium') {
+            throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid medium' });
+          }
+        }
+        
+        if (input.toolIds) {
+          for (const toolId of input.toolIds) {
+            const tool = await getMaterialById(toolId);
+            if (!tool || tool.userId !== ctx.user.id || tool.materialType !== 'Tool') {
+              throw new TRPCError({ code: 'BAD_REQUEST', message: 'Invalid tool' });
+            }
+          }
+        }
+        
+        await updateWorkMaterials(input.workId, input.surfaceIds, input.mediumIds, input.toolIds);
         return { success: true };
       }),
 

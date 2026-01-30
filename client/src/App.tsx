@@ -13,6 +13,9 @@ import EditRoundup from "./pages/EditRoundup";
 import Materials from "./pages/Materials";
 import CrucibleIntake from "./pages/CrucibleIntake";
 import CrucibleAnalytics from "./pages/CrucibleAnalytics";
+import CrucibleWorks from "./pages/CrucibleWorks";
+import WorkDetail from "./pages/WorkDetail";
+import WorkEdit from "./pages/WorkEdit";
 
 function Router() {
   return (
@@ -27,6 +30,9 @@ function Router() {
       <Route path="/materials" component={Materials} />
       <Route path="/crucible/intake" component={CrucibleIntake} />
       <Route path="/crucible/analytics" component={CrucibleAnalytics} />
+      <Route path="/crucible/works" component={CrucibleWorks} />
+      <Route path="/crucible/work/:id" component={WorkDetail} />
+      <Route path="/crucible/work/:id/edit" component={WorkEdit} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
