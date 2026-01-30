@@ -1360,9 +1360,16 @@ export const appRouter = router({
     create: protectedProcedure
       .input(z.object({
         materialType: z.enum(['Surface', 'Medium', 'Tool']),
+        // Basic info from Google Sheets
+        code: z.string().max(32).optional(),
         displayName: z.string().min(1).max(100),
+        brand: z.string().max(100).optional(),
+        specs: z.string().optional(),
+        size: z.string().max(100).optional(),
+        purchaseLocation: z.string().max(200).optional(),
+        cost: z.string().max(50).optional(),
+        notes: z.string().optional(),
         aliases: z.array(z.string()).optional(),
-        notes: z.string().max(200).optional(),
         // Surface fields
         reactivityProfile: z.enum(['Stable', 'Responsive', 'Volatile', 'Chaotic']).optional(),
         edgeBehavior: z.enum(['Sharp', 'Feathered', 'Blooming', 'Fractured']).optional(),
@@ -1397,9 +1404,16 @@ export const appRouter = router({
     update: protectedProcedure
       .input(z.object({
         id: z.number(),
+        // Basic info from Google Sheets
+        code: z.string().max(32).optional(),
         displayName: z.string().min(1).max(100).optional(),
+        brand: z.string().max(100).optional(),
+        specs: z.string().optional(),
+        size: z.string().max(100).optional(),
+        purchaseLocation: z.string().max(200).optional(),
+        cost: z.string().max(50).optional(),
+        notes: z.string().optional(),
         aliases: z.array(z.string()).optional(),
-        notes: z.string().max(200).optional(),
         // Surface fields
         reactivityProfile: z.enum(['Stable', 'Responsive', 'Volatile', 'Chaotic']).optional(),
         edgeBehavior: z.enum(['Sharp', 'Feathered', 'Blooming', 'Fractured']).optional(),

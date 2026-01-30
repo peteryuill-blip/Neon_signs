@@ -167,10 +167,19 @@ export const materials = mysqlTable("materials", {
   userId: int("userId").notNull(),
   materialId: varchar("materialId", { length: 32 }).notNull().unique(), // Auto-generated: S_001, M_001, T_001
   materialType: mysqlEnum("materialType", ["Surface", "Medium", "Tool"]).notNull(),
-  displayName: varchar("displayName", { length: 100 }).notNull(),
+  
+  // Basic info (from Google Sheets)
+  code: varchar("code", { length: 32 }), // Custom user code (MB1, MB2, etc.)
+  displayName: varchar("displayName", { length: 100 }).notNull(), // ITEM_NAME
+  brand: varchar("brand", { length: 100 }), // BRAND
+  specs: text("specs"), // SPECS (specifications/description)
+  size: varchar("size", { length: 100 }), // SIZE (physical dimensions)
+  purchaseLocation: varchar("purchaseLocation", { length: 200 }), // PURCHASE_L (where to buy/link)
+  cost: varchar("cost", { length: 50 }), // COST (price)
+  notes: text("notes"), // NOTES
+  
   aliases: json("aliases").$type<string[] | null>(),
   firstUsedDate: timestamp("firstUsedDate"),
-  notes: varchar("notes", { length: 200 }),
   usedInWorksCount: int("usedInWorksCount").default(0).notNull(), // Track usage for immutability
   
   // Surface-specific fields

@@ -286,3 +286,22 @@
 - [x] Add size inputs (height x width in cm) to Crucible Intake form
 - [x] Add date picker to Crucible Intake form
 - [ ] Display size and date in analytics/results
+
+
+## Feature: Material Fields from Google Sheets
+- [x] Add code field (custom material code like MB1, MB2) to materials table
+- [x] Add brand field (manufacturer/brand name)
+- [x] Add specs field (specifications/description)
+- [x] Add size field (physical dimensions)
+- [x] Add purchaseLocation field (where to buy/link)
+- [x] Add cost field (price)
+- [x] Update Materials page form with all new fields
+- [x] Optimize form for mobile (smaller inputs, better spacing, scrollable)
+- [ ] Display new fields in material cards
+
+## Bug Fix: Materials Input Performance & Mobile UX
+- [x] Fix laggy input fields on Materials page (simplified form)
+- [x] Optimize form rendering for mobile devices (max-height, overflow-y-auto)
+- [x] Improve touch targets and spacing for mobile (smaller h-9 inputs, compact spacing)
+- [x] Reduce unnecessary re-renders (removed complex logic)
+- [x] Simplify material form layout for smaller screens (single column behavioral properties)

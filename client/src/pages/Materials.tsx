@@ -48,8 +48,17 @@ function MaterialForm({
   onCancel: () => void;
   initialData?: any;
 }) {
+  // Basic fields from Google Sheets
+  const [code, setCode] = useState(initialData?.code || '');
   const [displayName, setDisplayName] = useState(initialData?.displayName || '');
+  const [brand, setBrand] = useState(initialData?.brand || '');
+  const [specs, setSpecs] = useState(initialData?.specs || '');
+  const [size, setSize] = useState(initialData?.size || '');
+  const [purchaseLocation, setPurchaseLocation] = useState(initialData?.purchaseLocation || '');
+  const [cost, setCost] = useState(initialData?.cost || '');
   const [notes, setNotes] = useState(initialData?.notes || '');
+  
+  // Behavioral properties
   const [fields, setFields] = useState<Record<string, string>>(initialData || {});
   
   const utils = trpc.useUtils();
@@ -76,7 +85,13 @@ function MaterialForm({
     
     const data = {
       materialType: type,
+      code: code || undefined,
       displayName,
+      brand: brand || undefined,
+      specs: specs || undefined,
+      size: size || undefined,
+      purchaseLocation: purchaseLocation || undefined,
+      cost: cost || undefined,
       notes: notes || undefined,
       ...fields,
     };
@@ -91,42 +106,115 @@ function MaterialForm({
   const isLoading = createMutation.isPending || updateMutation.isPending;
   
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Label htmlFor="displayName" className="text-cyan-400">Display Name *</Label>
-        <Input
-          id="displayName"
-          value={displayName}
-          onChange={(e) => setDisplayName(e.target.value)}
-          placeholder={`e.g., ${type === 'Surface' ? 'Arches 300gsm Cold Press' : type === 'Medium' ? 'Winsor Newton Lamp Black' : 'Size 8 Round Kolinsky'}`}
-          className="mt-1 bg-black/50 border-cyan-500/30 focus:border-cyan-400"
-          required
-        />
+    <form onSubmit={handleSubmit} className="space-y-4 max-h-[70vh] overflow-y-auto px-1">
+      {/* Basic Info Section */}
+      <div className="space-y-3">
+        <h4 className="text-sm font-semibold text-cyan-400 uppercase tracking-wide">Basic Info</h4>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <Label htmlFor="code" className="text-xs text-gray-400">CODE</Label>
+            <Input
+              id="code"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              placeholder="MB1, MB2..."
+              className="mt-1 bg-black/50 border-cyan-500/30 text-sm h-9"
+            />
+          </div>
+          
+          <div>
+            <Label htmlFor="cost" className="text-xs text-gray-400">COST</Label>
+            <Input
+              id="cost"
+              value={cost}
+              onChange={(e) => setCost(e.target.value)}
+              placeholder="$25.00"
+              className="mt-1 bg-black/50 border-cyan-500/30 text-sm h-9"
+            />
+          </div>
+        </div>
+        
+        <div>
+          <Label htmlFor="displayName" className="text-xs text-cyan-400">ITEM NAME *</Label>
+          <Input
+            id="displayName"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            placeholder={`e.g., ${type === 'Surface' ? 'Arches 300gsm' : type === 'Medium' ? 'Lamp Black' : 'Size 8 Round'}`}
+            className="mt-1 bg-black/50 border-cyan-500/30 text-sm h-9"
+            required
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="brand" className="text-xs text-gray-400">BRAND</Label>
+          <Input
+            id="brand"
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
+            placeholder="Manufacturer/brand"
+            className="mt-1 bg-black/50 border-cyan-500/30 text-sm h-9"
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="size" className="text-xs text-gray-400">SIZE</Label>
+          <Input
+            id="size"
+            value={size}
+            onChange={(e) => setSize(e.target.value)}
+            placeholder="Physical dimensions"
+            className="mt-1 bg-black/50 border-cyan-500/30 text-sm h-9"
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="specs" className="text-xs text-gray-400">SPECS</Label>
+          <Textarea
+            id="specs"
+            value={specs}
+            onChange={(e) => setSpecs(e.target.value)}
+            placeholder="Specifications/description"
+            className="mt-1 bg-black/50 border-cyan-500/30 text-sm h-16"
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="purchaseLocation" className="text-xs text-gray-400">PURCHASE LOCATION</Label>
+          <Input
+            id="purchaseLocation"
+            value={purchaseLocation}
+            onChange={(e) => setPurchaseLocation(e.target.value)}
+            placeholder="Where to buy / link"
+            className="mt-1 bg-black/50 border-cyan-500/30 text-sm h-9"
+          />
+        </div>
+        
+        <div>
+          <Label htmlFor="notes" className="text-xs text-gray-400">NOTES</Label>
+          <Textarea
+            id="notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Additional notes"
+            className="mt-1 bg-black/50 border-cyan-500/30 text-sm h-16"
+          />
+        </div>
       </div>
       
-      <div>
-        <Label htmlFor="notes" className="text-cyan-400">Notes</Label>
-        <Textarea
-          id="notes"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-          placeholder="Optional notes about this material..."
-          className="mt-1 bg-black/50 border-cyan-500/30 focus:border-cyan-400"
-          maxLength={200}
-        />
-      </div>
-      
-      <div className="border-t border-cyan-500/20 pt-4">
-        <h4 className="text-sm font-medium text-cyan-400 mb-3">Behavioral Properties</h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Behavioral Properties Section */}
+      <div className="border-t border-cyan-500/20 pt-4 space-y-3">
+        <h4 className="text-sm font-semibold text-cyan-400 uppercase tracking-wide">Behavioral Properties</h4>
+        <div className="grid grid-cols-1 gap-3">
           {dynamicFields.map((field) => (
             <div key={field.name}>
-              <Label htmlFor={field.name} className="text-gray-400 text-sm">{field.label}</Label>
+              <Label htmlFor={field.name} className="text-xs text-gray-400">{field.label.toUpperCase()}</Label>
               <Select
                 value={fields[field.name] || ''}
                 onValueChange={(value) => setFields({ ...fields, [field.name]: value })}
               >
-                <SelectTrigger className="mt-1 bg-black/50 border-cyan-500/30">
+                <SelectTrigger className="mt-1 bg-black/50 border-cyan-500/30 h-9 text-sm">
                   <SelectValue placeholder="Select..." />
                 </SelectTrigger>
                 <SelectContent>
