@@ -49,6 +49,7 @@ export default function CrucibleIntake() {
   const [workDate, setWorkDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [heightCm, setHeightCm] = useState<string>('');
   const [widthCm, setWidthCm] = useState<string>('');
+  const [hours, setHours] = useState<string>('');
   
   // Fetch materials
   const { data: surfacesRaw } = trpc.materials.getByType.useQuery({ type: 'Surface' });
@@ -63,7 +64,7 @@ export default function CrucibleIntake() {
   
   const createMutation = trpc.works.create.useMutation({
     onSuccess: (data) => {
-      navigate(`/crucible/work/${data.id}`);
+      navigate('/crucible/analytics');
     },
   });
   
@@ -119,6 +120,7 @@ export default function CrucibleIntake() {
         disposition,
         heightCm: heightCm ? parseFloat(heightCm) : undefined,
         widthCm: widthCm ? parseFloat(widthCm) : undefined,
+        hours: hours ? parseFloat(hours) : undefined,
       });
       
       // Upload photo if present
@@ -133,11 +135,11 @@ export default function CrucibleIntake() {
             fileName: photoFile.name.replace(/\.[^/.]+$/, ''),
           });
           setIsUploading(false);
-          navigate(`/crucible/work/${work.id}`);
+          navigate('/crucible/analytics');
         };
         reader.readAsDataURL(photoFile);
       } else {
-        navigate(`/crucible/work/${work.id}`);
+        navigate('/crucible/analytics');
       }
     } catch (error) {
       console.error('Failed to create work:', error);
@@ -229,6 +231,25 @@ export default function CrucibleIntake() {
                 {heightCm && widthCm && (
                   <p className="text-xs text-purple-400 mt-1">
                     {heightCm}cm × {widthCm}cm
+                  </p>
+                )}
+              </div>
+              
+              {/* Hours */}
+              <div>
+                <Label className="text-purple-400">Hours Spent</Label>
+                <Input
+                  type="number"
+                  step="0.25"
+                  min="0"
+                  value={hours}
+                  onChange={(e) => setHours(e.target.value)}
+                  placeholder="e.g., 2.5"
+                  className="mt-1 bg-black/50 border-purple-500/30 text-white w-32"
+                />
+                {hours && (
+                  <p className="text-xs text-purple-400 mt-1">
+                    {parseFloat(hours)} hour{parseFloat(hours) !== 1 ? 's' : ''}
                   </p>
                 )}
               </div>

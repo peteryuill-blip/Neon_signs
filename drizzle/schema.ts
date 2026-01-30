@@ -237,6 +237,9 @@ export const worksCore = mysqlTable("works_core", {
   heightCm: float("heightCm"), // Height in centimeters
   widthCm: float("widthCm"), // Width in centimeters
   
+  // Time tracking
+  hours: float("hours"), // Hours spent on this work
+  
   // Photo
   photoUrl: text("photoUrl"),
   photoKey: varchar("photoKey", { length: 256 }), // S3 key for reference

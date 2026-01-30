@@ -1523,6 +1523,7 @@ export const appRouter = router({
         disposition: z.enum(['Trash', 'Probably_Trash', 'Save']),
         heightCm: z.number().positive().optional(), // Height in cm
         widthCm: z.number().positive().optional(), // Width in cm
+        hours: z.number().positive().optional(), // Hours spent
         photoUrl: z.string().optional(),
         photoKey: z.string().optional(),
       }))
@@ -1565,6 +1566,7 @@ export const appRouter = router({
             disposition: input.disposition,
             heightCm: input.heightCm,
             widthCm: input.widthCm,
+            hours: input.hours,
             photoUrl: input.photoUrl,
             photoKey: input.photoKey,
           },

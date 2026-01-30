@@ -331,3 +331,16 @@
 - [x] Add multi-select UI for tools in Crucible Intake (checkbox list)
 - [x] Optimize multi-select for mobile (touch-friendly, scrollable max-h-48)
 - [ ] Display all selected materials in work detail/analytics views
+
+
+## Bug Fix: Log Trial Button Not Working
+- [x] Debug why "Log Trial" button doesn't submit the form (navigation issue fixed)
+- [x] Check form validation errors (surfaceIds/mediumIds validation working)
+- [x] Fix submission handler (redirects to /crucible/analytics after success)
+- [x] Test successful trial creation (all 32 tests passing)
+
+## Feature: Hours Field for Artwork Time Tracking
+- [x] Add hours field to works_core table
+- [x] Add hours input to Crucible Intake form (step 0.25, displays "X hours")
+- [ ] Display hours in work detail/analytics views
+- [x] Update API to accept hours field
