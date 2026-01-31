@@ -809,8 +809,8 @@ export async function getTrashRateAsVelocitySignal(userId: number): Promise<{ to
   const result = await db.execute(sql`
     SELECT 
       COUNT(*) as totalWorks,
-      SUM(CASE WHEN disposition = 'Trash' THEN 1 ELSE 0 END) as trashCount,
-      SUM(CASE WHEN disposition = 'Trash' THEN 1 ELSE 0 END) / COUNT(*) * 100 as trashRate,
+      COALESCE(SUM(CASE WHEN disposition = 'Trash' THEN 1 ELSE 0 END), 0) as trashCount,
+      COALESCE(SUM(CASE WHEN disposition = 'Trash' THEN 1 ELSE 0 END) * 100.0 / NULLIF(COUNT(*), 0), 0) as trashRate,
       COUNT(*) / GREATEST(DATEDIFF(NOW(), MIN(date)) / 7, 1) as weeklyAvg
     FROM works_core
     WHERE userId = ${userId}
@@ -819,10 +819,10 @@ export async function getTrashRateAsVelocitySignal(userId: number): Promise<{ to
   const rows = result[0] as unknown as any[];
   const row = rows?.[0];
   return {
-    totalWorks: row?.totalWorks ?? 0,
-    trashCount: row?.trashCount ?? 0,
-    trashRate: row?.trashRate ?? 0,
-    weeklyAvg: row?.weeklyAvg ?? 0
+    totalWorks: Number(row?.totalWorks ?? 0),
+    trashCount: Number(row?.trashCount ?? 0),
+    trashRate: Number(row?.trashRate ?? 0),
+    weeklyAvg: Number(row?.weeklyAvg ?? 0)
   };
 }
 

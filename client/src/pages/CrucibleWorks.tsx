@@ -17,7 +17,8 @@ const RATING_LABELS: Record<number, string> = {
 const DISPOSITION_CONFIG = {
   Trash: { icon: Trash2, color: 'text-gray-500', bgColor: 'bg-gray-500/10' },
   Probably_Trash: { icon: HelpCircle, color: 'text-amber-500', bgColor: 'bg-amber-500/10' },
-  Save: { icon: Check, color: 'text-cyan-400', bgColor: 'bg-cyan-400/10' },
+  Save_Archive: { icon: Check, color: 'text-cyan-400', bgColor: 'bg-cyan-400/10' },
+  Save_Has_Potential: { icon: Star, color: 'text-purple-400', bgColor: 'bg-purple-400/10' },
 };
 
 export default function CrucibleWorks() {
@@ -71,7 +72,8 @@ export default function CrucibleWorks() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All</SelectItem>
-                <SelectItem value="Save">Save</SelectItem>
+                <SelectItem value="Save_Has_Potential">Save - Has Potential</SelectItem>
+                <SelectItem value="Save_Archive">Save - Archive</SelectItem>
                 <SelectItem value="Probably_Trash">Probably Trash</SelectItem>
                 <SelectItem value="Trash">Trash</SelectItem>
               </SelectContent>

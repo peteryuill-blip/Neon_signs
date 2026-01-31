@@ -15,7 +15,8 @@ const RATING_LABELS: Record<number, { label: string; description: string }> = {
 const DISPOSITION_CONFIG = {
   Trash: { icon: Trash2, color: 'text-gray-500', label: 'Trash' },
   Probably_Trash: { icon: HelpCircle, color: 'text-amber-500', label: 'Probably Trash' },
-  Save: { icon: Check, color: 'text-cyan-400', label: 'Save' },
+  Save_Archive: { icon: Check, color: 'text-cyan-400', label: 'Save - Archive' },
+  Save_Has_Potential: { icon: Star, color: 'text-purple-400', label: 'Save - Has Potential' },
 };
 
 export default function WorkDetail() {

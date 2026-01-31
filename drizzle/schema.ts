@@ -228,7 +228,7 @@ export const worksCore = mysqlTable("works_core", {
   technicalIntent: varchar("technicalIntent", { length: 140 }), // Pre-action hypothesis
   discovery: varchar("discovery", { length: 280 }), // Post-action observation
   rating: int("rating").notNull(), // 1-5 (somatic_drill to breakthrough)
-  disposition: mysqlEnum("disposition", ["Trash", "Probably_Trash", "Save"]).notNull(),
+  disposition: mysqlEnum("disposition", ["Trash", "Probably_Trash", "Save_Archive", "Save_Has_Potential"]).notNull(),
   
   // Size (dimensions in cm)
   heightCm: float("heightCm"), // Height in centimeters

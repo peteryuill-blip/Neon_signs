@@ -1557,7 +1557,7 @@ export const appRouter = router({
         technicalIntent: z.string().max(140).optional(),
         discovery: z.string().max(280).optional(),
         rating: z.number().min(1).max(5),
-        disposition: z.enum(['Trash', 'Probably_Trash', 'Save']),
+        disposition: z.enum(['Trash', 'Probably_Trash', 'Save_Archive', 'Save_Has_Potential']),
         heightCm: z.number().positive().optional(), // Height in cm
         widthCm: z.number().positive().optional(), // Width in cm
         hours: z.number().positive().optional(), // Hours spent
@@ -1623,7 +1623,7 @@ export const appRouter = router({
         technicalIntent: z.string().max(140).optional(),
         discovery: z.string().max(280).optional(),
         rating: z.number().min(1).max(5).optional(),
-        disposition: z.enum(['Trash', 'Probably_Trash', 'Save']).optional(),
+        disposition: z.enum(['Trash', 'Probably_Trash', 'Save_Archive', 'Save_Has_Potential']).optional(),
         heightCm: z.number().positive().optional(),
         widthCm: z.number().positive().optional(),
         hours: z.number().positive().optional(),

@@ -370,3 +370,18 @@
 - [x] Ensure all measurement fields (height, width, hours) are fully editable
 - [x] Reuse photo optimization logic from CrucibleIntake for consistency
 - [x] Test photo upload and replacement in edit mode
+
+## Bug Fix: Analytics Trash Rate Stuck at 0%
+- [x] Investigate trash rate calculation logic in Analytics page
+- [x] Fix the calculation to properly count works by disposition
+- [x] Test with different disposition values to verify percentage updates
+
+## Feature: Update Disposition Options
+- [x] Update database schema to change disposition enum values
+- [x] Replace "Save" with "Save - Archive" and "Save - Has Potential"
+- [x] Update CrucibleIntake form disposition options
+- [x] Update WorkEdit form disposition options
+- [x] Update CrucibleWorks filter options
+- [x] Update Analytics page disposition logic
+- [x] Run database migration to apply schema changes
+- [x] Test all forms and filters with new disposition values

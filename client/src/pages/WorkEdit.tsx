@@ -20,7 +20,8 @@ const RATING_LABELS: Record<number, string> = {
 const DISPOSITION_OPTIONS = [
   { value: 'Trash', label: 'Trash', icon: Trash2, color: 'text-gray-500' },
   { value: 'Probably_Trash', label: 'Probably Trash', icon: HelpCircle, color: 'text-amber-500' },
-  { value: 'Save', label: 'Save', icon: Check, color: 'text-cyan-400' },
+  { value: 'Save_Archive', label: 'Save - Archive', icon: Check, color: 'text-cyan-400' },
+  { value: 'Save_Has_Potential', label: 'Save - Has Potential', icon: Star, color: 'text-purple-400' },
 ] as const;
 
 export default function WorkEdit() {
@@ -70,7 +71,7 @@ export default function WorkEdit() {
   const [technicalIntent, setTechnicalIntent] = useState('');
   const [discovery, setDiscovery] = useState('');
   const [rating, setRating] = useState(3);
-  const [disposition, setDisposition] = useState<'Trash' | 'Probably_Trash' | 'Save'>('Save');
+  const [disposition, setDisposition] = useState<'Trash' | 'Probably_Trash' | 'Save_Archive' | 'Save_Has_Potential'>('Save_Archive');
   const [heightCm, setHeightCm] = useState<number | undefined>();
   const [widthCm, setWidthCm] = useState<number | undefined>();
   const [hours, setHours] = useState<number | undefined>();
