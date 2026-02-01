@@ -385,3 +385,13 @@
 - [x] Update Analytics page disposition logic
 - [x] Run database migration to apply schema changes
 - [x] Test all forms and filters with new disposition values
+
+## Bug Fix: Broken Image Links on Crucible Works Page
+- [x] Investigate why images are showing as broken (404 errors) - S3 storage was cleared
+- [x] Check database photoUrl values for works - URLs exist but files are gone
+- [x] Verify S3 storage and URL generation - Platform storage issue
+- [x] Implement hybrid storage: base64 thumbnails in database + S3 URLs for full-res
+- [x] Add photoThumbnail field to works_core schema
+- [x] Update upload logic to generate and store thumbnails
+- [x] Update CrucibleWorks and WorkDetail to use database thumbnails
+- [x] Test image display on all pages

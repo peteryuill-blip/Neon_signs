@@ -1,0 +1,40 @@
+{
+  "query": "SELECT id, code, photoUrl, photoKey FROM works_core ORDER BY id DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2Y9wzvyJgsWeM7p.root --database Qogm3U7EGpVgaoy6kEznuP --execute SELECT id, code, photoUrl, photoKey FROM works_core ORDER BY id DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "90007",
+      "code": "T_017",
+      "photoUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663243139088/Qogm3U7EGpVgaoy6kEznuP/1-works/T_017-yfqaydhp.webp",
+      "photoKey": "1-works/T_017-yfqaydhp.webp"
+    },
+    {
+      "id": "90006",
+      "code": "T_016",
+      "photoUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663243139088/Qogm3U7EGpVgaoy6kEznuP/1-works/T_016-3i04ij24.webp",
+      "photoKey": "1-works/T_016-3i04ij24.webp"
+    },
+    {
+      "id": "90005",
+      "code": "T_015",
+      "photoUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663243139088/Qogm3U7EGpVgaoy6kEznuP/1-works/T_015-x0rtioy1.webp",
+      "photoKey": "1-works/T_015-x0rtioy1.webp"
+    },
+    {
+      "id": "90004",
+      "code": "T_014",
+      "photoUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663243139088/Qogm3U7EGpVgaoy6kEznuP/1-works/T_014-csf47yeu.webp",
+      "photoKey": "1-works/T_014-csf47yeu.webp"
+    },
+    {
+      "id": "90003",
+      "code": "T_013",
+      "photoUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663243139088/Qogm3U7EGpVgaoy6kEznuP/1-works/T_013-ywolxvlv.webp",
+      "photoKey": "1-works/T_013-ywolxvlv.webp"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcode\tphotoUrl\tphotoKey\n90007\tT_017\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663243139088/Qogm3U7EGpVgaoy6kEznuP/1-works/T_017-yfqaydhp.webp\t1-works/T_017-yfqaydhp.webp\n90006\tT_016\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663243139088/Qogm3U7EGpVgaoy6kEznuP/1-works/T_016-3i04ij24.webp\t1-works/T_016-3i04ij24.webp\n90005\tT_015\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663243139088/Qogm3U7EGpVgaoy6kEznuP/1-works/T_015-x0rtioy1.webp\t1-works/T_015-x0rtioy1.webp\n90004\tT_014\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663243139088/Qogm3U7EGpVgaoy6kEznuP/1-works/T_014-csf47yeu.webp\t1-works/T_014-csf47yeu.webp\n90003\tT_013\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663243139088/Qogm3U7EGpVgaoy6kEznuP/1-works/T_013-ywolxvlv.webp\t1-works/T_013-ywolxvlv.webp\n",
+  "stderr": "",
+  "execution_time_ms": 1996
+}

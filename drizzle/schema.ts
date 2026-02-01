@@ -240,6 +240,7 @@ export const worksCore = mysqlTable("works_core", {
   // Photo
   photoUrl: text("photoUrl"),
   photoKey: varchar("photoKey", { length: 256 }), // S3 key for reference
+  photoThumbnail: text("photoThumbnail"), // Base64 thumbnail for reliable display
   
   // Session linking (optional)
   sessionId: int("sessionId"), // Could link to a studio session

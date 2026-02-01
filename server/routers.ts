@@ -1704,18 +1704,34 @@ export const appRouter = router({
         const base64Data = input.photoData.replace(/^data:image\/\w+;base64,/, '');
         const buffer = Buffer.from(base64Data, 'base64');
 
-        // Upload to S3
-        const { url, key } = await uploadPhoto(
-          ctx.user.id,
-          buffer,
-          input.fileName,
-          'work'
-        );
+        // Generate thumbnail for database storage
+        const { generateThumbnail } = await import('./generateThumbnail');
+        const thumbnail = await generateThumbnail(buffer);
 
-        // Update work with photo URL and key
-        await updateWork(input.workId, { photoUrl: url, photoKey: key });
+        // Upload to S3 (keep trying even if it might fail)
+        let url = '';
+        let key = '';
+        try {
+          const uploadResult = await uploadPhoto(
+            ctx.user.id,
+            buffer,
+            input.fileName,
+            'work'
+          );
+          url = uploadResult.url;
+          key = uploadResult.key;
+        } catch (error) {
+          console.error('S3 upload failed, using thumbnail only:', error);
+        }
 
-        return { url, key };
+        // Update work with photo URL, key, and thumbnail
+        await updateWork(input.workId, { 
+          photoUrl: url || null, 
+          photoKey: key || null,
+          photoThumbnail: thumbnail 
+        });
+
+        return { url, key, thumbnail };
       }),
   }),
 

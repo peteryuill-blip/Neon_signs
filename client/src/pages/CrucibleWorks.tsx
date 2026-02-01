@@ -118,10 +118,10 @@ export default function CrucibleWorks() {
                   <Card className="bg-black/40 border-purple-500/30 hover:border-magenta-400/50 transition-all cursor-pointer group">
                     <CardContent className="p-0">
                       {/* Photo */}
-                      {work.photoUrl ? (
+                      {(work.photoThumbnail || work.photoUrl) ? (
                         <div className="aspect-[4/3] overflow-hidden rounded-t-lg">
                           <img 
-                            src={work.photoUrl} 
+                            src={work.photoThumbnail || work.photoUrl || ''} 
                             alt={work.code}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                           />

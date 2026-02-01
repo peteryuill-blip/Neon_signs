@@ -96,10 +96,10 @@ export default function WorkDetail() {
       <main className="container py-8 max-w-4xl">
         <div className="space-y-6">
           {/* Photo */}
-          {work.photoUrl && (
+          {(work.photoThumbnail || work.photoUrl) && (
             <Card className="bg-black/40 border-purple-500/30 overflow-hidden">
               <img 
-                src={work.photoUrl} 
+                src={work.photoThumbnail || work.photoUrl || ''} 
                 alt={work.code}
                 className="w-full max-h-[600px] object-contain bg-black"
               />
