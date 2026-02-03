@@ -1,0 +1,1 @@
+ALTER TABLE `works_core` MODIFY COLUMN `photoThumbnail` longtext;

@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, boolean, json, float } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, longtext, timestamp, varchar, boolean, json, float } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -240,7 +240,7 @@ export const worksCore = mysqlTable("works_core", {
   // Photo
   photoUrl: text("photoUrl"),
   photoKey: varchar("photoKey", { length: 256 }), // S3 key for reference
-  photoThumbnail: text("photoThumbnail"), // Base64 thumbnail for reliable display
+  photoThumbnail: longtext("photoThumbnail"), // Base64 thumbnail for reliable display
   
   // Session linking (optional)
   sessionId: int("sessionId"), // Could link to a studio session

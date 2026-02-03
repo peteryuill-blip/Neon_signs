@@ -410,3 +410,10 @@
 - [x] Add success/error notifications - console logs and error alerts
 - [x] Ensure photo displays in preview immediately after selection - working
 - [x] Test complete user flow from photo selection to final display - fixed synchronous flow
+
+## CRITICAL BUG: Photo Upload Database Update Failure
+- [x] Fix "Failed query: update works_core set photoUrl/photoKey/photoThumbnail" error - Changed TEXT to LONGTEXT
+- [x] Investigate why database update is failing in uploadPhoto mutation - Base64 thumbnails exceeded TEXT 64KB limit
+- [x] Check if photoThumbnail column exists and has correct type - Changed to LONGTEXT (4GB limit)
+- [x] Verify updateWork function in db.ts handles photo fields correctly - Working correctly
+- [x] Test photo upload end-to-end after fix - T_021 uploaded successfully with yellow photo
