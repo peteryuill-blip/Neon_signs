@@ -1,0 +1,30 @@
+{
+  "query": "SELECT id, code, photoKey FROM works_core WHERE id >= 120000 ORDER BY id DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2Y9wzvyJgsWeM7p.root --database Qogm3U7EGpVgaoy6kEznuP --execute SELECT id, code, photoKey FROM works_core WHERE id >= 120000 ORDER BY id DESC LIMIT 5;",
+  "rows": [
+    {
+      "id": "150002",
+      "code": "T_021",
+      "photoKey": "1-works/test-yellow-ghs1hqth.webp"
+    },
+    {
+      "id": "150001",
+      "code": "T_020",
+      "photoKey": "1-works/test_artwork-8obmqawd.webp"
+    },
+    {
+      "id": "120002",
+      "code": "T_019",
+      "photoKey": "1-works/test-photo-81bupk1v.webp"
+    },
+    {
+      "id": "120001",
+      "code": "T_018",
+      "photoKey": "1-works/test_t018-12kbu1ro.webp"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcode\tphotoKey\n150002\tT_021\t1-works/test-yellow-ghs1hqth.webp\n150001\tT_020\t1-works/test_artwork-8obmqawd.webp\n120002\tT_019\t1-works/test-photo-81bupk1v.webp\n120001\tT_018\t1-works/test_t018-12kbu1ro.webp\n",
+  "stderr": "",
+  "execution_time_ms": 1598
+}

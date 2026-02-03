@@ -4,7 +4,7 @@ import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Flame, Star, Trash2, HelpCircle, Check, Calendar, Ruler, Clock } from 'lucide-react';
+import { ArrowLeft, Flame, Star, Trash2, HelpCircle, Check, Calendar, Ruler, Clock, Download } from 'lucide-react';
 
 const RATING_LABELS: Record<number, string> = {
   1: 'Somatic Drill',
@@ -26,6 +26,46 @@ export default function CrucibleWorks() {
   const [ratingFilter, setRatingFilter] = useState<string>('all');
   
   const { data: works, isLoading } = trpc.works.getAll.useQuery({ limit: 100 });
+  const { refetch: fetchExportData } = trpc.works.exportCSV.useQuery(undefined, { enabled: false });
+  
+  const handleExportCSV = async () => {
+    try {
+      const { data } = await fetchExportData();
+      if (!data) return;
+      
+      // Convert to CSV
+      const headers = ['Code', 'Date', 'Rating', 'Disposition', 'Surfaces', 'Mediums', 'Tools', 'Technical Intent', 'Discovery', 'Height (cm)', 'Width (cm)', 'Hours'];
+      const rows = data.map(work => [
+        work.code,
+        new Date(work.date).toISOString().split('T')[0],
+        work.rating || '',
+        work.disposition.replace(/_/g, ' '),
+        work.surfaces,
+        work.mediums,
+        work.tools,
+        work.technicalIntent || '',
+        work.discovery || '',
+        work.heightCm || '',
+        work.widthCm || '',
+        work.hours || '',
+      ]);
+      
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      ].join('\n');
+      
+      // Download
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `crucible-works-${new Date().toISOString().split('T')[0]}.csv`;
+      link.click();
+    } catch (error) {
+      console.error('Failed to export CSV:', error);
+      alert('Failed to export CSV. Please try again.');
+    }
+  };
   
   // Filter works
   const filteredWorks = works?.filter(work => {
@@ -53,9 +93,20 @@ export default function CrucibleWorks() {
               </div>
             </div>
             
-            <div className="text-right">
-              <div className="text-2xl font-bold text-cyan-400">{filteredWorks.length}</div>
-              <div className="text-sm text-gray-500">trials</div>
+            <div className="flex items-center gap-4">
+              <Button 
+                onClick={handleExportCSV}
+                variant="outline"
+                size="sm"
+                className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export CSV
+              </Button>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-cyan-400">{filteredWorks.length}</div>
+                <div className="text-sm text-gray-500">trials</div>
+              </div>
             </div>
           </div>
         </div>

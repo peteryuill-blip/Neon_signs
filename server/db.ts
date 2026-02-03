@@ -937,3 +937,49 @@ export async function updateWorkMaterials(
     }
   }
 }
+
+/**
+ * Get all works with their materials for CSV export
+ */
+export async function getAllWorksForExport(): Promise<Array<{
+  code: string;
+  date: Date;
+  rating: number | null;
+  disposition: string;
+  surfaces: string;
+  mediums: string;
+  tools: string;
+  technicalIntent: string | null;
+  discovery: string | null;
+  heightCm: number | null;
+  widthCm: number | null;
+  hours: number | null;
+}>> {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+  const works = await db.select().from(worksCore).orderBy(desc(worksCore.date));
+  
+  const result = [];
+  for (const work of works) {
+    const surfaces = await getWorkSurfaces(work.id);
+    const mediums = await getWorkMediums(work.id);
+    const tools = await getWorkTools(work.id);
+    
+    result.push({
+      code: work.code,
+      date: work.date,
+      rating: work.rating,
+      disposition: work.disposition,
+      surfaces: surfaces.map(s => s.code).join('; '),
+      mediums: mediums.map(m => m.code).join('; '),
+      tools: tools.map(t => t.code).join('; '),
+      technicalIntent: work.technicalIntent,
+      discovery: work.discovery,
+      heightCm: work.heightCm,
+      widthCm: work.widthCm,
+      hours: work.hours,
+    });
+  }
+  
+  return result;
+}

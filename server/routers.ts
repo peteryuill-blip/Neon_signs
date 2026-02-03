@@ -62,6 +62,7 @@ import {
   getWorkMediums,
   getWorkTools,
   updateWorkMaterials,
+  getAllWorksForExport,
 } from "./db";
 import { TRPCError } from "@trpc/server";
 import { fetchWeather } from "./_core/weather";
@@ -1545,6 +1546,11 @@ export const appRouter = router({
       const count = await getWorksCount(ctx.user.id);
       const nextCode = await getNextWorkCode(ctx.user.id);
       return { count, nextCode };
+    }),
+
+    // Export all works as CSV data
+    exportCSV: protectedProcedure.query(async ({ ctx }) => {
+      return getAllWorksForExport();
     }),
 
     // Create new work (Crucible Intake)

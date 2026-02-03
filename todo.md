@@ -417,3 +417,10 @@
 - [x] Check if photoThumbnail column exists and has correct type - Changed to LONGTEXT (4GB limit)
 - [x] Verify updateWork function in db.ts handles photo fields correctly - Working correctly
 - [x] Test photo upload end-to-end after fix - T_021 uploaded successfully with yellow photo
+
+## Feature: CSV Export for Crucible Works
+- [x] Create API endpoint to fetch all works with materials data
+- [x] Format data as CSV with columns: code, date, rating, disposition, surfaces, mediums, tools, technical_intent, discovery, height_cm, width_cm, hours
+- [x] Add CSV export button to CrucibleWorks page header
+- [x] Generate and download CSV file with all trial data
+- [x] Test CSV export with existing works - Downloaded crucible-works-2026-02-03.csv with 21 trials
