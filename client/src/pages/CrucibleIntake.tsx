@@ -63,11 +63,7 @@ export default function CrucibleIntake() {
   const tools = toolsRaw ? naturalSortByCode(toolsRaw) : [];
   const { data: nextCodeData } = trpc.works.getNextCode.useQuery();
   
-  const createMutation = trpc.works.create.useMutation({
-    onSuccess: (data) => {
-      navigate('/crucible/analytics');
-    },
-  });
+  const createMutation = trpc.works.create.useMutation();
   
   const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -124,26 +120,37 @@ export default function CrucibleIntake() {
         hours: hours ? parseFloat(hours) : undefined,
       });
       
-      // Upload photo if present
+      // Upload photo if present - WAIT for it to complete
       if (photoFile && work.id) {
         setIsUploading(true);
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          const photoData = e.target?.result as string;
-          await uploadPhotoMutation.mutateAsync({
+        try {
+          const photoData = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target?.result as string);
+            reader.onerror = reject;
+            reader.readAsDataURL(photoFile);
+          });
+          
+          console.log('Uploading photo for work', work.id, 'size:', photoData.length);
+          const result = await uploadPhotoMutation.mutateAsync({
             workId: work.id,
             photoData,
             fileName: photoFile.name.replace(/\.[^/.]+$/, ''),
           });
+          console.log('✅ Photo upload SUCCESS:', result);
           setIsUploading(false);
-          navigate('/crucible/analytics');
-        };
-        reader.readAsDataURL(photoFile);
-      } else {
-        navigate('/crucible/analytics');
+        } catch (error) {
+          console.error('Photo upload FAILED:', error);
+          alert('Photo upload failed, but work was saved. You can edit the work later to add the photo.');
+          setIsUploading(false);
+        }
       }
+      
+      // Only navigate after EVERYTHING is complete
+      navigate('/crucible/analytics');
     } catch (error) {
       console.error('Failed to create work:', error);
+      alert('Failed to create work. Please try again.');
       setIsUploading(false);
     }
   };

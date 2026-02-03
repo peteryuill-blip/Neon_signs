@@ -1,0 +1,18 @@
+{
+  "query": "SELECT id, code, photoUrl, photoKey, LENGTH(photoThumbnail) as thumbnailSize, createdAt FROM works_core WHERE code = 'T_018';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2Y9wzvyJgsWeM7p.root --database Qogm3U7EGpVgaoy6kEznuP --execute SELECT id, code, photoUrl, photoKey, LENGTH(photoThumbnail) as thumbnailSize, createdAt FROM works_core WHERE code = 'T_018';",
+  "rows": [
+    {
+      "id": "120001",
+      "code": "T_018",
+      "photoUrl": "NULL",
+      "photoKey": "NULL",
+      "thumbnailSize": "NULL",
+      "createdAt": "2026-02-03 06:15:21"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcode\tphotoUrl\tphotoKey\tthumbnailSize\tcreatedAt\n120001\tT_018\tNULL\tNULL\tNULL\t2026-02-03 06:15:21\n",
+  "stderr": "",
+  "execution_time_ms": 1513
+}

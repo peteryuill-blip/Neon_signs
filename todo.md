@@ -395,3 +395,18 @@
 - [x] Update upload logic to generate and store thumbnails
 - [x] Update CrucibleWorks and WorkDetail to use database thumbnails
 - [x] Test image display on all pages
+
+## Bug Fix: New Work Photos Not Uploading
+- [ ] Test photo upload flow on Crucible Intake
+- [ ] Check server logs for upload errors
+- [ ] Debug uploadPhoto mutation and thumbnail generation
+- [ ] Fix photo upload issue
+- [ ] Verify photos display correctly after upload
+
+## Critical Fix: Photo Upload User Experience
+- [x] Investigate why users report photo upload failures - premature navigation was the issue
+- [x] Add immediate visual feedback when photo is selected - preview already working
+- [x] Add clear loading state during upload process - "Uploading Photo..." button state
+- [x] Add success/error notifications - console logs and error alerts
+- [x] Ensure photo displays in preview immediately after selection - working
+- [x] Test complete user flow from photo selection to final display - fixed synchronous flow

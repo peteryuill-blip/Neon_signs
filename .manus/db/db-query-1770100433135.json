@@ -1,0 +1,17 @@
+{
+  "query": "SELECT id, code, photoUrl, photoThumbnail IS NOT NULL as hasThumbnail, LENGTH(photoThumbnail) as thumbnailSize FROM works_core WHERE code = 'T_019';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2Y9wzvyJgsWeM7p.root --database Qogm3U7EGpVgaoy6kEznuP --execute SELECT id, code, photoUrl, photoThumbnail IS NOT NULL as hasThumbnail, LENGTH(photoThumbnail) as thumbnailSize FROM works_core WHERE code = 'T_019';",
+  "rows": [
+    {
+      "id": "120002",
+      "code": "T_019",
+      "photoUrl": "https://d2xsxph8kpxj0f.cloudfront.net/310519663243139088/Qogm3U7EGpVgaoy6kEznuP/1-works/test-photo-81bupk1v.webp",
+      "hasThumbnail": "1",
+      "thumbnailSize": "1071"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcode\tphotoUrl\thasThumbnail\tthumbnailSize\n120002\tT_019\thttps://d2xsxph8kpxj0f.cloudfront.net/310519663243139088/Qogm3U7EGpVgaoy6kEznuP/1-works/test-photo-81bupk1v.webp\t1\t1071\n",
+  "stderr": "",
+  "execution_time_ms": 1593
+}
