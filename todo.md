@@ -424,3 +424,14 @@
 - [x] Add CSV export button to CrucibleWorks page header
 - [x] Generate and download CSV file with all trial data
 - [x] Test CSV export with existing works - Downloaded crucible-works-2026-02-03.csv with 21 trials
+
+## Enhancement: Comprehensive Crucible Analytics Dashboard
+- [x] Add material usage breakdown (most used surfaces, mediums, tools)
+- [x] Add rating distribution chart (1-5 star breakdown)
+- [x] Add disposition breakdown chart (Trash, Probably Trash, Save variants)
+- [x] Add dimensional statistics (avg/min/max height, width, total area)
+- [x] Add time investment statistics (total hours, avg hours per work, distribution)
+- [x] Add temporal trends (works per week, rating over time, trash rate over time) - API ready, not displayed yet
+- [x] Add API endpoints for detailed analytics queries
+- [x] Create responsive grid layout for all metrics
+- [x] Test with real data and verify mobile optimization

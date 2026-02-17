@@ -63,6 +63,12 @@ import {
   getWorkTools,
   updateWorkMaterials,
   getAllWorksForExport,
+  getMaterialUsageStats,
+  getRatingDistribution,
+  getDispositionBreakdown,
+  getDimensionalStats,
+  getTimeInvestmentStats,
+  getTemporalTrends,
 } from "./db";
 import { TRPCError } from "@trpc/server";
 import { fetchWeather } from "./_core/weather";
@@ -1771,6 +1777,36 @@ export const appRouter = router({
     // Low rating + high discovery patterns
     lowRatingHighDiscovery: protectedProcedure.query(async ({ ctx }) => {
       return getLowRatingHighDiscoveryPatterns(ctx.user.id);
+    }),
+
+    // Material usage statistics
+    materialUsage: protectedProcedure.query(async () => {
+      return getMaterialUsageStats();
+    }),
+
+    // Rating distribution
+    ratingDistribution: protectedProcedure.query(async () => {
+      return getRatingDistribution();
+    }),
+
+    // Disposition breakdown
+    dispositionBreakdown: protectedProcedure.query(async () => {
+      return getDispositionBreakdown();
+    }),
+
+    // Dimensional statistics
+    dimensionalStats: protectedProcedure.query(async () => {
+      return getDimensionalStats();
+    }),
+
+    // Time investment statistics
+    timeInvestment: protectedProcedure.query(async () => {
+      return getTimeInvestmentStats();
+    }),
+
+    // Temporal trends
+    temporalTrends: protectedProcedure.query(async () => {
+      return getTemporalTrends();
     }),
 
     // Dashboard summary

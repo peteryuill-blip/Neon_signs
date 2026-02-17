@@ -983,3 +983,157 @@ export async function getAllWorksForExport(): Promise<Array<{
   
   return result;
 }
+
+
+// ===== CRUCIBLE ANALYTICS DETAILED QUERIES =====
+
+export async function getMaterialUsageStats() {
+  const db = await getDb();
+  if (!db) return { surfaceUsage: [], mediumUsage: [], toolUsage: [] };
+  
+  const surfaceUsage = await db
+    .select({
+      materialId: materials.id,
+      code: materials.code,
+      name: materials.name,
+      usageCount: sql<number>`COUNT(${workSurfaces.workId})`.as('usage_count'),
+    })
+    .from(materials)
+    .leftJoin(workSurfaces, eq(materials.id, workSurfaces.surfaceId))
+    .where(eq(materials.type, 'surface'))
+    .groupBy(materials.id)
+    .orderBy(desc(sql`usage_count`));
+
+  const mediumUsage = await db
+    .select({
+      materialId: materials.id,
+      code: materials.code,
+      name: materials.name,
+      usageCount: sql<number>`COUNT(${workMediums.workId})`.as('usage_count'),
+    })
+    .from(materials)
+    .leftJoin(workMediums, eq(materials.id, workMediums.mediumId))
+    .where(eq(materials.type, 'medium'))
+    .groupBy(materials.id)
+    .orderBy(desc(sql`usage_count`));
+
+  const toolUsage = await db
+    .select({
+      materialId: materials.id,
+      code: materials.code,
+      name: materials.name,
+      usageCount: sql<number>`COUNT(${workTools.workId})`.as('usage_count'),
+    })
+    .from(materials)
+    .leftJoin(workTools, eq(materials.id, workTools.toolId))
+    .where(eq(materials.type, 'tool'))
+    .groupBy(materials.id)
+    .orderBy(desc(sql`usage_count`));
+
+  return { surfaceUsage, mediumUsage, toolUsage };
+}
+
+export async function getRatingDistribution() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const distribution = await db
+    .select({
+      rating: worksCore.rating,
+      count: sql<number>`COUNT(*)`.as('count'),
+    })
+    .from(worksCore)
+    .groupBy(worksCore.rating)
+    .orderBy(worksCore.rating);
+
+  return distribution;
+}
+
+export async function getDispositionBreakdown() {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const breakdown = await db
+    .select({
+      disposition: worksCore.disposition,
+      count: sql<number>`COUNT(*)`.as('count'),
+    })
+    .from(worksCore)
+    .groupBy(worksCore.disposition)
+    .orderBy(desc(sql`count`));
+
+  return breakdown;
+}
+
+export async function getDimensionalStats() {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const stats = await db
+    .select({
+      avgHeight: sql<number>`AVG(${worksCore.heightCm})`.as('avg_height'),
+      minHeight: sql<number>`MIN(${worksCore.heightCm})`.as('min_height'),
+      maxHeight: sql<number>`MAX(${worksCore.heightCm})`.as('max_height'),
+      avgWidth: sql<number>`AVG(${worksCore.widthCm})`.as('avg_width'),
+      minWidth: sql<number>`MIN(${worksCore.widthCm})`.as('min_width'),
+      maxWidth: sql<number>`MAX(${worksCore.widthCm})`.as('max_width'),
+      totalArea: sql<number>`SUM(${worksCore.heightCm} * ${worksCore.widthCm})`.as('total_area'),
+    })
+    .from(worksCore);
+
+  return stats[0] || null;
+}
+
+export async function getTimeInvestmentStats() {
+  const db = await getDb();
+  if (!db) return null;
+  
+  const stats = await db
+    .select({
+      totalHours: sql<number>`SUM(${worksCore.hours})`.as('total_hours'),
+      avgHours: sql<number>`AVG(${worksCore.hours})`.as('avg_hours'),
+      minHours: sql<number>`MIN(${worksCore.hours})`.as('min_hours'),
+      maxHours: sql<number>`MAX(${worksCore.hours})`.as('max_hours'),
+      worksWithHours: sql<number>`COUNT(CASE WHEN ${worksCore.hours} IS NOT NULL THEN 1 END)`.as('works_with_hours'),
+    })
+    .from(worksCore);
+
+  return stats[0] || null;
+}
+
+export async function getTemporalTrends() {
+  const db = await getDb();
+  if (!db) return { worksPerWeek: [], ratingOverTime: [], trashRateOverTime: [] };
+  
+  // Works per week
+  const worksPerWeek = await db
+    .select({
+      week: sql<string>`DATE_FORMAT(${worksCore.date}, '%Y-%U')`.as('week'),
+      count: sql<number>`COUNT(*)`.as('count'),
+    })
+    .from(worksCore)
+    .groupBy(sql`week`)
+    .orderBy(sql`week`);
+
+  // Rating over time (monthly average)
+  const ratingOverTime = await db
+    .select({
+      month: sql<string>`DATE_FORMAT(${worksCore.date}, '%Y-%m')`.as('month'),
+      avgRating: sql<number>`AVG(${worksCore.rating})`.as('avg_rating'),
+    })
+    .from(worksCore)
+    .groupBy(sql`month`)
+    .orderBy(sql`month`);
+
+  // Trash rate over time (monthly)
+  const trashRateOverTime = await db
+    .select({
+      month: sql<string>`DATE_FORMAT(${worksCore.date}, '%Y-%m')`.as('month'),
+      trashRate: sql<number>`(SUM(CASE WHEN ${worksCore.disposition} IN ('Trash', 'Probably_Trash') THEN 1 ELSE 0 END) * 100.0 / COUNT(*))`.as('trash_rate'),
+    })
+    .from(worksCore)
+    .groupBy(sql`month`)
+    .orderBy(sql`month`);
+
+  return { worksPerWeek, ratingOverTime, trashRateOverTime };
+}
