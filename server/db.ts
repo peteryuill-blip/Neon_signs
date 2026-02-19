@@ -995,12 +995,12 @@ export async function getMaterialUsageStats() {
     .select({
       materialId: materials.id,
       code: materials.code,
-      name: materials.name,
+      name: materials.displayName,
       usageCount: sql<number>`COUNT(${workSurfaces.workId})`.as('usage_count'),
     })
     .from(materials)
     .leftJoin(workSurfaces, eq(materials.id, workSurfaces.surfaceId))
-    .where(eq(materials.type, 'surface'))
+    .where(eq(materials.materialType, 'Surface'))
     .groupBy(materials.id)
     .orderBy(desc(sql`usage_count`));
 
@@ -1008,12 +1008,12 @@ export async function getMaterialUsageStats() {
     .select({
       materialId: materials.id,
       code: materials.code,
-      name: materials.name,
+      name: materials.displayName,
       usageCount: sql<number>`COUNT(${workMediums.workId})`.as('usage_count'),
     })
     .from(materials)
     .leftJoin(workMediums, eq(materials.id, workMediums.mediumId))
-    .where(eq(materials.type, 'medium'))
+    .where(eq(materials.materialType, 'Medium'))
     .groupBy(materials.id)
     .orderBy(desc(sql`usage_count`));
 
@@ -1021,12 +1021,12 @@ export async function getMaterialUsageStats() {
     .select({
       materialId: materials.id,
       code: materials.code,
-      name: materials.name,
+      name: materials.displayName,
       usageCount: sql<number>`COUNT(${workTools.workId})`.as('usage_count'),
     })
     .from(materials)
     .leftJoin(workTools, eq(materials.id, workTools.toolId))
-    .where(eq(materials.type, 'tool'))
+    .where(eq(materials.materialType, 'Tool'))
     .groupBy(materials.id)
     .orderBy(desc(sql`usage_count`));
 

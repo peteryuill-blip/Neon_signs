@@ -435,3 +435,9 @@
 - [x] Add API endpoints for detailed analytics queries
 - [x] Create responsive grid layout for all metrics
 - [x] Test with real data and verify mobile optimization
+
+## Bug Fix: Material Usage Numbers Not Displaying
+- [x] Investigate why Surface Usage, Medium Usage, and Tool Usage cards show no numbers - Wrong column names in query
+- [x] Check materialUsage API response in browser console - 500 errors from bad queries
+- [x] Fix query or display logic to show material codes and usage counts - Fixed to use displayName and correct enum values
+- [x] Test with real data to verify numbers display correctly - Showing S4(21), S5(11), MB1(54), MB2(53), T1(56)
