@@ -69,6 +69,8 @@ import {
   getDimensionalStats,
   getTimeInvestmentStats,
   getTemporalTrends,
+  getWorksForDateRange,
+  getUnifiedExportData,
 } from "./db";
 import { TRPCError } from "@trpc/server";
 import { fetchWeather } from "./_core/weather";
@@ -1078,6 +1080,65 @@ export const appRouter = router({
       return { csv, filename: `neon-signs-export-${new Date().toISOString().split('T')[0]}.csv` };
     }),
 
+    // Unified CSV export: roundups + crucible trials in one file
+    unifiedCsv: protectedProcedure.query(async ({ ctx }) => {
+      const data = await getUnifiedExportData(ctx.user.id);
+      
+      // Build roundup section
+      const roundupHeaders = [
+        'Week', 'Year', 'Date', 'Weather Report', 'Studio Hours', 'Works Made',
+        'Jester Activity', 'Energy Level', 'Walking Engine', 'Walking Insights',
+        'Partnership Temperature', 'Thing Worked', 'Thing Resisted', 'Somatic State',
+        'Door Intention', 'Phase DNA', 'Weekly Steps', 'Avg Steps/Day'
+      ];
+      const roundupRows = data.roundups.map(r => [
+        r.week, r.year, r.date,
+        `"${(r.weatherReport || '').replace(/"/g, '""')}"`,
+        r.studioHours,
+        `"${(r.worksMade || '').replace(/"/g, '""')}"`,
+        r.jesterActivity, r.energyLevel,
+        r.walkingEngineUsed ? 'Yes' : 'No',
+        `"${(r.walkingInsights || '').replace(/"/g, '""')}"`,
+        `"${(r.partnershipTemperature || '').replace(/"/g, '""')}"`,
+        `"${(r.thingWorked || '').replace(/"/g, '""')}"`,
+        `"${(r.thingResisted || '').replace(/"/g, '""')}"`,
+        `"${(r.somaticState || '').replace(/"/g, '""')}"`,
+        `"${(r.doorIntention || '').replace(/"/g, '""')}"`,
+        r.phaseDna || '',
+        r.weeklySteps || 0,
+        r.avgDailySteps || 0
+      ]);
+      
+      // Build trials section
+      const trialHeaders = [
+        'Trial Code', 'Date', 'Week', 'Rating', 'Disposition', 'Surfaces', 'Mediums', 'Tools',
+        'Technical Intent', 'Discovery', 'Height (cm)', 'Width (cm)', 'Hours'
+      ];
+      const trialRows = data.trials.map(t => [
+        t.code, t.date, t.week >= 0 ? t.week : '',
+        t.rating || '', t.disposition.replace(/_/g, ' '),
+        `"${(t.surfaces || '').replace(/"/g, '""')}"`,
+        `"${(t.mediums || '').replace(/"/g, '""')}"`,
+        `"${(t.tools || '').replace(/"/g, '""')}"`,
+        `"${(t.technicalIntent || '').replace(/"/g, '""')}"`,
+        `"${(t.discovery || '').replace(/"/g, '""')}"`,
+        t.heightCm || '', t.widthCm || '', t.hours || ''
+      ]);
+      
+      // Combine into single CSV with section headers
+      const csv = [
+        '=== WEEKLY ROUNDUPS ===',
+        roundupHeaders.join(','),
+        ...roundupRows.map(r => r.join(',')),
+        '',
+        '=== CRUCIBLE TRIALS ===',
+        trialHeaders.join(','),
+        ...trialRows.map(r => r.join(','))
+      ].join('\n');
+      
+      return { csv, filename: `neon-signs-unified-${new Date().toISOString().split('T')[0]}.csv` };
+    }),
+
     // Generate PDF report data
     pdfData: protectedProcedure.query(async ({ ctx }) => {
       const roundups = await getAllWeeklyRoundups(ctx.user.id, 1000, 0);
@@ -1826,6 +1887,134 @@ export const appRouter = router({
         trashRate: velocity.trashRate,
         weeklyAvg: velocity.weeklyAvg,
         discoveryDensity: discovery.density,
+      };
+    }),
+
+    // Get works for a specific week (by date range)
+    worksForWeek: protectedProcedure
+      .input(z.object({
+        startDate: z.string(), // ISO date string
+        endDate: z.string(),   // ISO date string
+      }))
+      .query(async ({ ctx, input }) => {
+        return getWorksForDateRange(
+          ctx.user.id,
+          new Date(input.startDate),
+          new Date(input.endDate)
+        );
+      }),
+
+    // Unified summary combining roundup + crucible stats
+    unifiedSummary: protectedProcedure.query(async ({ ctx }) => {
+      const settings = await getUserSettings(ctx.user.id);
+      const dateInfo = getDateInfoWithSettings(settings);
+      const checkInDay = settings?.checkInDay || 'Sunday';
+
+      const [
+        totalStudioHours,
+        avgJester,
+        energyDistribution,
+        jesterTrend,
+        studioHoursTrend,
+        totalRoundups,
+        worksCount,
+        velocity,
+        discovery,
+        surfaces,
+        mediums,
+        materialUsage,
+        ratingDist,
+        dispositionBreakdown,
+        dimensionalStats,
+        timeInvestment,
+        temporalTrends,
+        allRoundups,
+      ] = await Promise.all([
+        getTotalStudioHours(ctx.user.id),
+        getAverageJesterActivity(ctx.user.id),
+        getEnergyLevelDistribution(ctx.user.id),
+        getJesterTrend(ctx.user.id, 52),
+        getStudioHoursTrend(ctx.user.id, 52),
+        getWeeklyRoundupCount(ctx.user.id),
+        getWorksCount(ctx.user.id),
+        getTrashRateAsVelocitySignal(ctx.user.id),
+        getDiscoveryDensity(ctx.user.id),
+        getMaterialsByType(ctx.user.id, 'Surface'),
+        getMaterialsByType(ctx.user.id, 'Medium'),
+        getMaterialUsageStats(),
+        getRatingDistribution(),
+        getDispositionBreakdown(),
+        getDimensionalStats(),
+        getTimeInvestmentStats(),
+        getTemporalTrends(),
+        getAllWeeklyRoundups(ctx.user.id, 52, 0),
+      ]);
+
+      // Calculate step aggregates from roundups
+      let totalSteps = 0;
+      let weeksWithSteps = 0;
+      for (const r of allRoundups) {
+        if (r.weeklyStepTotal && r.weeklyStepTotal > 0) {
+          totalSteps += r.weeklyStepTotal;
+          weeksWithSteps++;
+        }
+      }
+      const avgWeeklySteps = weeksWithSteps > 0 ? Math.round(totalSteps / weeksWithSteps) : 0;
+
+      // Energy trend from roundups
+      const energyTrend = [...allRoundups].reverse().map(r => ({
+        weekNumber: r.weekNumber,
+        year: r.year,
+        energyLevel: r.energyLevel,
+      }));
+
+      // Step trend from roundups
+      const stepTrend = [...allRoundups].reverse().map(r => ({
+        weekNumber: r.weekNumber,
+        year: r.year,
+        weeklySteps: r.weeklyStepTotal || 0,
+        avgDailySteps: r.dailyStepAverage || 0,
+      }));
+
+      return {
+        // Progress
+        currentWeek: dateInfo.weekNumber,
+        currentYear: dateInfo.year,
+        crucibleYear: dateInfo.crucibleYear,
+        totalWeeks: dateInfo.totalWeeks,
+        totalRoundups,
+        checkInDay,
+
+        // Studio practice
+        totalStudioHours: Math.round(totalStudioHours * 10) / 10,
+        avgStudioHoursPerWeek: totalRoundups > 0 ? Math.round((totalStudioHours / totalRoundups) * 10) / 10 : 0,
+        avgJester,
+        energyDistribution,
+        jesterTrend,
+        studioHoursTrend,
+        energyTrend,
+
+        // Steps
+        totalSteps,
+        avgWeeklySteps,
+        stepTrend,
+
+        // Crucible trials
+        totalWorks: worksCount,
+        totalSurfaces: surfaces.length,
+        totalMediums: mediums.length,
+        trashRate: velocity.trashRate,
+        trashCount: velocity.trashCount,
+        weeklyTrialAvg: velocity.weeklyAvg,
+        discoveryDensity: discovery.density,
+
+        // Detailed crucible data
+        materialUsage,
+        ratingDistribution: ratingDist,
+        dispositionBreakdown,
+        dimensionalStats,
+        timeInvestment,
+        temporalTrends,
       };
     }),
   }),

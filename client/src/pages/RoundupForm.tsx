@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Loader2, ArrowLeft, Calendar, AlertCircle, CheckCircle2, Save, Footprints, Plus, Trash2, ChevronDown, ChevronUp, Palette } from "lucide-react";
+import { Loader2, ArrowLeft, Calendar, AlertCircle, CheckCircle2, Save, Footprints, Plus, Trash2, ChevronDown, ChevronUp, Palette, FlaskConical, Star, ExternalLink } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
@@ -380,6 +380,74 @@ function WorkCard({
           />
         </div>
       )}
+    </div>
+  );
+}
+
+// Crucible Trials Summary - shows trials logged this week from the Crucible Intake
+function CrucibleTrialsSummary({ weekNumber, year }: { weekNumber?: number; year?: number }) {
+  // We need the settings to calculate the week's date range
+  const { data: settings } = trpc.settings.get.useQuery();
+  
+  // Calculate approximate date range for this crucible week
+  const dateRange = useMemo(() => {
+    if (weekNumber === undefined || !settings) return null;
+    const startDate = settings.crucibleStartDate ? new Date(settings.crucibleStartDate) : new Date('2025-12-21T00:00:00+07:00');
+    const weekStart = new Date(startDate.getTime() + weekNumber * 7 * 24 * 60 * 60 * 1000);
+    const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
+    return {
+      startDate: weekStart.toISOString(),
+      endDate: weekEnd.toISOString(),
+    };
+  }, [weekNumber, settings]);
+  
+  const { data: trials } = trpc.crucibleAnalytics.worksForWeek.useQuery(
+    { startDate: dateRange?.startDate || '', endDate: dateRange?.endDate || '' },
+    { enabled: !!dateRange }
+  );
+  
+  if (!trials || trials.length === 0) return null;
+  
+  return (
+    <div className="cyber-card rounded-xl p-4 sm:p-5 border border-[var(--neon-magenta)]/30">
+      <div className="flex items-center gap-3 mb-3">
+        <FlaskConical className="h-5 w-5 text-[var(--neon-magenta)]" />
+        <div className="flex-1">
+          <h3 className="font-semibold text-sm neon-text-magenta">Crucible Trials This Week</h3>
+          <p className="text-[10px] text-muted-foreground">{trials.length} trial{trials.length !== 1 ? 's' : ''} logged via Crucible Intake</p>
+        </div>
+        <Link href="/crucible/works">
+          <Button variant="ghost" size="sm" className="text-[var(--neon-cyan)] hover:bg-[var(--neon-cyan)]/10 text-xs px-2 h-7">
+            View All <ExternalLink className="h-3 w-3 ml-1" />
+          </Button>
+        </Link>
+      </div>
+      <div className="space-y-2">
+        {trials.map((trial) => (
+          <div key={trial.id} className="flex items-center gap-3 p-2 rounded-lg bg-[var(--neon-magenta)]/5 border border-[var(--neon-magenta)]/10">
+            <div className="flex-shrink-0 w-14 text-center">
+              <span className="text-xs font-mono neon-text-cyan">{trial.code}</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                {trial.rating && (
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: trial.rating }).map((_, i) => (
+                      <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                )}
+                <span className="text-[10px] text-muted-foreground truncate">
+                  {trial.disposition.replace(/_/g, ' ')}
+                </span>
+              </div>
+              <div className="text-[10px] text-muted-foreground truncate">
+                {[trial.surfaces, trial.mediums].filter(Boolean).join(' · ')}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -769,6 +837,9 @@ export default function RoundupForm() {
               <p className="text-sm neon-text-magenta mt-2">{errors.studioHours}</p>
             )}
           </div>
+
+          {/* Crucible Trials This Week */}
+          <CrucibleTrialsSummary weekNumber={canSubmitData?.weekNumber} year={canSubmitData?.year} />
 
           {/* Works Made - Expanded Section */}
           <div className="cyber-form rounded-xl p-6 border border-[var(--neon-amber)]/30">

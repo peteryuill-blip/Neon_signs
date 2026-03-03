@@ -1137,3 +1137,146 @@ export async function getTemporalTrends() {
 
   return { worksPerWeek, ratingOverTime, trashRateOverTime };
 }
+
+
+// ===== INTEGRATION: Works by date range (for syncing with weekly roundups) =====
+
+export async function getWorksForDateRange(
+  userId: number,
+  startDate: Date,
+  endDate: Date
+): Promise<Array<WorkCore & { surfaces: string; mediums: string; tools: string }>> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const works = await db.select().from(worksCore)
+    .where(and(
+      eq(worksCore.userId, userId),
+      sql`${worksCore.date} >= ${startDate}`,
+      sql`${worksCore.date} < ${endDate}`
+    ))
+    .orderBy(desc(worksCore.date));
+  
+  const result = [];
+  for (const work of works) {
+    const surfaces = await getWorkSurfaces(work.id);
+    const mediums = await getWorkMediums(work.id);
+    const tools = await getWorkTools(work.id);
+    
+    result.push({
+      ...work,
+      surfaces: surfaces.map(s => s.code || s.displayName).join(', '),
+      mediums: mediums.map(m => m.code || m.displayName).join(', '),
+      tools: tools.map(t => t.code || t.displayName).join(', '),
+    });
+  }
+  
+  return result;
+}
+
+// ===== UNIFIED EXPORT: Combined roundup + crucible data =====
+
+export async function getUnifiedExportData(userId: number): Promise<{
+  roundups: Array<{
+    week: number;
+    year: number;
+    date: string;
+    weatherReport: string;
+    studioHours: number;
+    worksMade: string;
+    jesterActivity: number;
+    energyLevel: string;
+    walkingEngineUsed: boolean;
+    walkingInsights: string | null;
+    partnershipTemperature: string;
+    thingWorked: string;
+    thingResisted: string;
+    somaticState: string;
+    doorIntention: string | null;
+    phaseDna: string | null;
+    weeklySteps: number | null;
+    avgDailySteps: number | null;
+  }>;
+  trials: Array<{
+    code: string;
+    date: string;
+    week: number;
+    rating: number | null;
+    disposition: string;
+    surfaces: string;
+    mediums: string;
+    tools: string;
+    technicalIntent: string | null;
+    discovery: string | null;
+    heightCm: number | null;
+    widthCm: number | null;
+    hours: number | null;
+  }>;
+}> {
+  const db = await getDb();
+  if (!db) throw new Error('Database not available');
+  
+  // Get all roundups
+  const roundups = await getAllWeeklyRoundups(userId, 1000, 0);
+  
+  // Get all works with materials
+  const works = await db.select().from(worksCore)
+    .where(eq(worksCore.userId, userId))
+    .orderBy(desc(worksCore.date));
+  
+  const trials = [];
+  for (const work of works) {
+    const surfaces = await getWorkSurfaces(work.id);
+    const mediums = await getWorkMediums(work.id);
+    const tools = await getWorkTools(work.id);
+    
+    // Calculate which Crucible week this trial belongs to
+    // We'll use the date to approximate the week number
+    const workDate = new Date(work.date);
+    const matchingRoundup = roundups.find(r => {
+      const rDate = new Date(r.createdAt);
+      const diffDays = Math.abs((workDate.getTime() - rDate.getTime()) / (1000 * 60 * 60 * 24));
+      return diffDays < 7 && r.weekNumber >= 0;
+    });
+    
+    trials.push({
+      code: work.code,
+      date: workDate.toISOString().split('T')[0],
+      week: matchingRoundup?.weekNumber ?? -1,
+      rating: work.rating,
+      disposition: work.disposition,
+      surfaces: surfaces.map(s => s.code || s.displayName).join('; '),
+      mediums: mediums.map(m => m.code || m.displayName).join('; '),
+      tools: tools.map(t => t.code || t.displayName).join('; '),
+      technicalIntent: work.technicalIntent,
+      discovery: work.discovery,
+      heightCm: work.heightCm,
+      widthCm: work.widthCm,
+      hours: work.hours,
+    });
+  }
+  
+  return {
+    roundups: roundups.map(r => ({
+      week: r.weekNumber,
+      year: r.year,
+      date: r.createdAt.toISOString().split('T')[0],
+      weatherReport: r.weatherReport,
+      studioHours: r.studioHours,
+      worksMade: r.worksMade,
+      jesterActivity: r.jesterActivity,
+      energyLevel: r.energyLevel,
+      walkingEngineUsed: r.walkingEngineUsed,
+      walkingInsights: r.walkingInsights,
+      partnershipTemperature: r.partnershipTemperature,
+      thingWorked: r.thingWorked,
+      thingResisted: r.thingResisted,
+      somaticState: r.somaticState,
+      doorIntention: r.doorIntention,
+      phaseDna: r.phaseDnaAssigned,
+      weeklySteps: r.weeklyStepTotal,
+      avgDailySteps: r.dailyStepAverage,
+    })),
+    trials,
+  };
+}

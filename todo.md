@@ -446,3 +446,33 @@
 - [x] Modify getTrashRateAsVelocitySignal() to count both "Trash" and "Probably_Trash" dispositions
 - [x] Test that trash rate percentage updates correctly
 - [x] Verify Analytics page displays the updated trash rate
+
+## Integration: Merge Weekly Roundup + Crucible Systems
+### Works Data Sync
+- [x] Add API endpoint to fetch Crucible works for a given week (by date range)
+- [x] Auto-populate "Works Made" section of Weekly Roundup with Crucible trial data for that week
+- [x] Show Crucible trial summary (codes, ratings, dispositions) in roundup form as read-only reference
+- [x] Link roundup worksMade text auto-generation to actual Crucible trial data
+
+### Unified Analytics Page
+- [x] Create new unified analytics page replacing separate Crucible Analytics
+- [x] Section: Crucible Year Progress (week counter, total roundups, total trials)
+- [x] Section: Studio Practice (total hours, avg hours/week, jester trend, energy distribution)
+- [x] Section: Step Tracking (total steps, weekly averages, daily patterns)
+- [x] Section: Material Trials (total trials, trash rate, rating distribution, disposition breakdown)
+- [x] Section: Material Usage (surfaces, mediums, tools usage counts)
+- [x] Section: Dimensional & Time Stats (sizes, hours per trial)
+- [x] Section: Discovery Insights (discovery density, key patterns)
+- [x] Update navigation to point to unified analytics page
+
+### Unified Export
+- [x] Create single CSV export combining roundup + crucible data
+- [x] Sheet 1 data: Weekly roundups with all fields
+- [x] Sheet 2 data: Crucible trials with materials, ratings, dispositions
+- [x] Include cross-references (week numbers linking trials to roundups)
+- [x] Single download button on unified analytics page
+
+### Navigation Cleanup
+- [x] Replace separate analytics pages with unified page
+- [x] Update header navigation icons
+- [x] Ensure smooth flow between roundup form → crucible intake → unified analytics

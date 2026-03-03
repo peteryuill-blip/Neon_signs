@@ -13,6 +13,7 @@ import EditRoundup from "./pages/EditRoundup";
 import Materials from "./pages/Materials";
 import CrucibleIntake from "./pages/CrucibleIntake";
 import CrucibleAnalytics from "./pages/CrucibleAnalytics";
+import CommandCenter from "./pages/CommandCenter";
 import CrucibleWorks from "./pages/CrucibleWorks";
 import WorkDetail from "./pages/WorkDetail";
 import WorkEdit from "./pages/WorkEdit";
@@ -29,7 +30,8 @@ function Router() {
       {/* Crucible Artwork Module */}
       <Route path="/materials" component={Materials} />
       <Route path="/crucible/intake" component={CrucibleIntake} />
-      <Route path="/crucible/analytics" component={CrucibleAnalytics} />
+      <Route path="/analytics" component={CommandCenter} />
+      <Route path="/crucible/analytics" component={CommandCenter} />
       <Route path="/crucible/works" component={CrucibleWorks} />
       <Route path="/crucible/work/:id" component={WorkDetail} />
       <Route path="/crucible/work/:id/edit" component={WorkEdit} />

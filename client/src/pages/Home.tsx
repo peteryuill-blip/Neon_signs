@@ -532,14 +532,14 @@ export default function Home() {
               {/* Analytics */}
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Link href="/crucible/analytics">
-                    <button className="nav-icon-btn group" aria-label="Analytics">
+                  <Link href="/analytics">
+                    <button className="nav-icon-btn group" aria-label="Command Center">
                       <BarChart3 className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--neon-purple)] group-hover:drop-shadow-[0_0_8px_var(--neon-purple)]" />
                     </button>
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="bg-black border-[var(--neon-purple)]/50">
-                  <p className="text-xs">Analytics</p>
+                  <p className="text-xs">Command Center</p>
                 </TooltipContent>
               </Tooltip>
 
