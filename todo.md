@@ -476,3 +476,6 @@
 - [x] Replace separate analytics pages with unified page
 - [x] Update header navigation icons
 - [x] Ensure smooth flow between roundup form → crucible intake → unified analytics
+
+## Navigation: Add Analytics Link
+- [x] Add Command Center quick link card to dashboard bottom section alongside other quick links
