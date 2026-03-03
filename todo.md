@@ -441,3 +441,8 @@
 - [x] Check materialUsage API response in browser console - 500 errors from bad queries
 - [x] Fix query or display logic to show material codes and usage counts - Fixed to use displayName and correct enum values
 - [x] Test with real data to verify numbers display correctly - Showing S4(21), S5(11), MB1(54), MB2(53), T1(56)
+
+## Update Trash Rate Calculation
+- [x] Modify getTrashRateAsVelocitySignal() to count both "Trash" and "Probably_Trash" dispositions
+- [x] Test that trash rate percentage updates correctly
+- [x] Verify Analytics page displays the updated trash rate

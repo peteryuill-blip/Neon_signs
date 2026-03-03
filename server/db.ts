@@ -809,8 +809,8 @@ export async function getTrashRateAsVelocitySignal(userId: number): Promise<{ to
   const result = await db.execute(sql`
     SELECT 
       COUNT(*) as totalWorks,
-      COALESCE(SUM(CASE WHEN disposition = 'Trash' THEN 1 ELSE 0 END), 0) as trashCount,
-      COALESCE(SUM(CASE WHEN disposition = 'Trash' THEN 1 ELSE 0 END) * 100.0 / NULLIF(COUNT(*), 0), 0) as trashRate,
+      COALESCE(SUM(CASE WHEN disposition IN ('Trash', 'Probably_Trash') THEN 1 ELSE 0 END), 0) as trashCount,
+      COALESCE(SUM(CASE WHEN disposition IN ('Trash', 'Probably_Trash') THEN 1 ELSE 0 END) * 100.0 / NULLIF(COUNT(*), 0), 0) as trashRate,
       COUNT(*) / GREATEST(DATEDIFF(NOW(), MIN(date)) / 7, 1) as weeklyAvg
     FROM works_core
     WHERE userId = ${userId}
