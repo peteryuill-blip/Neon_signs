@@ -802,6 +802,24 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Command Center - Prominent Link */}
+        <Link href="/analytics">
+          <div className="cyber-card rounded-xl p-6 cursor-pointer group hover:border-[var(--neon-purple)] transition-all duration-300">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-lg bg-[var(--neon-purple)]/10 flex items-center justify-center group-hover:neon-glow-purple transition-shadow">
+                <BarChart3 className="h-7 w-7 neon-text-purple" />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-lg group-hover:neon-text-purple transition-all">Command Center</h3>
+                <p className="text-sm text-muted-foreground">
+                  Unified analytics — studio, trials & materials
+                </p>
+              </div>
+              <ChevronRight className="h-6 w-6 text-muted-foreground group-hover:text-[var(--neon-purple)] group-hover:translate-x-1 transition-all" />
+            </div>
+          </div>
+        </Link>
+
         {/* Quick Notes Widget */}
         <QuickNotesWidget />
 
@@ -863,22 +881,6 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href="/analytics">
-            <div className="cyber-card rounded-xl p-6 cursor-pointer group hover:border-[var(--neon-purple)] transition-all duration-300">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-lg bg-[var(--neon-purple)]/10 flex items-center justify-center group-hover:neon-glow-purple transition-shadow">
-                  <BarChart3 className="h-7 w-7 neon-text-purple" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold text-lg group-hover:neon-text-purple transition-all">Command Center</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Unified analytics — studio, trials & materials
-                  </p>
-                </div>
-                <ChevronRight className="h-6 w-6 text-muted-foreground group-hover:text-[var(--neon-purple)] group-hover:translate-x-1 transition-all" />
-              </div>
-            </div>
-          </Link>
         </div>
       </main>
 

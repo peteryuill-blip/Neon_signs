@@ -479,3 +479,4 @@
 
 ## Navigation: Add Analytics Link
 - [x] Add Command Center quick link card to dashboard bottom section alongside other quick links
+- [x] Move Command Center card higher on dashboard, above quick notes section
