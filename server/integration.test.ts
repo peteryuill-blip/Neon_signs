@@ -96,8 +96,8 @@ describe("Unified Integration: unifiedCsv export", () => {
     // Second line should be the roundup headers
     const roundupHeaderLine = lines[1];
     expect(roundupHeaderLine).toContain("Week");
-    expect(roundupHeaderLine).toContain("Studio Hours");
-    expect(roundupHeaderLine).toContain("Jester Activity");
+    expect(roundupHeaderLine).toContain("Studio_Hours");
+    expect(roundupHeaderLine).toContain("Jester_Activity");
 
     // Find the trial section
     const trialSectionIndex = result.csv.indexOf("=== CRUCIBLE TRIALS ===");
@@ -108,7 +108,7 @@ describe("Unified Integration: unifiedCsv export", () => {
 
     // Second line of trial section should be headers
     const trialHeaderLine = trialLines[1];
-    expect(trialHeaderLine).toContain("Trial Code");
+    expect(trialHeaderLine).toContain("Trial_Code");
     expect(trialHeaderLine).toContain("Rating");
     expect(trialHeaderLine).toContain("Disposition");
 

@@ -480,3 +480,16 @@
 ## Navigation: Add Analytics Link
 - [x] Add Command Center quick link card to dashboard bottom section alongside other quick links
 - [x] Move Command Center card higher on dashboard, above quick notes section
+
+## CSV Export Restructuring
+- [x] Rewrite unified CSV export to produce two sections matching exact spec
+- [x] ROUNDUP: Split "Works Made" into Works_Started, Works_Finished, Works_Notes
+- [x] ROUNDUP: Rename "Weather Report" to "Raw_Weather_Report"
+- [x] ROUNDUP: Fix Week 0 duplicate (Dec 20 → Week -1, Dec 22 → Week 0)
+- [x] ROUNDUP: Replace deferred/placeholder text with blank cells
+- [x] ROUNDUP: Enforce exact column order per spec
+- [x] TRIALS: Split "Technical Intent" into Technical_Observation and Self_Directive
+- [x] TRIALS: Add Save_Has_Potential_Flag boolean column
+- [x] TRIALS: Replace deferred/placeholder text with blank cells
+- [x] TRIALS: Enforce exact column order per spec
+- [x] Test export endpoint produces valid CSV matching all validation checks
