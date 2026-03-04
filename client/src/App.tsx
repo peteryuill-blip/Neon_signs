@@ -17,6 +17,7 @@ import CommandCenter from "./pages/CommandCenter";
 import CrucibleWorks from "./pages/CrucibleWorks";
 import WorkDetail from "./pages/WorkDetail";
 import WorkEdit from "./pages/WorkEdit";
+import BottomNav from "./components/BottomNav";
 
 function Router() {
   return (
@@ -57,6 +58,7 @@ function App() {
             }}
           />
           <Router />
+          <BottomNav />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

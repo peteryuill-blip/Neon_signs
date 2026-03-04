@@ -1105,35 +1105,52 @@ export async function getTemporalTrends() {
   const db = await getDb();
   if (!db) return { worksPerWeek: [], ratingOverTime: [], trashRateOverTime: [] };
   
-  // Works per week
-  const worksPerWeek = await db
+  // Works per week - use YEARWEEK for proper week grouping, format as W1, W2, etc.
+  const worksPerWeekRaw = await db
     .select({
-      week: sql<string>`DATE_FORMAT(${worksCore.date}, '%Y-%U')`.as('week'),
+      yearWeek: sql<number>`YEARWEEK(${worksCore.date}, 1)`.as('year_week'),
       count: sql<number>`COUNT(*)`.as('count'),
+      minDate: sql<string>`MIN(${worksCore.date})`.as('min_date'),
     })
     .from(worksCore)
-    .groupBy(sql`week`)
-    .orderBy(sql`week`);
+    .groupBy(sql`year_week`)
+    .orderBy(sql`year_week`);
+  
+  // Convert to sequential week labels (W1, W2, W3...)
+  const worksPerWeek = worksPerWeekRaw.map((row, index) => ({
+    week: `W${index + 1}`,
+    count: row.count,
+  }));
 
-  // Rating over time (monthly average)
-  const ratingOverTime = await db
+  // Rating over time (by week, formatted as W1, W2...)
+  const ratingOverTimeRaw = await db
     .select({
-      month: sql<string>`DATE_FORMAT(${worksCore.date}, '%Y-%m')`.as('month'),
+      yearWeek: sql<number>`YEARWEEK(${worksCore.date}, 1)`.as('year_week'),
       avgRating: sql<number>`AVG(${worksCore.rating})`.as('avg_rating'),
     })
     .from(worksCore)
-    .groupBy(sql`month`)
-    .orderBy(sql`month`);
+    .groupBy(sql`year_week`)
+    .orderBy(sql`year_week`);
+  
+  const ratingOverTime = ratingOverTimeRaw.map((row, index) => ({
+    month: `W${index + 1}`,
+    avgRating: row.avgRating,
+  }));
 
-  // Trash rate over time (monthly)
-  const trashRateOverTime = await db
+  // Trash rate over time (by week)
+  const trashRateOverTimeRaw = await db
     .select({
-      month: sql<string>`DATE_FORMAT(${worksCore.date}, '%Y-%m')`.as('month'),
+      yearWeek: sql<number>`YEARWEEK(${worksCore.date}, 1)`.as('year_week'),
       trashRate: sql<number>`(SUM(CASE WHEN ${worksCore.disposition} IN ('Trash', 'Probably_Trash') THEN 1 ELSE 0 END) * 100.0 / COUNT(*))`.as('trash_rate'),
     })
     .from(worksCore)
-    .groupBy(sql`month`)
-    .orderBy(sql`month`);
+    .groupBy(sql`year_week`)
+    .orderBy(sql`year_week`);
+  
+  const trashRateOverTime = trashRateOverTimeRaw.map((row, index) => ({
+    month: `W${index + 1}`,
+    trashRate: row.trashRate,
+  }));
 
   return { worksPerWeek, ratingOverTime, trashRateOverTime };
 }
@@ -1279,4 +1296,57 @@ export async function getUnifiedExportData(userId: number): Promise<{
     })),
     trials,
   };
+}
+
+
+// ===== INTAKE OPTIMIZATION: Last trial defaults =====
+
+export async function getLastTrialDefaults(userId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  
+  // Get the most recent work
+  const [lastWork] = await db.select()
+    .from(worksCore)
+    .where(eq(worksCore.userId, userId))
+    .orderBy(desc(worksCore.date), desc(worksCore.id))
+    .limit(1);
+  
+  if (!lastWork) return null;
+  
+  // Get its materials
+  const surfaces = await getWorkSurfaces(lastWork.id);
+  const mediums = await getWorkMediums(lastWork.id);
+  const tools = await getWorkTools(lastWork.id);
+  
+  return {
+    surfaceIds: surfaces.map(s => s.id),
+    mediumIds: mediums.map(m => m.id),
+    toolIds: tools.map(t => t.id),
+    surfaceNames: surfaces.map(s => `${s.displayName} (${s.code})`).join(', '),
+    mediumNames: mediums.map(m => `${m.displayName} (${m.code})`).join(', '),
+    toolNames: tools.map(t => `${t.displayName} (${t.code})`).join(', '),
+    heightCm: lastWork.heightCm,
+    widthCm: lastWork.widthCm,
+  };
+}
+
+// Get most common dimension pairs for quick-select presets
+export async function getCommonDimensions(userId: number): Promise<Array<{ height: number; width: number; count: number }>> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db.execute(sql`
+    SELECT heightCm as height, widthCm as width, COUNT(*) as count
+    FROM works_core
+    WHERE userId = ${userId}
+      AND heightCm IS NOT NULL 
+      AND widthCm IS NOT NULL
+    GROUP BY heightCm, widthCm
+    ORDER BY count DESC
+    LIMIT 5
+  `);
+  
+  return (result[0] as unknown as Array<{ height: number; width: number; count: number }>)
+    .filter(d => d.height && d.width);
 }

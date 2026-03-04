@@ -223,7 +223,7 @@ export default function CommandCenter() {
                   />
                 </div>
                 <div className="flex justify-between mt-2 text-[10px] text-muted-foreground">
-                  <span>{data.totalWeeks} weeks elapsed</span>
+                  <span>{data.currentWeek} weeks elapsed</span>
                   <span>{Math.max(52 - data.currentWeek, 0)} weeks remaining</span>
                 </div>
               </CardContent>
@@ -264,9 +264,9 @@ export default function CommandCenter() {
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={data.jesterTrend}>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                        <XAxis dataKey="weekNumber" tick={{ fontSize: 10, fill: '#888' }} tickFormatter={(v) => `W${v}`} />
+                        <XAxis dataKey="weekNumber" tick={{ fontSize: 10, fill: '#888' }} tickFormatter={(v) => v === -1 ? 'B' : `W${v}`} />
                         <YAxis domain={[0, 10]} tick={{ fontSize: 10, fill: '#888' }} />
-                        <Tooltip {...chartTooltipStyle} formatter={(v: number) => [`${v}/10`, 'Jester']} labelFormatter={(l) => `Week ${l}`} />
+                        <Tooltip {...chartTooltipStyle} formatter={(v: number) => [`${v}/10`, 'Jester']} labelFormatter={(l) => l === -1 ? 'Baseline' : `Week ${l}`} />
                         <Line type="monotone" dataKey="jesterActivity" stroke="var(--neon-magenta)" strokeWidth={2} dot={false} />
                       </LineChart>
                     </ResponsiveContainer>
@@ -330,9 +330,9 @@ export default function CommandCenter() {
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={data.studioHoursTrend}>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                        <XAxis dataKey="weekNumber" tick={{ fontSize: 10, fill: '#888' }} tickFormatter={(v) => `W${v}`} />
+                        <XAxis dataKey="weekNumber" tick={{ fontSize: 10, fill: '#888' }} tickFormatter={(v) => v === -1 ? 'B' : `W${v}`} />
                         <YAxis tick={{ fontSize: 10, fill: '#888' }} />
-                        <Tooltip {...chartTooltipStyle} formatter={(v: number) => [`${v}h`, 'Studio']} labelFormatter={(l) => `Week ${l}`} />
+                        <Tooltip {...chartTooltipStyle} formatter={(v: number) => [`${v}h`, 'Studio']} labelFormatter={(l) => l === -1 ? 'Baseline' : `Week ${l}`} />
                         <Area type="monotone" dataKey="studioHours" stroke="var(--neon-cyan)" fill="rgba(0,240,255,0.1)" strokeWidth={2} />
                       </AreaChart>
                     </ResponsiveContainer>
@@ -369,9 +369,9 @@ export default function CommandCenter() {
                     <ResponsiveContainer width="100%" height="100%">
                       <BarChart data={data.stepTrend}>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                        <XAxis dataKey="weekNumber" tick={{ fontSize: 10, fill: '#888' }} tickFormatter={(v) => `W${v}`} />
+                        <XAxis dataKey="weekNumber" tick={{ fontSize: 10, fill: '#888' }} tickFormatter={(v) => v === -1 ? 'B' : `W${v}`} />
                         <YAxis tick={{ fontSize: 10, fill: '#888' }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
-                        <Tooltip {...chartTooltipStyle} formatter={(v: number) => [`${v.toLocaleString()}`, 'Steps']} labelFormatter={(l) => `Week ${l}`} />
+                        <Tooltip {...chartTooltipStyle} formatter={(v: number) => [`${v.toLocaleString()}`, 'Steps']} labelFormatter={(l) => l === -1 ? 'Baseline' : `Week ${l}`} />
                         <Bar dataKey="weeklySteps" radius={[4, 4, 0, 0]}>
                           {data.stepTrend.map((entry, index) => (
                             <Cell
@@ -444,9 +444,9 @@ export default function CommandCenter() {
                     <ResponsiveContainer width="100%" height="100%">
                       <AreaChart data={data.jesterTrend}>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                        <XAxis dataKey="weekNumber" tick={{ fontSize: 10, fill: '#888' }} tickFormatter={(v) => `W${v}`} />
+                        <XAxis dataKey="weekNumber" tick={{ fontSize: 10, fill: '#888' }} tickFormatter={(v) => v === -1 ? 'B' : `W${v}`} />
                         <YAxis domain={[0, 10]} tick={{ fontSize: 10, fill: '#888' }} />
-                        <Tooltip {...chartTooltipStyle} formatter={(v: number) => [`${v}/10`, 'Jester']} labelFormatter={(l) => `Week ${l}`} />
+                        <Tooltip {...chartTooltipStyle} formatter={(v: number) => [`${v}/10`, 'Jester']} labelFormatter={(l) => l === -1 ? 'Baseline' : `Week ${l}`} />
                         <Area type="monotone" dataKey="jesterActivity" stroke="var(--neon-magenta)" fill="rgba(255,20,147,0.1)" strokeWidth={2} />
                       </AreaChart>
                     </ResponsiveContainer>
@@ -513,10 +513,10 @@ export default function CommandCenter() {
                     const percentage = total > 0 ? ((item.count / total) * 100).toFixed(1) : '0';
                     const label = item.disposition.replace(/_/g, ' ');
                     const colorMap: Record<string, string> = {
-                      'Trash': 'from-gray-500 to-gray-600',
+                      'Trash': 'from-red-500 to-red-600',
                       'Probably_Trash': 'from-amber-500 to-amber-600',
-                      'Save_Archive': 'from-cyan-500 to-cyan-600',
-                      'Save_Has_Potential': 'from-purple-500 to-pink-500',
+                      'Save_Archive': 'from-emerald-500 to-emerald-600',
+                      'Save_Has_Potential': 'from-yellow-400 to-yellow-500',
                     };
 
                     return (
@@ -680,7 +680,7 @@ export default function CommandCenter() {
                       .slice(0, 15)
                       .map((surface) => (
                         <div key={surface.materialId} className="flex justify-between items-center text-sm">
-                          <span className="text-gray-300 truncate mr-2">{surface.code}</span>
+                          <span className="text-gray-300 truncate mr-2">{surface.name || surface.code} <span className="text-[10px] text-muted-foreground">({surface.code})</span></span>
                           <span className="neon-text-amber font-bold flex-shrink-0">{surface.usageCount}</span>
                         </div>
                       ))}
@@ -706,7 +706,7 @@ export default function CommandCenter() {
                       .slice(0, 15)
                       .map((medium) => (
                         <div key={medium.materialId} className="flex justify-between items-center text-sm">
-                          <span className="text-gray-300 truncate mr-2">{medium.code}</span>
+                          <span className="text-gray-300 truncate mr-2">{medium.name || medium.code} <span className="text-[10px] text-muted-foreground">({medium.code})</span></span>
                           <span className="neon-text-magenta font-bold flex-shrink-0">{medium.usageCount}</span>
                         </div>
                       ))}
@@ -732,7 +732,7 @@ export default function CommandCenter() {
                       .slice(0, 15)
                       .map((tool) => (
                         <div key={tool.materialId} className="flex justify-between items-center text-sm">
-                          <span className="text-gray-300 truncate mr-2">{tool.code}</span>
+                          <span className="text-gray-300 truncate mr-2">{tool.name || tool.code} <span className="text-[10px] text-muted-foreground">({tool.code})</span></span>
                           <span className="neon-text-cyan font-bold flex-shrink-0">{tool.usageCount}</span>
                         </div>
                       ))}

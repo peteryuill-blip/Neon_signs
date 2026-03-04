@@ -892,11 +892,11 @@ export default function History() {
               <Calendar className="h-5 w-5 neon-text-cyan" />
               <h2 className="text-lg font-semibold neon-text-white">52-Week Timeline</h2>
             </div>
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1.5">
               {timelineData.map((week) => (
                 <div
                   key={week.week}
-                  className={`w-5 h-5 rounded-sm flex items-center justify-center text-[10px] font-medium transition-all cursor-default relative
+                  className={`w-8 h-8 rounded-md flex items-center justify-center text-xs font-medium transition-all cursor-default relative
                     ${week.isCurrent 
                       ? 'ring-2 ring-[var(--neon-cyan)] ring-offset-2 ring-offset-[var(--void-black)] shadow-[0_0_10px_var(--neon-cyan)]' 
                       : ''}
@@ -973,6 +973,7 @@ export default function History() {
                         dataKey="weekNumber" 
                         stroke="rgba(255, 255, 255, 0.3)"
                         tick={{ fill: 'rgba(255, 255, 255, 0.5)' }}
+                        tickFormatter={(v) => v === -1 ? 'B' : `W${v}`}
                       />
                       <YAxis 
                         domain={[0, 10]} 
@@ -1015,6 +1016,7 @@ export default function History() {
                         dataKey="weekNumber" 
                         stroke="rgba(255, 255, 255, 0.3)"
                         tick={{ fill: 'rgba(255, 255, 255, 0.5)' }}
+                        tickFormatter={(v) => v === -1 ? 'B' : `W${v}`}
                       />
                       <YAxis 
                         stroke="rgba(255, 255, 255, 0.3)"
@@ -1050,6 +1052,7 @@ export default function History() {
                         dataKey="weekNumber" 
                         stroke="rgba(255, 255, 255, 0.3)"
                         tick={{ fill: 'rgba(255, 255, 255, 0.5)' }}
+                        tickFormatter={(v) => v === -1 ? 'B' : `W${v}`}
                       />
                       <YAxis 
                         stroke="rgba(255, 255, 255, 0.3)"
@@ -1131,6 +1134,7 @@ export default function History() {
                           dataKey="weekNumber" 
                           stroke="rgba(255, 255, 255, 0.3)"
                           tick={{ fill: 'rgba(255, 255, 255, 0.5)' }}
+                          tickFormatter={(v) => v === -1 ? 'B' : `W${v}`}
                         />
                         <YAxis 
                           stroke="rgba(255, 255, 255, 0.3)"

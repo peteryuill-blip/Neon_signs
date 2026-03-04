@@ -71,6 +71,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-serif: 'Playfair Display', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'IBM Plex Mono', 'Fira Code', monospace;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -96,6 +97,35 @@
   --text-soft: #e0e0e0;
   --text-muted: #888899;
   --text-dim: #555566;
+  
+  /* NEW: Semantic Colors */
+  --status-save: #00cc88;
+  --status-potential: #ffcc00;
+  --status-probably-trash: #ff8844;
+  --status-trash: #ff3344;
+  --status-signal: #00f0ff;
+  
+  /* NEW: Energy Semantic */
+  --energy-hot: #ff4400;
+  --energy-sustainable: #ffcc00;
+  --energy-depleted: #6644cc;
+  
+  /* NEW: Jester Scale */
+  --jester-clear: #00cc88;
+  --jester-watch: #ffcc00;
+  --jester-alert: #ff4400;
+  --jester-critical: #ff1493;
+  
+  /* NEW: Border Tiers */
+  --border-default: #2a2a3a;
+  --border-subtle: #1a1a2a;
+  --border-interactive: #3a3a5a;
+  
+  /* NEW: Glow Intensity Tiers */
+  --glow-ambient: 0 0 4px;
+  --glow-subtle: 0 0 8px;
+  --glow-medium: 0 0 16px;
+  --glow-intense: 0 0 30px;
   
   /* Glow effects - soft blur, alive not harsh */
   --glow-cyan: 0 0 8px #00f0ff, 0 0 20px rgba(0, 240, 255, 0.5), 0 0 40px rgba(0, 240, 255, 0.25);
@@ -278,13 +308,49 @@
   .cyber-card {
     background: var(--near-black);
     background-image: var(--wet-shine);
-    border: 1px solid rgba(255, 20, 147, 0.3);
-    box-shadow: 
-      inset 0 1px 0 rgba(255,255,255,0.05),
-      0 0 20px rgba(255, 20, 147, 0.15),
-      0 0 40px rgba(157, 78, 221, 0.1);
+    border: 1px solid var(--border-default);
+    box-shadow: none;
     position: relative;
     overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.3s;
+  }
+  
+  .cyber-card:hover {
+    border-color: rgba(0, 240, 255, 0.3);
+    box-shadow: var(--glow-subtle) rgba(0, 240, 255, 0.15);
+  }
+  
+  /* Interactive card (works, materials) */
+  .cyber-card-interactive {
+    background: var(--near-black);
+    background-image: var(--wet-shine);
+    border: 1px solid var(--border-interactive);
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.3s;
+  }
+  
+  .cyber-card-interactive:hover {
+    border-color: var(--neon-cyan);
+    box-shadow: var(--glow-medium) rgba(0, 240, 255, 0.2);
+  }
+  
+  /* Signal card (discovery detected) */
+  .cyber-card-signal {
+    border-left: 3px solid var(--neon-amber);
+    box-shadow: var(--glow-subtle) rgba(255, 107, 53, 0.15);
+  }
+  
+  /* Alert card (roundup due) */
+  .cyber-card-alert {
+    border: 1px solid var(--neon-amber);
+    animation: neon-breathe 4s ease-in-out infinite;
+  }
+  
+  /* Data display: trial codes, material codes, numbers */
+  .data-code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    letter-spacing: 0.02em;
   }
   
   .cyber-card::before {
@@ -298,13 +364,7 @@
     opacity: 0.5;
   }
   
-  .cyber-card:hover {
-    border-color: rgba(0, 240, 255, 0.5);
-    box-shadow: 
-      inset 0 1px 0 rgba(255,255,255,0.08),
-      var(--glow-cyan),
-      0 0 60px rgba(255, 20, 147, 0.2);
-  }
+  /* Old intense hover removed — using reduced glow hover above */
 
   /* Navigation icon buttons - matching N logo style */
   .nav-icon-btn {

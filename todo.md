@@ -493,3 +493,71 @@
 - [x] TRIALS: Replace deferred/placeholder text with blank cells
 - [x] TRIALS: Enforce exact column order per spec
 - [x] Test export endpoint produces valid CSV matching all validation checks
+
+## MASTERPIECE REDESIGN (from NEON_SIGNS_REDESIGN_SPEC.md)
+
+### Phase 1: Critical Fixes
+- [ ] Fix "52 weeks elapsed" progress bar text bug on Command Center Overview
+- [ ] Fix duplicate W0 x-axis on all charts → render Week -1 as "B" (baseline)
+- [ ] Fix Trials Over Time x-axis formatting (week numbers not month format)
+- [ ] Add material display names to Command Center Materials tab (not just codes)
+- [ ] Fix disposition color consistency (green=saves, red=trash, amber=probably trash)
+
+### Phase 2: Intake Optimization
+- [ ] Smart material defaults (pre-select last trial's materials via useLastTrialDefaults hook)
+- [ ] Collapsed sections (materials + notes start collapsed)
+- [ ] Auto-disposition from rating (1-2→Probably Trash, 3→Save Archive, 4-5→Save Archive)
+- [ ] Dimension quick-select presets from most common sizes
+- [ ] Sticky "Save Trial" button at bottom of intake form
+- [ ] Remove default rating selection (force user to choose)
+- [ ] Photo upload front and center in essentials section
+- [ ] Hours quick-tap options (1.0/1.5/2.0/2.5/3.0)
+
+### Phase 3: Navigation Overhaul
+- [ ] Build BottomNav.tsx component (5 tabs: Home, Intake, Works, Analytics, More)
+- [ ] Integrate BottomNav into App.tsx routing
+- [ ] Add badges (trial count on Intake, roundup due on Home)
+- [ ] Remove header icon bar from dashboard
+- [ ] Bottom nav: cyan glow + filled icon for active tab
+- [ ] On tablet/desktop (>=768px) convert to left sidebar with labels
+
+### Phase 4: Dashboard Redesign
+- [ ] "This Week" focus with delta indicators (vs last week)
+- [ ] Simplified step tracker (single bars, no dual-bar overlay)
+- [ ] Jester as status badge not chart ("0/10 ✓ Clear")
+- [ ] Quick Notes expansion with existing notes visible inline + count
+- [ ] Somatic state highlight card
+- [ ] Remove cumulative stats from dashboard (move to Command Center)
+- [ ] Next check-in countdown display
+
+### Phase 5: Visual Polish
+- [ ] Add semantic color variables (--status-save, --status-trash, etc.)
+- [ ] Add energy semantic colors (--energy-hot, --energy-sustainable, --energy-depleted)
+- [ ] Add jester scale colors (--jester-clear, --jester-watch, --jester-alert, --jester-critical)
+- [ ] Contextual card borders (reduce universal glow)
+- [ ] Progress bar redesign (cyan fill on dark track, remove red gradient)
+- [ ] Add monospace font (JetBrains Mono) for codes and data
+- [ ] Touch target enlargement (52-week timeline, mobile buttons min 44x44px)
+- [ ] Gallery lightbox for Works (full-screen photo with swipe)
+- [ ] Works gallery: quick filter pills, material info on cards, discovery preview
+- [ ] Batch operations for reviewing Probably Trash works
+- [ ] Scroll snap on Week Browser in History
+- [ ] New border variables (--border-subtle, --border-interactive)
+- [ ] New glow intensity tiers (--glow-ambient, --glow-subtle, --glow-medium, --glow-intense)
+- [ ] Updated .cyber-card classes (remove ambient glow, add contextual variants)
+- [ ] .data-code class for monospace trial/material codes
+- [ ] .bottom-nav and .bottom-nav-item CSS classes
+- [ ] .intake-save-footer sticky class
+
+### Phase 6: Architecture
+- [ ] Split server/routers.ts into domain modules (roundup, works, materials, analytics, export, settings, archive)
+- [ ] Split server/db.ts into domain modules
+- [ ] Extract CSV restructuring logic to shared/csvRestructure.ts
+- [ ] Analytics query caching (staleTime: 300000 on Command Center queries)
+- [ ] Lazy-load Recharts behind React.lazy()
+
+### Phase 7: Intake Presets
+- [ ] Database migration for intake_presets table
+- [ ] Preset CRUD API (create, read, update, delete presets)
+- [ ] PresetSelector.tsx component for intake form
+- [ ] Auto-create first preset from usage data

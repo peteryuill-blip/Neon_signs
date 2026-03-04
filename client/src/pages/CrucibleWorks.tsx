@@ -4,26 +4,27 @@ import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Flame, Star, Trash2, HelpCircle, Check, Calendar, Ruler, Clock, Download } from 'lucide-react';
+import { ArrowLeft, Flame, Star, Trash2, HelpCircle, Check, Calendar, Ruler, Clock, Download, X, Sparkles } from 'lucide-react';
 
 const RATING_LABELS: Record<number, string> = {
-  1: 'Somatic Drill',
+  1: 'Material Test',
   2: 'Glitch Harvest',
   3: 'Stable Execution',
   4: 'Signal Detected',
   5: 'Breakthrough',
 };
 
-const DISPOSITION_CONFIG = {
-  Trash: { icon: Trash2, color: 'text-gray-500', bgColor: 'bg-gray-500/10' },
-  Probably_Trash: { icon: HelpCircle, color: 'text-amber-500', bgColor: 'bg-amber-500/10' },
-  Save_Archive: { icon: Check, color: 'text-cyan-400', bgColor: 'bg-cyan-400/10' },
-  Save_Has_Potential: { icon: Star, color: 'text-purple-400', bgColor: 'bg-purple-400/10' },
+const DISPOSITION_CONFIG: Record<string, { icon: any; color: string; bgColor: string }> = {
+  Trash: { icon: Trash2, color: 'text-[var(--status-trash)]', bgColor: 'bg-[var(--status-trash)]/10' },
+  Probably_Trash: { icon: HelpCircle, color: 'text-[var(--status-probably-trash)]', bgColor: 'bg-[var(--status-probably-trash)]/10' },
+  Save_Archive: { icon: Check, color: 'text-[var(--status-save)]', bgColor: 'bg-[var(--status-save)]/10' },
+  Save_Has_Potential: { icon: Star, color: 'text-[var(--status-potential)]', bgColor: 'bg-[var(--status-potential)]/10' },
 };
 
 export default function CrucibleWorks() {
   const [dispositionFilter, setDispositionFilter] = useState<string>('all');
   const [ratingFilter, setRatingFilter] = useState<string>('all');
+  const [lightboxWork, setLightboxWork] = useState<any>(null);
   
   const { data: works, isLoading } = trpc.works.getAll.useQuery({ limit: 100 });
   const { refetch: fetchExportData } = trpc.works.exportCSV.useQuery(undefined, { enabled: false });
@@ -33,7 +34,6 @@ export default function CrucibleWorks() {
       const { data } = await fetchExportData();
       if (!data) return;
       
-      // Convert to CSV
       const headers = ['Code', 'Date', 'Rating', 'Disposition', 'Surfaces', 'Mediums', 'Tools', 'Technical Intent', 'Discovery', 'Height (cm)', 'Width (cm)', 'Hours'];
       const rows = data.map(work => [
         work.code,
@@ -55,7 +55,6 @@ export default function CrucibleWorks() {
         ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
       ].join('\n');
       
-      // Download
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
@@ -67,29 +66,30 @@ export default function CrucibleWorks() {
     }
   };
   
-  // Filter works
   const filteredWorks = works?.filter(work => {
     if (dispositionFilter !== 'all' && work.disposition !== dispositionFilter) return false;
     if (ratingFilter !== 'all' && work.rating !== parseInt(ratingFilter)) return false;
     return true;
   }) || [];
+
+  const hasDiscovery = (work: any) => work.discovery && work.discovery.trim().length > 0;
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white">
+    <div className="min-h-screen bg-[var(--void-black)] text-white pb-24">
       {/* Header */}
-      <header className="border-b border-magenta-500/20 bg-black/50 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b border-[var(--border-default)] bg-[var(--near-black)]/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="container py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link href="/">
-                <Button variant="ghost" size="sm" className="text-gray-400 hover:text-magenta-400">
+                <Button variant="ghost" size="sm" className="text-[var(--text-muted)] hover:text-[var(--neon-magenta)]">
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Dashboard
+                  Home
                 </Button>
               </Link>
               <div>
-                <h1 className="text-xl font-bold text-magenta-400">Crucible Works</h1>
-                <p className="text-sm text-gray-500">Browse all material trials</p>
+                <h1 className="text-xl font-bold text-[var(--neon-magenta)]">Crucible Works</h1>
+                <p className="text-sm text-[var(--text-muted)]">Browse all material trials</p>
               </div>
             </div>
             
@@ -98,14 +98,14 @@ export default function CrucibleWorks() {
                 onClick={handleExportCSV}
                 variant="outline"
                 size="sm"
-                className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+                className="border-[var(--neon-cyan)]/30 text-[var(--neon-cyan)] hover:bg-[var(--neon-cyan)]/10"
               >
                 <Download className="w-4 h-4 mr-2" />
-                Export CSV
+                Export
               </Button>
               <div className="text-right">
-                <div className="text-2xl font-bold text-cyan-400">{filteredWorks.length}</div>
-                <div className="text-sm text-gray-500">trials</div>
+                <div className="text-2xl font-bold data-code text-[var(--neon-cyan)]">{filteredWorks.length}</div>
+                <div className="text-xs text-[var(--text-muted)]">trials</div>
               </div>
             </div>
           </div>
@@ -115,10 +115,10 @@ export default function CrucibleWorks() {
       {/* Filters */}
       <div className="container py-6">
         <div className="flex flex-wrap gap-4 mb-6">
-          <div className="flex-1 min-w-[200px]">
-            <label className="text-sm text-gray-400 mb-2 block">Disposition</label>
+          <div className="flex-1 min-w-[160px]">
+            <label className="text-sm text-[var(--text-muted)] mb-2 block">Disposition</label>
             <Select value={dispositionFilter} onValueChange={setDispositionFilter}>
-              <SelectTrigger className="bg-black/50 border-purple-500/30">
+              <SelectTrigger className="bg-[var(--void-black)] border-[var(--border-interactive)]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -131,10 +131,10 @@ export default function CrucibleWorks() {
             </Select>
           </div>
           
-          <div className="flex-1 min-w-[200px]">
-            <label className="text-sm text-gray-400 mb-2 block">Rating</label>
+          <div className="flex-1 min-w-[160px]">
+            <label className="text-sm text-[var(--text-muted)] mb-2 block">Rating</label>
             <Select value={ratingFilter} onValueChange={setRatingFilter}>
-              <SelectTrigger className="bg-black/50 border-purple-500/30">
+              <SelectTrigger className="bg-[var(--void-black)] border-[var(--border-interactive)]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -143,7 +143,7 @@ export default function CrucibleWorks() {
                 <SelectItem value="4">4 - Signal Detected</SelectItem>
                 <SelectItem value="3">3 - Stable Execution</SelectItem>
                 <SelectItem value="2">2 - Glitch Harvest</SelectItem>
-                <SelectItem value="1">1 - Somatic Drill</SelectItem>
+                <SelectItem value="1">1 - Material Test</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -151,103 +151,164 @@ export default function CrucibleWorks() {
         
         {/* Works Grid */}
         {isLoading ? (
-          <div className="text-center py-12 text-gray-500">Loading trials...</div>
+          <div className="text-center py-12 text-[var(--text-muted)]">Loading trials...</div>
         ) : filteredWorks.length === 0 ? (
           <div className="text-center py-12">
-            <Flame className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-500">No trials found</p>
+            <Flame className="w-12 h-12 text-[var(--text-dim)] mx-auto mb-4" />
+            <p className="text-[var(--text-muted)]">No trials found</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {filteredWorks.map((work) => {
-              const DispositionIcon = DISPOSITION_CONFIG[work.disposition].icon;
-              const dispositionColor = DISPOSITION_CONFIG[work.disposition].color;
-              const dispositionBg = DISPOSITION_CONFIG[work.disposition].bgColor;
+              const config = DISPOSITION_CONFIG[work.disposition] || DISPOSITION_CONFIG.Trash;
+              const DispositionIcon = config.icon;
+              const discovery = hasDiscovery(work);
               
               return (
-                <Link key={work.id} href={`/crucible/work/${work.id}`}>
-                  <Card className="bg-black/40 border-purple-500/30 hover:border-magenta-400/50 transition-all cursor-pointer group">
-                    <CardContent className="p-0">
-                      {/* Photo */}
+                <div key={work.id} className="relative">
+                  {/* Gallery card - click photo for lightbox, click info for detail */}
+                  <div 
+                    className={`cyber-card-interactive rounded-lg overflow-hidden ${discovery ? 'cyber-card-signal' : ''}`}
+                  >
+                    {/* Photo - opens lightbox */}
+                    <div 
+                      className="aspect-square overflow-hidden cursor-pointer"
+                      onClick={() => setLightboxWork(work)}
+                    >
                       {(work.photoThumbnail || work.photoUrl) ? (
-                        <div className="aspect-[4/3] overflow-hidden rounded-t-lg">
-                          <img 
-                            src={work.photoThumbnail || work.photoUrl || ''} 
-                            alt={work.code}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                          />
-                        </div>
+                        <img 
+                          src={work.photoThumbnail || work.photoUrl || ''} 
+                          alt={work.code}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform"
+                          loading="lazy"
+                        />
                       ) : (
-                        <div className="aspect-[4/3] bg-gradient-to-br from-purple-900/20 to-black rounded-t-lg flex items-center justify-center">
-                          <Flame className="w-12 h-12 text-purple-500/30" />
+                        <div className="w-full h-full bg-gradient-to-br from-[var(--neon-purple)]/10 to-[var(--void-black)] flex items-center justify-center">
+                          <Flame className="w-8 h-8 text-[var(--neon-purple)]/30" />
                         </div>
                       )}
-                      
-                      {/* Content */}
-                      <div className="p-4 space-y-3">
-                        {/* Header */}
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <div className="font-mono text-cyan-400 font-bold">{work.code}</div>
-                            <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
-                              <Calendar className="w-3 h-3" />
-                              {new Date(work.date).toLocaleDateString()}
-                            </div>
-                          </div>
-                          
-                          <div className={`p-2 rounded-lg ${dispositionBg}`}>
-                            <DispositionIcon className={`w-4 h-4 ${dispositionColor}`} />
+                    </div>
+                    
+                    {/* Info overlay */}
+                    <Link href={`/crucible/work/${work.id}`}>
+                      <div className="p-2.5 space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <span className="data-code text-[var(--neon-cyan)] font-bold text-sm">{work.code}</span>
+                          <div className={`p-1 rounded ${config.bgColor}`}>
+                            <DispositionIcon className={`w-3.5 h-3.5 ${config.color}`} />
                           </div>
                         </div>
                         
-                        {/* Rating */}
-                        <div className="flex items-center gap-2">
-                          <div className="flex gap-1">
-                            {[1, 2, 3, 4, 5].map((i) => (
-                              <Star
-                                key={i}
-                                className={`w-4 h-4 ${
-                                  i <= work.rating
-                                    ? 'fill-amber-400 text-amber-400'
-                                    : 'text-gray-600'
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <span className="text-xs text-gray-500">{RATING_LABELS[work.rating]}</span>
+                        {/* Rating stars */}
+                        <div className="flex gap-0.5">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <Star
+                              key={i}
+                              className={`w-3 h-3 ${
+                                i <= work.rating
+                                  ? 'fill-[var(--neon-amber)] text-[var(--neon-amber)]'
+                                  : 'text-[var(--text-dim)]'
+                              }`}
+                            />
+                          ))}
                         </div>
                         
-                        {/* Size & Hours */}
-                        <div className="flex items-center gap-4 text-xs text-gray-500">
+                        {/* Meta row */}
+                        <div className="flex items-center gap-2 text-[10px] text-[var(--text-muted)]">
                           {work.heightCm && work.widthCm && (
-                            <div className="flex items-center gap-1">
-                              <Ruler className="w-3 h-3" />
-                              {work.heightCm}×{work.widthCm}cm
-                            </div>
+                            <span className="data-code">{work.heightCm}×{work.widthCm}</span>
                           )}
                           {work.hours && (
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-3 h-3" />
-                              {work.hours}h
-                            </div>
+                            <span className="data-code">{work.hours}h</span>
+                          )}
+                          {discovery && (
+                            <Sparkles className="w-3 h-3 text-[var(--neon-amber)]" />
                           )}
                         </div>
-                        
-                        {/* Technical Intent Preview */}
-                        {work.technicalIntent && (
-                          <p className="text-sm text-gray-400 line-clamp-2">
-                            {work.technicalIntent}
-                          </p>
-                        )}
                       </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                    </Link>
+                  </div>
+                </div>
               );
             })}
           </div>
         )}
       </div>
+
+      {/* Lightbox */}
+      {lightboxWork && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
+          onClick={() => setLightboxWork(null)}
+        >
+          <button 
+            className="absolute top-4 right-4 p-2 text-white/70 hover:text-white z-10"
+            onClick={() => setLightboxWork(null)}
+          >
+            <X className="w-8 h-8" />
+          </button>
+          
+          <div className="max-w-[90vw] max-h-[85vh] flex flex-col items-center gap-4" onClick={e => e.stopPropagation()}>
+            {(lightboxWork.photoUrl || lightboxWork.photoThumbnail) ? (
+              <img 
+                src={lightboxWork.photoUrl || lightboxWork.photoThumbnail} 
+                alt={lightboxWork.code}
+                className="max-w-full max-h-[70vh] object-contain rounded-lg"
+              />
+            ) : (
+              <div className="w-64 h-64 bg-[var(--near-black)] rounded-lg flex items-center justify-center">
+                <Flame className="w-16 h-16 text-[var(--neon-purple)]/30" />
+              </div>
+            )}
+            
+            {/* Info bar */}
+            <div className="bg-[var(--near-black)] rounded-lg p-4 w-full max-w-lg border border-[var(--border-default)]">
+              <div className="flex items-center justify-between mb-2">
+                <span className="data-code text-[var(--neon-cyan)] font-bold text-lg">{lightboxWork.code}</span>
+                <div className="flex gap-0.5">
+                  {[1, 2, 3, 4, 5].map((i: number) => (
+                    <Star
+                      key={i}
+                      className={`w-4 h-4 ${
+                        i <= lightboxWork.rating
+                          ? 'fill-[var(--neon-amber)] text-[var(--neon-amber)]'
+                          : 'text-[var(--text-dim)]'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-4 text-sm text-[var(--text-muted)]">
+                <span>{new Date(lightboxWork.date).toLocaleDateString()}</span>
+                <span className="data-code">{RATING_LABELS[lightboxWork.rating]}</span>
+                {lightboxWork.heightCm && lightboxWork.widthCm && (
+                  <span className="data-code">{lightboxWork.heightCm}×{lightboxWork.widthCm}cm</span>
+                )}
+                {lightboxWork.hours && <span className="data-code">{lightboxWork.hours}h</span>}
+              </div>
+              {lightboxWork.technicalIntent && (
+                <p className="text-sm text-[var(--text-soft)] mt-2">{lightboxWork.technicalIntent}</p>
+              )}
+              {hasDiscovery(lightboxWork) && (
+                <div className="mt-2 p-2 rounded bg-[var(--neon-amber)]/5 border-l-2 border-[var(--neon-amber)]">
+                  <div className="flex items-center gap-1 text-xs text-[var(--neon-amber)] mb-1">
+                    <Sparkles className="w-3 h-3" />
+                    Discovery
+                  </div>
+                  <p className="text-sm text-[var(--text-soft)]">{lightboxWork.discovery}</p>
+                </div>
+              )}
+              <div className="mt-3 flex justify-end">
+                <Link href={`/crucible/work/${lightboxWork.id}`}>
+                  <Button size="sm" variant="outline" className="border-[var(--neon-cyan)]/30 text-[var(--neon-cyan)] hover:bg-[var(--neon-cyan)]/10">
+                    View Full Detail
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
