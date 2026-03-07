@@ -1,1224 +1,914 @@
-{
-  "generated_at": "2025-12-21T20:49:32.113433",
-  "total_entries": 60,
-  "entries": [
-    {
-      "source_phase": "PH1",
-      "source_date": "2018-01-03",
-      "content": "The work is technically rigorous, emotionally unstable, and conceptually paradoxical: circles reach for cosmic coherence while black bars enforce the hard limits of knowledge and meaning.",
-      "phrase_tags": [
-        "technically",
-        "emotionally",
-        "meaning",
-        "limits",
-        "knowledge",
-        "rigorous",
-        "unstable",
-        "paradoxical"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH1_circular-paradigm",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 6,
-      "pattern_tag": "circular-paradigm",
-      "week_index": 0
-    },
-    {
-      "source_phase": "PH1",
-      "source_date": "2018-01-23",
-      "content": "In line with the philosophers Albert Camus, Jean-Paul Sartre, and SÃ¸ren Kierkegaard, it was the point when I realised that there can never be a true understanding of our purpose. Not through thought, reason, or mathematics. To understand this, was to let go, and begin the next stage of existential ",
-      "phrase_tags": [
-        "purpose",
-        "reason",
-        "thought",
-        "albert",
-        "sartre",
-        "kierkegaard",
-        "stage",
-        "begin"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH1_existential",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 4,
-      "pattern_tag": "existential",
-      "week_index": 3
-    },
-    {
-      "source_phase": "PH1",
-      "source_date": "2018-02-09",
-      "content": "The work within post-conceptual geometric abstraction and contemporary occult revival movements (2010s resurgence of interest in crowley, thelema, neo-paganism in visual arts).",
-      "phrase_tags": [
-        "crowley",
-        "interest",
-        "occult",
-        "paganism",
-        "revival",
-        "abstraction",
-        "thelema",
-        "geometric"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH1_thelemic",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 5,
-      "pattern_tag": "thelemic",
-      "week_index": 5
-    },
-    {
-      "source_phase": "PH1",
-      "source_date": "2018-05-01",
-      "content": "The relationship between the 30+ preparatory variations and the final work? is selection intuitive, rational, or both? (status: active) 5.",
-      "phrase_tags": [
-        "relationship",
-        "selection",
-        "preparatory",
-        "rational",
-        "final",
-        "variations",
-        "active",
-        "status"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH1_practice-reflection",
-      "somatic_state": "Calm center, hands steady",
-      "jester_activity": 4,
-      "pattern_tag": "practice-reflection",
-      "week_index": 17
-    },
-    {
-      "source_phase": "PH1",
-      "source_date": "2018-05-08",
-      "content": "The balance between dark and light, black and white, yin and yang, have always been very attractive to me. Sharp contrast, depth, the desire to shed the colours of older work. I did not feel it was relevant anymore, it did not serve a purpose and was only a distraction. All that matters now is black",
-      "phrase_tags": [
-        "contrast",
-        "white",
-        "purpose",
-        "sharp",
-        "matters",
-        "colours",
-        "older",
-        "anymore"
-      ],
-      "emotional_state": "depleted",
-      "phase_dna": "PH1_practice-reflection",
-      "somatic_state": "light, black and white, yin and yang, have always been very attractive to me.",
-      "jester_activity": 5,
-      "pattern_tag": "practice-reflection",
-      "week_index": 18
-    },
-    {
-      "source_phase": "PH1",
-      "source_date": "2018-05-17",
-      "content": "## filemeta phase ph1 phaselabel ph1: absurdity of meaning years 2018 layerset source_summary, a1, a2, a3, a4, a5_links role phase_spine_segment filetype phase_synthesis intendeduse use this block for questions about early existential black‑and‑white geometry, absurd meaning, norse/occult references",
-      "phrase_tags": [
-        "meaning",
-        "filetype",
-        "white",
-        "occult",
-        "absurd",
-        "filemeta",
-        "block",
-        "questions"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH1_absurdism",
-      "somatic_state": "Calm center, hands steady",
-      "jester_activity": 6,
-      "pattern_tag": "absurdism",
-      "week_index": 19
-    },
-    {
-      "source_phase": "PH1",
-      "source_date": "2018-05-24",
-      "content": "I concluded I would have to break myself down to absolutely nothing",
-      "phrase_tags": [
-        "myself",
-        "break",
-        "nothing",
-        "concluded",
-        "absolutely"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH1_practice-reflection",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 4,
-      "pattern_tag": "practice-reflection",
-      "week_index": 20
-    },
-    {
-      "source_phase": "PH1A",
-      "source_date": "2018-08-11",
-      "content": "The work as serious cosmology rather than high-end decoration - **site responsiveness vs.",
-      "phrase_tags": [
-        "responsiveness",
-        "serious",
-        "decoration",
-        "cosmology",
-        "rather"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH1A_practice-reflection",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 6,
-      "pattern_tag": "practice-reflection",
-      "week_index": 31
-    },
-    {
-      "source_phase": "PH1A",
-      "source_date": "2018-10-18",
-      "content": "Phase 1A takes the same black-and-white geometric language from PH1 and tests it on walls, lobbies, offices, and semi-public spaces. Each commission is a negotiation between client expectations and the need to keep the work as cosmology, not wallpaper.",
-      "phrase_tags": [
-        "white",
-        "tests",
-        "geometric",
-        "public",
-        "language",
-        "offices",
-        "phase",
-        "negotiation"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH1A_practice-reflection",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 6,
-      "pattern_tag": "practice-reflection",
-      "week_index": 41
-    },
-    {
-      "source_phase": "PH1A",
-      "source_date": "2018-12-18",
-      "content": "\" On the philosophical stakes: \"The commissions treat walls as extensions of the grid, places where cosmic order and corporate life collide.",
-      "phrase_tags": [
-        "extensions",
-        "commissions",
-        "places",
-        "cosmic",
-        "stakes",
-        "order",
-        "philosophical",
-        "collide"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH1A_practice-reflection",
-      "somatic_state": "tensions of the grid, places where cosmic order and corporate life collide.",
-      "jester_activity": 6,
-      "pattern_tag": "practice-reflection",
-      "week_index": 50
-    },
-    {
-      "source_phase": "PH1A",
-      "source_date": "2019-03-10",
-      "content": "The commissions treat walls as extensions of the grid, places where cosmic order and corporate life collide. There is pride in seeing the work hold its ground in these spaces, but also unease at how easily it could be flattened into design if the underlying intent is forgotten.",
-      "phrase_tags": [
-        "cosmic",
-        "order",
-        "extensions",
-        "seeing",
-        "ground",
-        "forgotten",
-        "unease",
-        "collide"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH1A_practice-reflection",
-      "somatic_state": "tensions of the grid, places where cosmic order and corporate life collide.",
-      "jester_activity": 6,
-      "pattern_tag": "practice-reflection",
-      "week_index": 61
-    },
-    {
-      "source_phase": "PH1A",
-      "source_date": "2019-03-10",
-      "content": "While PH1 asks \"Can meaning exist inside structure?\" in the intimate space of the studio, PH1A asks: Can this geometry survive outside the controlled studio environment? Can sacred geometry and existential abstraction hold their philosophical weight when embedded into commercial, hospitality, and in",
-      "phrase_tags": [
-        "controlled",
-        "meaning",
-        "outside",
-        "abstraction",
-        "environment",
-        "commercial",
-        "sacred",
-        "intimate"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH1A_sacred-geometry",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 4,
-      "pattern_tag": "sacred-geometry",
-      "week_index": 61
-    },
-    {
-      "source_phase": "PH1A",
-      "source_date": "2019-05-02",
-      "content": "Scale, architecture, and sightlines start to dictate decisions: where circles sit in a room, how black voids meet doors, lifts, and furniture. Working on site makes the geometry less private and more infrastructural; the drawings become part of how people move through space.",
-      "phrase_tags": [
-        "working",
-        "doors",
-        "decisions",
-        "start",
-        "drawings",
-        "private",
-        "space",
-        "dictate"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH1A_circular-paradigm",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 4,
-      "pattern_tag": "circular-paradigm",
-      "week_index": 69
-    },
-    {
-      "source_phase": "PH2",
-      "source_date": "2019-08-05",
-      "content": ") is the spiritual-geometric crystallization of everything ph1 questioned. where ph1 asked",
-      "phrase_tags": [
-        "spiritual",
-        "crystallization",
-        "asked",
-        "geometric",
-        "questioned",
-        "everything"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH2_spiritual-practice",
-      "somatic_state": "Calm center, hands steady",
-      "jester_activity": 6,
-      "pattern_tag": "spiritual-practice",
-      "week_index": 83
-    },
-    {
-      "source_phase": "PH2",
-      "source_date": "2019-08-05",
-      "content": "Gold and copper planes function like distinct energetic layers- solar and grounded- while the torus cuts through them as a continuous current. The drawings sit inside the tension between what can be measured and what can't; each piece is a deliberate negotiation with the limits of rational understan",
-      "phrase_tags": [
-        "measured",
-        "rational",
-        "understan",
-        "drawings",
-        "continuous",
-        "copper",
-        "function",
-        "energetic"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH2_gold-material",
-      "somatic_state": "grounded- while the torus cuts through them as a continuous current.",
-      "jester_activity": 4,
-      "pattern_tag": "gold-material",
-      "week_index": 83
-    },
-    {
-      "source_phase": "PH2",
-      "source_date": "2019-09-24",
-      "content": "The circle becomes the core vocabulary of this phase- stripped down, sharpened, and treated as the only structure honest enough to hold both order and uncertainty. Alignment marks the moment when the work stops wrestling with meaning and instead stabilizes into a long-term orbit; the circle becomes ",
-      "phrase_tags": [
-        "alignment",
-        "meaning",
-        "uncertainty",
-        "order",
-        "moment",
-        "treated",
-        "marks",
-        "wrestling"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH2_alignment",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 4,
-      "pattern_tag": "alignment",
-      "week_index": 90
-    },
-    {
-      "source_phase": "PH2",
-      "source_date": "2019-10-12",
-      "content": "The work shifts from depicting tension toward embodying alignment.",
-      "phrase_tags": [
-        "alignment",
-        "toward",
-        "embodying",
-        "shifts",
-        "tension",
-        "depicting"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH2_alignment",
-      "somatic_state": "bodying alignment.",
-      "jester_activity": 4,
-      "pattern_tag": "alignment",
-      "week_index": 92
-    },
-    {
-      "source_phase": "PH2",
-      "source_date": "2019-11-02",
-      "content": "The tension between what can be measured and what can't; each piece is a deliberate negotiation with the limits of rational understanding.",
-      "phrase_tags": [
-        "measured",
-        "rational",
-        "limits",
-        "deliberate",
-        "negotiation",
-        "piece",
-        "tension",
-        "understanding"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH2_practice-reflection",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 6,
-      "pattern_tag": "practice-reflection",
-      "week_index": 95
-    },
-    {
-      "source_phase": "PH2",
-      "source_date": "2020-02-29",
-      "content": "Where PH1 asked \"Can meaning exist inside structure?\", PH2 answers: **Not definitively.",
-      "phrase_tags": [
-        "meaning",
-        "inside",
-        "exist",
-        "answers",
-        "asked",
-        "structure",
-        "definitively"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH2_practice-reflection",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 4,
-      "pattern_tag": "practice-reflection",
-      "week_index": 112
-    },
-    {
-      "source_phase": "PH2A",
-      "source_date": "2020-04-09",
-      "content": "The work all other works point toward - scale as metaphor: the climactic transformation requires more space, more energy, more risk exhibition strategy: the four odes likely flanked or surrounded therion, creating a ritual architecture where the viewer moved through the narrative sequence before enc",
-      "phrase_tags": [
-        "ritual",
-        "climactic",
-        "moved",
-        "works",
-        "space",
-        "energy",
-        "exhibition",
-        "scale"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH2A_ritual",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 4,
-      "pattern_tag": "ritual",
-      "week_index": 118
-    },
-    {
-      "source_phase": "PH2A",
-      "source_date": "2020-05-17",
-      "content": "I work with ink on paper. Ink is very finite and very permanent. When it's just black on white, there's no undo button, no eraser. It's not like painting with oil, where you can go over it again and again. It's a one-shot medium.",
-      "phrase_tags": [
-        "paper",
-        "finite",
-        "medium",
-        "permanent",
-        "white",
-        "painting",
-        "eraser",
-        "button"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH2A_one-shot-discipline",
-      "somatic_state": "Calm center, hands steady",
-      "jester_activity": 5,
-      "pattern_tag": "one-shot-discipline",
-      "week_index": 123
-    },
-    {
-      "source_phase": "PH3A",
-      "source_date": "2020-06-16",
-      "content": "(august 2020, jonathan levine projects) on thelemic transition:",
-      "phrase_tags": [
-        "projects",
-        "transition",
-        "thelemic",
-        "august",
-        "jonathan",
-        "levine"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH3A_practice-reflection",
-      "somatic_state": "Calm center, hands steady",
-      "jester_activity": 5,
-      "pattern_tag": "practice-reflection",
-      "week_index": 128
-    },
-    {
-      "source_phase": "PH3A",
-      "source_date": "2020-06-21",
-      "content": "Eternity PH2's temporal logic: - Eternity: Torus has no beginning/end; circles suggest infinite return - Meditative time: Hours of labor, accumulated into presence - Timelessness: The work feels outside time PH3A's temporal logic: - Moment: One shot = one moment of decision, commitment, surrender - ",
-      "phrase_tags": [
-        "eternity",
-        "temporal",
-        "outside",
-        "infinite",
-        "feels",
-        "commitment",
-        "moment",
-        "accumulated"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH3A_one-shot-discipline",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 5,
-      "pattern_tag": "one-shot-discipline",
-      "week_index": 128
-    },
-    {
-      "source_phase": "PH2A",
-      "source_date": "2020-06-28",
-      "content": "2 irreversibility and existential commitment the core philosophical shift from ph1/ph2: - ph1 (absurdity): \"there is no guaranteed meaning, but i'll build structure anyway.",
-      "phrase_tags": [
-        "shift",
-        "absurdity",
-        "irreversibility",
-        "meaning",
-        "commitment",
-        "guaranteed",
-        "structure",
-        "philosophical"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH2A_absurdism",
-      "somatic_state": "Calm center, hands steady",
-      "jester_activity": 5,
-      "pattern_tag": "absurdism",
-      "week_index": 129
-    },
-    {
-      "source_phase": "PH2A",
-      "source_date": "2020-07-05",
-      "content": "Within me, over the last few years and especially over the last year, there has been a very significant shift- spiritually, emotionally, and physically- in reaction to what's going on around the world, but also as I explore my own understanding of self. I feel like I'm really making a lot of progres",
-      "phrase_tags": [
-        "shift",
-        "emotionally",
-        "physically",
-        "spiritually",
-        "around",
-        "reaction",
-        "world",
-        "explore"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH2A_spiritual-practice",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 4,
-      "pattern_tag": "spiritual-practice",
-      "week_index": 130
-    },
-    {
-      "source_phase": "PH3A",
-      "source_date": "2020-07-07",
-      "content": "The work becomes a meditation on acceptance and surrender.",
-      "phrase_tags": [
-        "meditation",
-        "surrender",
-        "becomes",
-        "acceptance"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH3A_meditation",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 4,
-      "pattern_tag": "meditation",
-      "week_index": 131
-    },
-    {
-      "source_phase": "PH2A",
-      "source_date": "2020-07-13",
-      "content": "\" On the Equinox title and Thelemic framework: \"I have chosen the title *The Equinox of the Gods* for this show because it refers to the transition from one phase to another in a spiritual context- moving from the Age of Osiris into the Age of Horus in Thelema.",
-      "phrase_tags": [
-        "chosen",
-        "osiris",
-        "another",
-        "title",
-        "phase",
-        "spiritual",
-        "context",
-        "horus"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH2A_thelemic",
-      "somatic_state": "Calm center, hands steady",
-      "jester_activity": 5,
-      "pattern_tag": "thelemic",
-      "week_index": 132
-    },
-    {
-      "source_phase": "PH3A",
-      "source_date": "2020-07-22",
-      "content": "The title itself references Thelemic spiritual cosmology, positioning the exhibition as more than art- it's a spiritual declaration of rebirth through rupture.",
-      "phrase_tags": [
-        "title",
-        "spiritual",
-        "positioning",
-        "exhibition",
-        "thelemic",
-        "rupture",
-        "cosmology",
-        "rebirth"
-      ],
-      "emotional_state": "depleted",
-      "phase_dna": "PH3A_rupture",
-      "somatic_state": "Body contracted, seeking stillness",
-      "jester_activity": 1,
-      "pattern_tag": "rupture",
-      "week_index": 133
-    },
-    {
-      "source_phase": "PH3A",
-      "source_date": "2020-07-29",
-      "content": "### 1.2 key exhibition context date significance august 2020 first solo at major international gallery; introduces thelemic cosmology; one-shot ink mandate aspect | ph2 (",
-      "phrase_tags": [
-        "gallery",
-        "context",
-        "exhibition",
-        "international",
-        "introduces",
-        "mandate",
-        "significance",
-        "august"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH3A_one-shot-discipline",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 4,
-      "pattern_tag": "one-shot-discipline",
-      "week_index": 134
-    },
-    {
-      "source_phase": "PH3A",
-      "source_date": "2020-08-27",
-      "content": "3 thelemic cosmology as philosophical framework comparison to earlier phases: spiritual framework emotional tone absurdism (camus) | sacred geometry vs.",
-      "phrase_tags": [
-        "earlier",
-        "spiritual",
-        "sacred",
-        "framework",
-        "camus",
-        "comparison",
-        "philosophical",
-        "geometry"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH3A_sacred-geometry",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 6,
-      "pattern_tag": "sacred-geometry",
-      "week_index": 138
-    },
-    {
-      "source_phase": "PH2A",
-      "source_date": "2020-09-15",
-      "content": "The work functions as: - Personal transformation narrative (artist's own spiritual evolution) - Global transformation metaphor (pandemic as aeonic rupture) - Historical threshold marker (2020 as a year when old structures visibly failed) Web-informed context: PH2A emerges during a period of intense ",
-      "phrase_tags": [
-        "context",
-        "pandemic",
-        "structures",
-        "period",
-        "artist",
-        "evolution",
-        "narrative",
-        "functions"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH2A_rupture",
-      "somatic_state": "Calm center, hands steady",
-      "jester_activity": 3,
-      "pattern_tag": "rupture",
-      "week_index": 141
-    },
-    {
-      "source_phase": "PH2A",
-      "source_date": "2020-12-06",
-      "content": "I have chosen the title *The Equinox of the Gods* for this show because it refers to the transition from one phase to another in a spiritual context- moving from the Age of Osiris into the Age of Horus in Thelema. For me, that resonates quite strongly right now, not just on a global scale with what'",
-      "phrase_tags": [
-        "context",
-        "horus",
-        "thelema",
-        "equinox",
-        "because",
-        "moving",
-        "osiris",
-        "title"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH2A_thelemic",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 5,
-      "pattern_tag": "thelemic",
-      "week_index": 152
-    },
-    {
-      "source_phase": "PH3",
-      "source_date": "2021-05-05",
-      "content": "Flowing geographic anchor hong kong â†’ bangkok nomadic | ## 2. primary source materials (a1v6p layer) ### 2.1 podcast excerpt (echoes, 2021) on conduit ontology:**",
-      "phrase_tags": [
-        "geographic",
-        "flowing",
-        "layer",
-        "podcast",
-        "echoes",
-        "bangkok",
-        "nomadic",
-        "source"
-      ],
-      "emotional_state": "hot",
-      "phase_dna": "PH3_nomadic",
-      "somatic_state": "Energy concentrated in chest and hands, forward momentum",
-      "jester_activity": 7,
-      "pattern_tag": "nomadic",
-      "week_index": 174
-    },
-    {
-      "source_phase": "PH3",
-      "source_date": "2021-06-26",
-      "content": ") with jj at pearl lam galleries celestial secrets bangkok ### 1.3 core philosophical shift ph2 (",
-      "phrase_tags": [
-        "shift",
-        "pearl",
-        "secrets",
-        "celestial",
-        "bangkok",
-        "philosophical",
-        "galleries"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH3_practice-reflection",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 4,
-      "pattern_tag": "practice-reflection",
-      "week_index": 181
-    },
-    {
-      "source_phase": "PH3",
-      "source_date": "2021-07-18",
-      "content": "The balance tell us? mq_ph3_005: how does urban walking phenomenologically differ between hong kong and bangkok? does this affect composition? ## 6.",
-      "phrase_tags": [
-        "walking",
-        "affect",
-        "bangkok",
-        "differ",
-        "composition",
-        "phenomenologically",
-        "balance",
-        "urban"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH3_walking-engine",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 4,
-      "pattern_tag": "walking-engine",
-      "week_index": 184
-    },
-    {
-      "source_phase": "PH3",
-      "source_date": "2021-07-19",
-      "content": "The body of work is described as a journey- an invitation for viewers to dive deeply into meaning and seek understanding of the sacred, chaos, perfection, and irrationality.",
-      "phrase_tags": [
-        "perfection",
-        "meaning",
-        "chaos",
-        "described",
-        "deeply",
-        "understanding",
-        "sacred",
-        "irrationality"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH3_embodiment",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 6,
-      "pattern_tag": "embodiment",
-      "week_index": 185
-    },
-    {
-      "source_phase": "PH3",
-      "source_date": "2021-12-30",
-      "content": ") marks a decisive chromatic and conceptual expansion from ph2's calm, torus-based minimalism. where ph2 asked",
-      "phrase_tags": [
-        "chromatic",
-        "asked",
-        "minimalism",
-        "expansion",
-        "torus",
-        "based",
-        "marks",
-        "conceptual"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH3_practice-reflection",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 6,
-      "pattern_tag": "practice-reflection",
-      "week_index": 208
-    },
-    {
-      "source_phase": "PH3",
-      "source_date": "2022-10-28",
-      "content": "3 a1v6p analysis: nomadic turning point & conduit consciousness chronological marker: - 2021 (echoes): artist remains hong kong-based; reflects on 12+ years in hk; podcast records moment of consolidation and first articulation of \"conduit ontology\" - 2023 (celestial secrets): first major residency o",
-      "phrase_tags": [
-        "residency",
-        "podcast",
-        "records",
-        "moment",
-        "analysis",
-        "remains",
-        "major",
-        "celestial"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH3_nomadic",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 4,
-      "pattern_tag": "nomadic",
-      "week_index": 251
-    },
-    {
-      "source_phase": "PH3",
-      "source_date": "2022-11-14",
-      "content": "The work is not an expression of the artist's will, but a manifestation of creative energy flowing through him - Resonance frequency: Creating conditions (mental, spiritual, physical) where inspiration can flow - Surrender, not control: Letting go of the need to force ideas; trusting the process - W",
-      "phrase_tags": [
-        "creative",
-        "resonance",
-        "energy",
-        "frequency",
-        "surrender",
-        "artist",
-        "letting",
-        "manifestation"
-      ],
-      "emotional_state": "hot",
-      "phase_dna": "PH3_spiritual-practice",
-      "somatic_state": "Heat in the core, fingers eager for material contact",
-      "jester_activity": 4,
-      "pattern_tag": "spiritual-practice",
-      "week_index": 254
-    },
-    {
-      "source_phase": "PH4",
-      "source_date": "2023-01-11",
-      "content": "The phase represents the full actualization of freedom granted by PH3A's rupture, but freedom comes with a cost: isolation, emotional turbulence, and existential questioning.",
-      "phrase_tags": [
-        "questioning",
-        "phase",
-        "turbulence",
-        "represents",
-        "rupture",
-        "freedom",
-        "comes",
-        "existential"
-      ],
-      "emotional_state": "depleted",
-      "phase_dna": "PH4_rupture",
-      "somatic_state": "Fatigue in limbs, need for rest",
-      "jester_activity": 1,
-      "pattern_tag": "rupture",
-      "week_index": 262
-    },
-    {
-      "source_phase": "PH4",
-      "source_date": "2023-02-10",
-      "content": "Custom works in red, it's been so many years since I've used any colour other than gold, I don't know what I'm doing, but the journey is the whole point.",
-      "phrase_tags": [
-        "colour",
-        "custom",
-        "works",
-        "journey",
-        "doing",
-        "whole"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH4_gold-material",
-      "somatic_state": "Calm center, hands steady",
-      "jester_activity": 5,
-      "pattern_tag": "gold-material",
-      "week_index": 266
-    },
-    {
-      "source_phase": "PH4",
-      "source_date": "2023-04-23",
-      "content": "It's been a wild ride, but I'm still standing. In my 3rd year of being a nomadic artist drifter, living out of a suitcase with nothing but the sunset on the horizon. I have no idea what's next, but I can't wait to find out.",
-      "phrase_tags": [
-        "suitcase",
-        "living",
-        "standing",
-        "drifter",
-        "horizon",
-        "nothing",
-        "nomadic",
-        "artist"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH4_nomadic",
-      "somatic_state": "Calm center, hands steady",
-      "jester_activity": 6,
-      "pattern_tag": "nomadic",
-      "week_index": 276
-    },
-    {
-      "source_phase": "PH4",
-      "source_date": "2023-07-17",
-      "content": "What remains is raw expressive energy, gestural mark-making, and emotional intensity.",
-      "phrase_tags": [
-        "energy",
-        "expressive",
-        "intensity",
-        "remains",
-        "gestural",
-        "emotional"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH4_practice-reflection",
-      "somatic_state": "Calm center, hands steady",
-      "jester_activity": 4,
-      "pattern_tag": "practice-reflection",
-      "week_index": 289
-    },
-    {
-      "source_phase": "PH4",
-      "source_date": "2024-03-11",
-      "content": "3 core philosophical shift ph3a (\"equinox/therion\") how do i destroy the form? ecstatic rupture one-shot ink pure black ink therion embrace institutional gallery gallery statements transgressive liberation ## 2.",
-      "phrase_tags": [
-        "shift",
-        "gallery",
-        "transgressive",
-        "therion",
-        "embrace",
-        "statements",
-        "destroy",
-        "philosophical"
-      ],
-      "emotional_state": "depleted",
-      "phase_dna": "PH4_rupture",
-      "somatic_state": "Body contracted, seeking stillness",
-      "jester_activity": 2,
-      "pattern_tag": "rupture",
-      "week_index": 323
-    },
-    {
-      "source_phase": "PH4",
-      "source_date": "2024-03-26",
-      "content": "At one of those moments in life where I have no idea what I'm doing with my art. I've been pushing myself hard to break out of my self imposed box, free my body and my mind, to allow what is within to flow through.",
-      "phrase_tags": [
-        "pushing",
-        "imposed",
-        "allow",
-        "myself",
-        "break",
-        "moments",
-        "doing"
-      ],
-      "emotional_state": "hot",
-      "phase_dna": "PH4_embodiment",
-      "somatic_state": "body and my mind, to allow what is within to flow through.",
-      "jester_activity": 4,
-      "pattern_tag": "embodiment",
-      "week_index": 325
-    },
-    {
-      "source_phase": "PH4A",
-      "source_date": "2024-04-11",
-      "content": "Why have I done this to myself, why do I fall for the wrong ones... There's so much love inside me, so much love I want nothing more than to shower on someone.",
-      "phrase_tags": [
-        "inside",
-        "someone",
-        "myself",
-        "shower",
-        "nothing",
-        "wrong"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH4A_practice-reflection",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 5,
-      "pattern_tag": "practice-reflection",
-      "week_index": 327
-    },
-    {
-      "source_phase": "PH4A",
-      "source_date": "2024-08-05",
-      "content": "\" Entry 51 (April 18, Hong Kong): On finding meaning through journey: \"Life.",
-      "phrase_tags": [
-        "meaning",
-        "entry",
-        "april",
-        "journey",
-        "finding"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH4A_practice-reflection",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 6,
-      "pattern_tag": "practice-reflection",
-      "week_index": 344
-    },
-    {
-      "source_phase": "PH4A",
-      "source_date": "2024-09-01",
-      "content": "Sorry for not really keeping up with my DM's everyone... Finally back in a city, with all the chaos and insanity that comes with it, so glad to be back in Bangkok after spending 4 months living on a beach in Vietnam it was definitely time to lose my mind again after working so hard on finding it.",
-      "phrase_tags": [
-        "working",
-        "sorry",
-        "bangkok",
-        "everyone",
-        "vietnam",
-        "finding",
-        "definitely",
-        "comes"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH4A_practice-reflection",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 4,
-      "pattern_tag": "practice-reflection",
-      "week_index": 347
-    },
-    {
-      "source_phase": "PH4A",
-      "source_date": "2024-09-22",
-      "content": "Those situations when you have no idea how you ended up in a certain place with certain people, at a certain time, there is no recreating it, all there is is understanding it... I don't know where my life will go, I don't know what I will be doing tomorrow, no plans, no ideas...",
-      "phrase_tags": [
-        "ended",
-        "people",
-        "recreating",
-        "certain",
-        "tomorrow",
-        "ideas",
-        "situations",
-        "understanding"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH4A_practice-reflection",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 5,
-      "pattern_tag": "practice-reflection",
-      "week_index": 350
-    },
-    {
-      "source_phase": "PH4A",
-      "source_date": "2024-11-18",
-      "content": "This works:** the emotional crisis strips away pretense.",
-      "phrase_tags": [
-        "strips",
-        "crisis",
-        "pretense",
-        "works",
-        "emotional"
-      ],
-      "emotional_state": "depleted",
-      "phase_dna": "PH4A_crisis",
-      "somatic_state": "Body contracted, seeking stillness",
-      "jester_activity": 3,
-      "pattern_tag": "crisis",
-      "week_index": 359
-    },
-    {
-      "source_phase": "PH4A",
-      "source_date": "2024-12-17",
-      "content": "Nomadic freedom**: after years of suitcase living, does return to hong kong represent growth or retreat? 5.",
-      "phrase_tags": [
-        "represent",
-        "growth",
-        "suitcase",
-        "retreat",
-        "nomadic",
-        "freedom",
-        "return",
-        "living"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "PH4A_nomadic",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 4,
-      "pattern_tag": "nomadic",
-      "week_index": 363
-    },
-    {
-      "source_phase": "PH4A",
-      "source_date": "2025-03-06",
-      "content": "3 core philosophical shift ph4 (\"nomadic crisis\") how do i survive without stability? oscillation; chaotic vulnerability suitcase + constant movement color experimentation; all papers gestural expressionism emergent chaos as truth; love as obsession private journals; vulnerability exposed ## 2.",
-      "phrase_tags": [
-        "expressionism",
-        "journals",
-        "oscillation",
-        "obsession",
-        "emergent",
-        "chaotic",
-        "experimentation",
-        "private"
-      ],
-      "emotional_state": "depleted",
-      "phase_dna": "PH4A_nomadic",
-      "somatic_state": "Body contracted, seeking stillness",
-      "jester_activity": 2,
-      "pattern_tag": "nomadic",
-      "week_index": 374
-    },
-    {
-      "source_phase": "NE",
-      "source_date": "2025-04-04",
-      "content": "The work fills me with purpose, marking a reversal from the void-seeking of ph4a - post-crisis clarity- the collapse of the old self has created enough emptiness that new forms can emerge the emotional timeline maps onto the work's production: aprilmay 2025, following weeks of intensive emotional pr",
-      "phrase_tags": [
-        "emptiness",
-        "reversal",
-        "created",
-        "purpose",
-        "emotional",
-        "production",
-        "collapse",
-        "timeline"
-      ],
-      "emotional_state": "depleted",
-      "phase_dna": "NE_crisis",
-      "somatic_state": "Heaviness in shoulders, breath shallow",
-      "jester_activity": 1,
-      "pattern_tag": "crisis",
-      "week_index": 378
-    },
-    {
-      "source_phase": "NE",
-      "source_date": "2025-04-04",
-      "content": "What remains is the body, the brush, the ink, and the blank paper.",
-      "phrase_tags": [
-        "paper",
-        "brush",
-        "blank",
-        "remains"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "NE_embodiment",
-      "somatic_state": "body, the brush, the ink, and the blank paper.",
-      "jester_activity": 4,
-      "pattern_tag": "embodiment",
-      "week_index": 378
-    },
-    {
-      "source_phase": "NE",
-      "source_date": "2025-05-12",
-      "content": "The work is not born from health or stable identity.",
-      "phrase_tags": [
-        "identity",
-        "health",
-        "stable"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "NE_identity",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 4,
-      "pattern_tag": "identity",
-      "week_index": 384
-    },
-    {
-      "source_phase": "NE",
-      "source_date": "2025-05-31",
-      "content": "These eight monumental works function as temples dedicated to the act of creation rather than documents of it, synthesizing nearly twenty years of Asian cultural immersion, the psychological pressure-chamber of Phases 3â€“4, and a lifelong suppressed desire for aggressive abstraction.",
-      "phrase_tags": [
-        "dedicated",
-        "abstraction",
-        "documents",
-        "creation",
-        "temples",
-        "works",
-        "nearly",
-        "synthesizing"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "NE_practice-reflection",
-      "somatic_state": "Body balanced, neutral readiness",
-      "jester_activity": 6,
-      "pattern_tag": "practice-reflection",
-      "week_index": 386
-    },
-    {
-      "source_phase": "NE",
-      "source_date": "2025-06-13",
-      "content": "The tension is not between two incompatible positions but between two modes the practice cycles through.",
-      "phrase_tags": [
-        "practice",
-        "incompatible",
-        "cycles",
-        "tension",
-        "modes",
-        "positions"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "NE_practice-reflection",
-      "somatic_state": "Grounded, steady breathing, present",
-      "jester_activity": 5,
-      "pattern_tag": "practice-reflection",
-      "week_index": 388
-    },
-    {
-      "source_phase": "NE",
-      "source_date": "2025-10-01",
-      "content": "Includes phase analyses, artist statements, journals, technical breakdowns, philosophical tensions, and career-scale insights on spiritual authenticity, market dynamics, and East-West fusion.",
-      "phrase_tags": [
-        "includes",
-        "phase",
-        "journals",
-        "tensions",
-        "spiritual",
-        "fusion",
-        "career",
-        "scale"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "NE_spiritual-practice",
-      "somatic_state": "Calm center, hands steady",
-      "jester_activity": 3,
-      "pattern_tag": "spiritual-practice",
-      "week_index": 404
-    },
-    {
-      "source_phase": "NE",
-      "source_date": "2025-11-03",
-      "content": "75â€“90 rejection rate across attempted works surviving eight works are tithe-offering from extensive creative output consumed by the process itself.",
-      "phrase_tags": [
-        "across",
-        "surviving",
-        "tithe",
-        "consumed",
-        "creative",
-        "process",
-        "rejection",
-        "attempted"
-      ],
-      "emotional_state": "sustainable",
-      "phase_dna": "NE_practice-reflection",
-      "somatic_state": "Calm center, hands steady",
-      "jester_activity": 5,
-      "pattern_tag": "practice-reflection",
-      "week_index": 409
-    },
-    {
-      "source_phase": "NE",
-      "source_date": "2025-12-24",
-      "content": "The Big Bang series represents not an evolution from earlier phases but a categorical rupture the death of sacred geometry as organizing principle and the birth of physics- force, gravity, irreversibility, and embodied time- as the new cosmological grammar.",
-      "phrase_tags": [
-        "earlier",
-        "irreversibility",
-        "birth",
-        "sacred",
-        "death",
-        "evolution",
-        "embodied",
-        "grammar"
-      ],
-      "emotional_state": "depleted",
-      "phase_dna": "NE_sacred-geometry",
-      "somatic_state": "Heaviness in shoulders, breath shallow",
-      "jester_activity": 2,
-      "pattern_tag": "sacred-geometry",
-      "week_index": 416
-    }
-  ]
-}
+[
+  {
+    "sourcePhase": "PH1",
+    "sourceDate": "2018-03-01T00:00:00.000Z",
+    "content": "I have spent several years working, progressively, through a deep, introspective exploration of all that makes me who I am, especially spiritually. To achieve improvement on my work, I concluded I would have to break myself down to absolutely nothing, so that I could rise again from a clear foundation.",
+    "phraseTags": ["ego death", "spiritual exploration", "clear foundation", "breaking down"],
+    "emotionalStateTag": "determined-vulnerable",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "PH1",
+    "sourceDate": "2017-06-01T00:00:00.000Z",
+    "content": "It was when I finally just didn't care anymore, and started to make these simple mandalas I really enjoyed it, and also people started to notice. The collapse of external concern enabling internal freedom functions as the origin point of the entire practice.",
+    "phraseTags": ["not caring", "mandalas", "internal freedom", "origin point"],
+    "emotionalStateTag": "liberated",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "PH1",
+    "sourceDate": "2017-09-01T00:00:00.000Z",
+    "content": "Color was discarded as not relevant anymore, it did not serve a purpose and was only a distraction. I really love black and white, it's so powerful. The harsh contrast is something I always really love a lot. It's so intense.",
+    "phraseTags": ["black and white", "monochrome", "contrast", "intensity", "discarding color"],
+    "emotionalStateTag": "conviction",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "PH1",
+    "sourceDate": "2018-03-15T00:00:00.000Z",
+    "content": "The absurdity lies in the perpetual question, What is the meaning of life? It's like screaming into the wind asking for an answer while knowing the answer will never come. Rather than seeing this as a limitation, it became freeing for me.",
+    "phraseTags": ["absurdity", "meaning of life", "freedom", "Camus", "existentialism"],
+    "emotionalStateTag": "philosophical-acceptance",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "PH1",
+    "sourceDate": "2018-02-01T00:00:00.000Z",
+    "content": "It was the point when I realised that there can never be a true understanding of our purpose. Not through thought, reason, or mathematics. To understand this, was to let go, and begin the next stage of existential development. To be truly free.",
+    "phraseTags": ["letting go", "existential freedom", "purpose", "no understanding"],
+    "emotionalStateTag": "transcendent",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "PH1",
+    "sourceDate": "2018-01-15T00:00:00.000Z",
+    "content": "The flat black bars that intervene upon the circular moiré forms, shattering the illusion of reality and enforcing the absurd reality of our limitations. Their dimensions derive from golden ratio calculations based on the circle diameters.",
+    "phraseTags": ["black bars", "golden ratio", "moiré", "limitations", "geometric precision"],
+    "emotionalStateTag": "analytical-creative",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "PH1",
+    "sourceDate": "2017-08-01T00:00:00.000Z",
+    "content": "I began to study about my heritage, which connects me to Norse history and Norse paganism. I read the poems and the myths which formed the building blocks of my family, and my deep connection to nature.",
+    "phraseTags": ["Norse heritage", "paganism", "nature", "ancestry", "identity"],
+    "emotionalStateTag": "searching",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "PH1",
+    "sourceDate": "2017-10-01T00:00:00.000Z",
+    "content": "Mathematics, physics, and astronomy were not mutually exclusive to spirituality, but rather they were two sides of the same coin. My sceptical, logical and rational fact-based mind, and the deep internal feeling of spiritual connection towards my surroundings.",
+    "phraseTags": ["two sides of the coin", "physics and spirituality", "reconciliation", "sacred geometry"],
+    "emotionalStateTag": "revelation",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "PH1",
+    "sourceDate": "2016-06-01T00:00:00.000Z",
+    "content": "Returned from Los Angeles and the 14th Factory project carrying that feeling of being totally defeated by art. Had spent years overthinking the commercial side or how people would react, a recursive anxiety that had paralyzed authentic production.",
+    "phraseTags": ["14th Factory", "Simon Birch", "defeat", "overthinking", "commercial anxiety"],
+    "emotionalStateTag": "defeated",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "PH1",
+    "sourceDate": "2018-03-20T00:00:00.000Z",
+    "content": "I think every artist always feels like they could do better, or do more, or each piece could be done better, cleaner. We are always left longing and never satisfied. It's truly an endless cycle of the knowledge that I'm better than them inside but not quite able to get it out yet.",
+    "phraseTags": ["dissatisfaction", "endless cycle", "internal vs external", "longing"],
+    "emotionalStateTag": "frustrated-driven",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "PH1",
+    "sourceDate": "2018-03-10T00:00:00.000Z",
+    "content": "The twenty-year painting career was not abandoned through failure but through deliberate immolation. The destruction of prior artistic identity as prerequisite to creative freedom. Controlled ego-death functioning simultaneously as spiritual practice and professional rebirth.",
+    "phraseTags": ["ego death", "immolation", "rebirth", "deliberate destruction", "twenty years"],
+    "emotionalStateTag": "sovereign",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "PH1",
+    "sourceDate": "2018-04-01T00:00:00.000Z",
+    "content": "It is up to me how I use these formulas, how I relate to this presence, how I create my own life. Calm and peaceful reflection, perhaps even a way to help initiate meditation.",
+    "phraseTags": ["self-determination", "meditation", "calm", "formulas", "presence"],
+    "emotionalStateTag": "grounded",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "PH1",
+    "sourceDate": "2015-12-01T00:00:00.000Z",
+    "content": "The crisis period culminated in what the artist calls an explicit tipping point marking a clear before and after. Everything prior was eliminated. Visual austerity matching psychological stripping.",
+    "phraseTags": ["tipping point", "before and after", "elimination", "stripping"],
+    "emotionalStateTag": "crisis-breakthrough",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "PH1A",
+    "sourceDate": "2018-09-01T00:00:00.000Z",
+    "content": "The Peninsula Hotel commission and institutional works represented the formal vocabulary surviving exposure to public, commercial contexts. Sacred geometry entering luxury spaces without losing philosophical integrity.",
+    "phraseTags": ["Peninsula Hotel", "institutional", "commercial", "luxury", "philosophical integrity"],
+    "emotionalStateTag": "professional-confident",
+    "phaseDnaTag": "PH1A"
+  },
+  {
+    "sourcePhase": "PH1A",
+    "sourceDate": "2019-01-01T00:00:00.000Z",
+    "content": "PH1A introduced metallic paint and large-scale formats, establishing the luxury-spiritual hybrid positioning. Gilding converts existential inquiry into collectible object, creating deliberate ambivalence about sincerity versus instrumentalization.",
+    "phraseTags": ["metallic paint", "large scale", "luxury-spiritual hybrid", "ambivalence"],
+    "emotionalStateTag": "strategic",
+    "phaseDnaTag": "PH1A"
+  },
+  {
+    "sourcePhase": "PH2",
+    "sourceDate": "2019-06-01T00:00:00.000Z",
+    "content": "The torus systems and continuous knotwork represented alignment claimed as philosophical position. Gold indexes illumination, the solar-celestial plane; copper marks the terrestrial-material plane. The form remains constant across both fields.",
+    "phraseTags": ["torus", "alignment", "gold", "copper", "knotwork", "binary existence"],
+    "emotionalStateTag": "aligned",
+    "phaseDnaTag": "PH2"
+  },
+  {
+    "sourcePhase": "PH2",
+    "sourceDate": "2019-08-01T00:00:00.000Z",
+    "content": "The circle functions simultaneously as formal composition, existential state of harmony with the universe, and practice method synchronizing art and spirituality. This polysemy is the phase's foundational conceptual innovation.",
+    "phraseTags": ["circle", "polysemy", "harmony", "synchronizing", "innovation"],
+    "emotionalStateTag": "synthesizing",
+    "phaseDnaTag": "PH2"
+  },
+  {
+    "sourcePhase": "PH2",
+    "sourceDate": "2020-01-01T00:00:00.000Z",
+    "content": "Studio method privileges hand-drawn, subtractive-reconstructive processes: hundreds of preparatory sketches, distillation to the essential circle, then rebuilding through intensive micro-line labor documented as meditative practice.",
+    "phraseTags": ["micro-line", "meditative", "subtractive", "distillation", "hand-drawn"],
+    "emotionalStateTag": "disciplined",
+    "phaseDnaTag": "PH2"
+  },
+  {
+    "sourcePhase": "PH2A",
+    "sourceDate": "2020-03-01T00:00:00.000Z",
+    "content": "Ode to Therion deploys the most intensive one-shot ink labor in the phase to create a visual paradox: disciplined method describing anarchic release. The permanence of the ink symbolizes the irreversible nature of complete self-actualization.",
+    "phraseTags": ["Therion", "one-shot", "paradox", "irreversible", "self-actualization"],
+    "emotionalStateTag": "ecstatic-intense",
+    "phaseDnaTag": "PH2A"
+  },
+  {
+    "sourcePhase": "PH2A",
+    "sourceDate": "2020-02-01T00:00:00.000Z",
+    "content": "PH2A radicalizes the studio method by introducing the one-shot constraint, converting iterative exploration into ritualized finality. The Thelemic aeonic framing maps Isis, Osiris, Hadit, Hoor Pa Kraat into geometric form.",
+    "phraseTags": ["one-shot", "ritual", "Thelema", "aeons", "finality"],
+    "emotionalStateTag": "ritualistic",
+    "phaseDnaTag": "PH2A"
+  },
+  {
+    "sourcePhase": "PH2",
+    "sourceDate": "2019-10-01T00:00:00.000Z",
+    "content": "PH2 answers the crisis PH1 posed. The circle replaces the rectangle, gold and copper replace monochrome austerity, and the philosophical stance shifts from questioning to claimed alignment. The direction of deployment changes entirely.",
+    "phraseTags": ["crisis answered", "circle replaces rectangle", "alignment", "evolution"],
+    "emotionalStateTag": "resolved",
+    "phaseDnaTag": "PH2"
+  },
+  {
+    "sourcePhase": "PH2A",
+    "sourceDate": "2020-04-01T00:00:00.000Z",
+    "content": "The alignment fails to hold. The dense knotwork and persistent emphasis on intense inner dialogue beneath the resolved surface suggest instability held in check rather than eliminated. What follows must navigate the aftermath.",
+    "phraseTags": ["instability", "aftermath", "inner dialogue", "failure to hold"],
+    "emotionalStateTag": "precarious",
+    "phaseDnaTag": "PH2A"
+  },
+  {
+    "sourcePhase": "PH3",
+    "sourceDate": "2021-06-01T00:00:00.000Z",
+    "content": "Not so much a cohesive art phase so much as it is a chaotic phase of turmoil and self discovery, pain, sadness, happiness and joy and the beginning of living life honestly.",
+    "phraseTags": ["turmoil", "self discovery", "honesty", "chaos", "mixed emotions"],
+    "emotionalStateTag": "raw-honest",
+    "phaseDnaTag": "PH3"
+  },
+  {
+    "sourcePhase": "PH3",
+    "sourceDate": "2021-01-01T00:00:00.000Z",
+    "content": "The internal struggles and depression, loneliness, need to fill the void in my life with self destructive impulses like drugs and alcohol and fleeting relationships, coupled with the COVID 19 environment meant I did not produce very much meaningful exhibition quality artwork.",
+    "phraseTags": ["depression", "loneliness", "self-destruction", "void", "COVID", "drought"],
+    "emotionalStateTag": "crisis",
+    "phaseDnaTag": "PH3"
+  },
+  {
+    "sourcePhase": "PH3",
+    "sourceDate": "2021-03-01T00:00:00.000Z",
+    "content": "This is where I began to truly look inward at myself, who I am, what I believe, what I want, what genuinely makes me happy, who I am as a man and as a human being.",
+    "phraseTags": ["introspection", "identity", "values", "self-knowledge"],
+    "emotionalStateTag": "awakening",
+    "phaseDnaTag": "PH3"
+  },
+  {
+    "sourcePhase": "PH3",
+    "sourceDate": "2021-09-01T00:00:00.000Z",
+    "content": "I kind of hit a point where I just like, I no longer cared about any of it. And then that is when I just boiled it down to a circle and then from there, I started building up again. The circle emerges when all other concerns are finally abandoned.",
+    "phraseTags": ["rock bottom", "circle", "distillation", "rebuilding", "not caring"],
+    "emotionalStateTag": "surrender",
+    "phaseDnaTag": "PH3"
+  },
+  {
+    "sourcePhase": "PH3",
+    "sourceDate": "2021-10-01T00:00:00.000Z",
+    "content": "The circle in PH3 is not a universal symbol adopted from tradition; it is what remains when everything else has been stripped away. It functions simultaneously as the minimum viable geometric unit and the maximum available psychological container.",
+    "phraseTags": ["minimum viable", "psychological container", "stripped away", "crisis residue"],
+    "emotionalStateTag": "distilled",
+    "phaseDnaTag": "PH3"
+  },
+  {
+    "sourcePhase": "PH3",
+    "sourceDate": "2022-01-01T00:00:00.000Z",
+    "content": "I don't necessarily feel like I am a creative person. I feel like I am a conduit that creativity flows through me. If I can get into the right resonant frequency zone, mentally, spiritually, physically, then the ideas flow through me.",
+    "phraseTags": ["conduit", "resonant frequency", "creativity flows through", "not creator but receiver"],
+    "emotionalStateTag": "channeling",
+    "phaseDnaTag": "PH3"
+  },
+  {
+    "sourcePhase": "PH3",
+    "sourceDate": "2022-02-01T00:00:00.000Z",
+    "content": "Instead of trying to come up with ideas, instead of trying to force thoughts or force creative expression, I just need to listen, and it will come to me. The self becomes a vessel, an antenna tuned to the correct frequency.",
+    "phraseTags": ["listening", "vessel", "antenna", "not forcing", "conduit"],
+    "emotionalStateTag": "receptive",
+    "phaseDnaTag": "PH3"
+  },
+  {
+    "sourcePhase": "PH3",
+    "sourceDate": "2021-12-01T00:00:00.000Z",
+    "content": "The idea of spirituality and energy and my sort of occult esoteric beliefs and feng shui on one side. And then physics and math and science and rationalism on the other side. And I realized they were not competing forces. They were actually two sides of the same coin explaining the exact same thing.",
+    "phraseTags": ["two sides", "spirituality", "physics", "reconciliation", "same coin"],
+    "emotionalStateTag": "epiphany",
+    "phaseDnaTag": "PH3"
+  },
+  {
+    "sourcePhase": "PH3",
+    "sourceDate": "2022-04-01T00:00:00.000Z",
+    "content": "Closed Hong Kong studio, sold furniture, placed items of value in storage, and left. First to Istanbul for a twenty-four-hour layover, then to Canada for six months of reconnection with family and friends in Ottawa and Toronto.",
+    "phraseTags": ["leaving Hong Kong", "studio closed", "Istanbul", "Canada", "reconnection"],
+    "emotionalStateTag": "departing",
+    "phaseDnaTag": "PH3"
+  },
+  {
+    "sourcePhase": "PH3",
+    "sourceDate": "2022-06-01T00:00:00.000Z",
+    "content": "I can sit by myself at a bar looking out over the street and just watch people interact through their normal, mundane, everyday lives for hours and hours and hours with perfect contentment. Like a receptor to all that chi, all that life energy, all that chaos around me.",
+    "phraseTags": ["observation", "flânerie", "chi", "life energy", "contentment", "receptor"],
+    "emotionalStateTag": "absorbed",
+    "phaseDnaTag": "PH3"
+  },
+  {
+    "sourcePhase": "PH3",
+    "sourceDate": "2022-08-01T00:00:00.000Z",
+    "content": "I really genuinely feel like I'm only just getting started. The insecurity and jealousy, comparing to more successful peers, cycling between confidence and self-doubt never fully resolves, but the self-doubt shifts register. No longer about whether the work is valid; about how much further it can go.",
+    "phraseTags": ["just getting started", "insecurity", "comparison", "confidence cycling"],
+    "emotionalStateTag": "hopeful-uncertain",
+    "phaseDnaTag": "PH3"
+  },
+  {
+    "sourcePhase": "PH3",
+    "sourceDate": "2020-11-01T00:00:00.000Z",
+    "content": "The marital separation from Thierry Chow was extremely amicable but still life changing. The cumulative weight of isolation, loss of domestic structure, and a world locked down triggered a protracted psychological unravelling.",
+    "phraseTags": ["divorce", "Thierry Chow", "amicable", "isolation", "unravelling"],
+    "emotionalStateTag": "grief",
+    "phaseDnaTag": "PH3"
+  },
+  {
+    "sourcePhase": "PH3A",
+    "sourceDate": "2023-06-29T00:00:00.000Z",
+    "content": "Celestial Secrets exhibition at West Eden Gallery, Bangkok. The four-pillar architecture: Saturn, Sacred Geometry, Space, Spirituality. Gold equals spiritual absolute; ink equals vibrational field. The first test of the portable, nomadic practice model.",
+    "phraseTags": ["Celestial Secrets", "West Eden", "Bangkok", "four pillars", "nomadic practice"],
+    "emotionalStateTag": "codified",
+    "phaseDnaTag": "PH3A"
+  },
+  {
+    "sourcePhase": "PH3A",
+    "sourceDate": "2023-07-01T00:00:00.000Z",
+    "content": "PH3A translates intuitively discovered geometric containment into an explicit architecture with formalized material semiotics. Sacred Geometry graduates from stylistic choice to ontological commitment. The artist treats geometric form as literally encoding the structure of reality.",
+    "phraseTags": ["ontological commitment", "sacred geometry", "material semiotics", "encoding reality"],
+    "emotionalStateTag": "systematic",
+    "phaseDnaTag": "PH3A"
+  },
+  {
+    "sourcePhase": "PH3A",
+    "sourceDate": "2023-03-01T00:00:00.000Z",
+    "content": "The geometric containment tested under crisis conditions in PH3 is later transgressed, transformed, and exceeded as the artist's confidence and embodied practice mature. The controlled geometric systems that held chaos at bay are later exploded.",
+    "phraseTags": ["containment transgressed", "confidence", "exploded", "maturation"],
+    "emotionalStateTag": "anticipatory",
+    "phaseDnaTag": "PH3A"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-05-12T00:00:00.000Z",
+    "content": "The artist operates in a process-ontology where meaning emerges through material engagement rather than preceding it. In flow state during work, not thinking about external frameworks, just painting, watching ink react with paper, listening to music, dancing, smoking.",
+    "phraseTags": ["process-ontology", "flow state", "material engagement", "meaning emerges"],
+    "emotionalStateTag": "flowing",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-05-15T00:00:00.000Z",
+    "content": "I'm still standing. The dominant emotional trajectory moves from cautious opening to increasingly vulnerable exposure, each entry removing another layer of protective concealment.",
+    "phraseTags": ["still standing", "vulnerability", "exposure", "layers removed"],
+    "emotionalStateTag": "resilient",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-06-01T00:00:00.000Z",
+    "content": "Feeling happy to be alive more and more with every day coexists with it can be lonely at times too, with no one ever knowing the real you. Joy and loneliness are not mutually exclusive but interwoven.",
+    "phraseTags": ["alive", "lonely", "interwoven", "joy and loneliness", "real you"],
+    "emotionalStateTag": "bittersweet",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-06-15T00:00:00.000Z",
+    "content": "Deeply emotional, sensitive, and poetic, almost to a debilitating degree. The qualifier debilitating indicates that emotional intensity is experienced as both gift and burden, requiring defensive adaptation.",
+    "phraseTags": ["emotional intensity", "sensitive", "poetic", "debilitating", "gift and burden"],
+    "emotionalStateTag": "overwhelmed",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-06-20T00:00:00.000Z",
+    "content": "I have always been my own worst critic, and my own worst gate keeper. The emotional texture is one of internal warfare, the expressive self struggling against the ordering self.",
+    "phraseTags": ["self-critic", "gatekeeper", "internal warfare", "expressive vs ordering"],
+    "emotionalStateTag": "conflicted",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-07-01T00:00:00.000Z",
+    "content": "All those moments will be lost in time, like tears in the rain. Roy Batty's death monologue articulates the core anxiety: whether unexpressed, unwitnessed inner life has meaning or reality.",
+    "phraseTags": ["Blade Runner", "tears in rain", "unwitnessed", "meaning", "lost moments"],
+    "emotionalStateTag": "existential-dread",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-07-10T00:00:00.000Z",
+    "content": "The beauty of this world never ceases to amaze me. Am I dreaming? Ethereal nights. These moments of numinous encounter provide counterweight to existential heaviness.",
+    "phraseTags": ["beauty", "dreaming", "numinous", "ethereal", "wonder"],
+    "emotionalStateTag": "awestruck",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-07-15T00:00:00.000Z",
+    "content": "I never want to stop getting lost. Trying to get lost, so I can stumble across something new. Disorientation reframed as discovery method, echoing psychogeography and situationist dérive.",
+    "phraseTags": ["getting lost", "discovery", "psychogeography", "stumble", "wandering"],
+    "emotionalStateTag": "adventurous",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-06-10T00:00:00.000Z",
+    "content": "I allowed myself to connect with the spirit of the earth, even though I was never able to articulate it nor understand it. The walking practice, long solo traversals through cities absorbing urban chi, functions as both meditative regulation and creative fuel.",
+    "phraseTags": ["walking", "spirit of earth", "urban chi", "meditative", "solo traversals"],
+    "emotionalStateTag": "connected",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-05-20T00:00:00.000Z",
+    "content": "Experimenting like crazy, pushing myself beyond my own mental barriers, working very hard on opening myself up. This is an intentional cognitive disruption strategy, using novelty and discomfort as catalysts.",
+    "phraseTags": ["experimenting", "mental barriers", "opening up", "cognitive disruption"],
+    "emotionalStateTag": "breaking-through",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-07-20T00:00:00.000Z",
+    "content": "The journey is the whole point. The artistic process isn't always pretty, but sometimes it's absolutely beautiful. Meaning is located not in outcomes but in becoming.",
+    "phraseTags": ["journey", "process", "becoming", "meaning in process"],
+    "emotionalStateTag": "processual",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-06-25T00:00:00.000Z",
+    "content": "Two or three or four different versions of myself. The project of bringing all the versions of me into one. Multiplicity treated normatively rather than pathologically; integration as aspirational ethic.",
+    "phraseTags": ["multiple selves", "integration", "versions", "authenticity"],
+    "emotionalStateTag": "fragmented-seeking-wholeness",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-08-01T00:00:00.000Z",
+    "content": "195 new paintings over almost four months in Vietnam. Depleted financial nest egg with no cash remaining, precipitating departure. A three-day, 600km solo motorbike trip through the mountains near the Laos border as formal closing ritual.",
+    "phraseTags": ["195 paintings", "depleted", "motorbike", "mountains", "closing ritual", "exhaustion"],
+    "emotionalStateTag": "spent-triumphant",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-07-25T00:00:00.000Z",
+    "content": "The artwork functions as both symptom and treatment of perceptual intensity. The existential daze finds externalization and therefore manageability through obsessive material production. 124+ works in approximately three months suggests ritualized stabilization through making.",
+    "phraseTags": ["symptom and treatment", "ritualized stabilization", "obsessive production", "perceptual intensity"],
+    "emotionalStateTag": "manic-productive",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-07-05T00:00:00.000Z",
+    "content": "If no one knows the real you, do you really exist? The fundamental philosophical tension is between freedom and constraint, but uniquely configured as self-imposed constraint. Externally perceived as non-conformist while internally experiencing imprisonment by a compulsive need for order and logic.",
+    "phraseTags": ["do you exist", "self-imposed constraint", "freedom paradox", "order vs expression"],
+    "emotionalStateTag": "questioning",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-06-05T00:00:00.000Z",
+    "content": "Portals, eyes, clouds, nebulas, black holes, stars, planets, the cosmos, both inside our souls and surrounding our existence. The artwork as technology for exploring microcosm-macrocosm correspondence.",
+    "phraseTags": ["portals", "cosmos", "souls", "microcosm", "macrocosm", "cosmic interiority"],
+    "emotionalStateTag": "cosmic",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-06-30T00:00:00.000Z",
+    "content": "I'm never painting and thinking to myself what would Carl Jung think about this piece. All of that is happening on a subconscious meta level. It works behind the scenes. The work independently discovers positions that philosophers articulated through theory.",
+    "phraseTags": ["subconscious", "not theorizing", "independent discovery", "practice-first"],
+    "emotionalStateTag": "intuitive",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-07-28T00:00:00.000Z",
+    "content": "A bad student of art. Formal art-historical education is minimal. Resonances with established traditions like Abstract Expressionism, Chinese literati painting, Zen calligraphy are convergent rather than derived.",
+    "phraseTags": ["self-taught", "convergent", "not derived", "bad student", "independent arrival"],
+    "emotionalStateTag": "defiant",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-05-25T00:00:00.000Z",
+    "content": "Letting the brush take control and dancing along with it. A channeling model of creativity where the artist becomes vessel rather than author. Aligning with Platonic inspiration, Sufi fana, and automatic writing traditions, though arrived at independently.",
+    "phraseTags": ["brush takes control", "dancing", "vessel", "channeling", "automatic"],
+    "emotionalStateTag": "surrendered",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-07-30T00:00:00.000Z",
+    "content": "PH4 enacts a complete dialectical cycle: from empathic explosion through defensive contraction through concentrated focus through contemplative distance to integrated resolution. Six artwork series as stations in a journey, each with distinct material systems. Structure emerged through intuitive practice rather than conscious design.",
+    "phraseTags": ["dialectical cycle", "six series", "stations", "intuitive structure", "emergence"],
+    "emotionalStateTag": "integrated",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-08-02T00:00:00.000Z",
+    "content": "The burning library metaphor drawn from a past girlfriend's remark: the destruction of unshared memories. If everything were lost, what would remain? A central structuring image for memory, archive, and legacy across the practice.",
+    "phraseTags": ["burning library", "unshared memories", "legacy", "loss", "what remains"],
+    "emotionalStateTag": "haunted",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-06-18T00:00:00.000Z",
+    "content": "A form of meditation and one of my most important rituals. Floating as a leaf on a breeze. Urban wandering sacralizes the mundane practice. Taoist wu-wei, actionless action, and surrender to natural flow.",
+    "phraseTags": ["meditation", "ritual", "flânerie", "wu-wei", "floating", "leaf on breeze"],
+    "emotionalStateTag": "meditative",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-06-22T00:00:00.000Z",
+    "content": "The existential daze characterized by heightened perception, liminal sleep states, surreal adventures, and visceral life-experience. Experienced as non-pathological liminal states, not clinical dissociation. Hypnagogic and liminal states play the role of visionary access points.",
+    "phraseTags": ["existential daze", "liminal states", "heightened perception", "hypnagogic", "visionary"],
+    "emotionalStateTag": "liminal",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-05-30T00:00:00.000Z",
+    "content": "From a young age built emotional walls. Early sensitivity led to defensive adaptation that persisted into adulthood, a lifetime architecture being consciously disassembled. The journal project itself is positioned as active dismantling of these barriers.",
+    "phraseTags": ["emotional walls", "early sensitivity", "defensive adaptation", "dismantling barriers"],
+    "emotionalStateTag": "dismantling",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-07-18T00:00:00.000Z",
+    "content": "The compulsive need for order and logic conflicts with spontaneous expression. The Vietnam period represents an attempt to privilege intuition, to let the brush take control rather than directing it.",
+    "phraseTags": ["order vs intuition", "spontaneous", "privilege intuition", "Vietnam"],
+    "emotionalStateTag": "tension",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-07-22T00:00:00.000Z",
+    "content": "The dual-ink system: Chinese and Western ink encodes the phase's core ontological tension: insider/outsider, absorption/imposition, substrate/stranger. This is not palette variation but material philosophy.",
+    "phraseTags": ["dual ink", "insider/outsider", "material philosophy", "stranger", "substrate"],
+    "emotionalStateTag": "experimental",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4",
+    "sourceDate": "2024-08-03T00:00:00.000Z",
+    "content": "Constraint-as-catalyst is confirmed as core methodology: material limitations force innovation and prevent stylistic ruts. What looks like deliberate choice is often circumstantial improvisation that the unconscious finds use for.",
+    "phraseTags": ["constraint as catalyst", "improvisation", "limitation drives innovation", "unconscious"],
+    "emotionalStateTag": "resourceful",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "PH4A",
+    "sourceDate": "2024-08-14T00:00:00.000Z",
+    "content": "The central question shifts from am I real if unwitnessed to why do I repeatedly destroy myself for love, and what does that reveal about being alive. Not abandonment of the prior project but its social stress-test.",
+    "phraseTags": ["love", "self-destruction", "stress-test", "being alive", "social inquiry"],
+    "emotionalStateTag": "tortured",
+    "phaseDnaTag": "PH4A"
+  },
+  {
+    "sourcePhase": "PH4A",
+    "sourceDate": "2024-09-01T00:00:00.000Z",
+    "content": "The court-jester persona is not experienced as strategic defense but as something loathed, a compulsive performance the artist resents rather than deploys. The mask is not armor but trap.",
+    "phraseTags": ["court jester", "mask", "trap", "loathed performance", "compulsive"],
+    "emotionalStateTag": "self-loathing",
+    "phaseDnaTag": "PH4A"
+  },
+  {
+    "sourcePhase": "PH4A",
+    "sourceDate": "2024-10-01T00:00:00.000Z",
+    "content": "Love as the most addictive drug, the most powerful force, and the most dangerous and destructive force in my life. The black hole in the heart is the void demanding filling through romantic attachment regardless of the partner's availability or capacity to reciprocate.",
+    "phraseTags": ["love addiction", "black hole", "destructive force", "void", "romantic attachment"],
+    "emotionalStateTag": "addicted",
+    "phaseDnaTag": "PH4A"
+  },
+  {
+    "sourcePhase": "PH4A",
+    "sourceDate": "2024-09-15T00:00:00.000Z",
+    "content": "For all my self destructive behavior I've always maintained strong cognitive clarity, somehow. Harm reduction is always something I take fairly seriously and do try to balance my self destructive tendencies with healthy things to mitigate the damage.",
+    "phraseTags": ["cognitive clarity", "harm reduction", "balance", "self-destructive", "mitigate"],
+    "emotionalStateTag": "self-aware",
+    "phaseDnaTag": "PH4A"
+  },
+  {
+    "sourcePhase": "PH4A",
+    "sourceDate": "2024-11-01T00:00:00.000Z",
+    "content": "Searching for god, that woman, and myself. God's lonely man. The sacred is located in the encounter with the Other, not in withdrawal from the world. Alienation as quasi-mystical condition.",
+    "phraseTags": ["searching for god", "lonely man", "Other", "alienation", "mystical"],
+    "emotionalStateTag": "lonely-seeking",
+    "phaseDnaTag": "PH4A"
+  },
+  {
+    "sourcePhase": "PH4A",
+    "sourceDate": "2024-12-01T00:00:00.000Z",
+    "content": "The beautiful nightmare framing, the Peter zone, revalues instability as aesthetic choice: terror becomes adventure, nightmare becomes beauty, scraping by becomes creative fuel. Awareness of reality and a light hearted way of framing a serious situation.",
+    "phraseTags": ["beautiful nightmare", "Peter zone", "instability as aesthetic", "reframing"],
+    "emotionalStateTag": "transmuting",
+    "phaseDnaTag": "PH4A"
+  },
+  {
+    "sourcePhase": "PH4A",
+    "sourceDate": "2025-01-01T00:00:00.000Z",
+    "content": "Time to change before it's too late, time to start new patterns. The phase terminates not in breakthrough but in exhaustion and tentative intention. PH4A documents the pattern recognition, not its transcendence.",
+    "phraseTags": ["new patterns", "change", "exhaustion", "pattern recognition", "before too late"],
+    "emotionalStateTag": "exhausted-hopeful",
+    "phaseDnaTag": "PH4A"
+  },
+  {
+    "sourcePhase": "PH4A",
+    "sourceDate": "2025-02-01T00:00:00.000Z",
+    "content": "PH4A is primarily a psychological and emotional document, not a visual production phase. The emotional intensity of love addiction and urban immersion consumes the energy normally available for creative production. The journals carry the weight of the phase almost entirely.",
+    "phraseTags": ["emotional document", "no visual output", "journals carry weight", "energy consumed"],
+    "emotionalStateTag": "drained",
+    "phaseDnaTag": "PH4A"
+  },
+  {
+    "sourcePhase": "PH4A",
+    "sourceDate": "2025-03-01T00:00:00.000Z",
+    "content": "The creative drought during emotional intensity suggests an either/or relationship between relational immersion and visual production. The artist's process may require insulation from romantic chaos to function at full capacity.",
+    "phraseTags": ["creative drought", "either/or", "insulation needed", "relational chaos"],
+    "emotionalStateTag": "barren",
+    "phaseDnaTag": "PH4A"
+  },
+  {
+    "sourcePhase": "PH4A",
+    "sourceDate": "2024-10-15T00:00:00.000Z",
+    "content": "No diagrams on the scorecard. The path need not be justified to external observers, external validation is secondary to having actually lived. The go all in heuristic: half-measures are experienced as worse dishonesty than full commitment to destructive paths.",
+    "phraseTags": ["no diagrams", "scorecard", "go all in", "lived experience", "no half measures"],
+    "emotionalStateTag": "defiant-authentic",
+    "phaseDnaTag": "PH4A"
+  },
+  {
+    "sourcePhase": "PH4A",
+    "sourceDate": "2024-11-15T00:00:00.000Z",
+    "content": "Strong meta-awareness of patterns coexists with acknowledged inability to change them. Knowing does not equal doing. Insight has not yet produced change. The hopeful romantic turns documented in the journals always revert.",
+    "phraseTags": ["pattern awareness", "knowing not doing", "always reverts", "unable to change"],
+    "emotionalStateTag": "trapped",
+    "phaseDnaTag": "PH4A"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-04-20T00:00:00.000Z",
+    "content": "The New Era constitutes the ontological singularity of Project 666. The moment from which the entire practice retrospectively reorganizes itself. Not an evolution from Phase 4 but a categorical rupture: the death of sacred geometry as organizing principle and the birth of physics.",
+    "phraseTags": ["ontological singularity", "categorical rupture", "death of geometry", "birth of physics"],
+    "emotionalStateTag": "revolutionary",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-04-25T00:00:00.000Z",
+    "content": "These are a radical departure from all the previous work I've ever done. Right now I'm sitting on the precipice of a new era, a deep fundamental change in directions. The shift moves from a Platonic aesthetic to a Heraclitean process ontology of flux, becoming, and irreversible event.",
+    "phraseTags": ["radical departure", "precipice", "new era", "Heraclitean", "flux"],
+    "emotionalStateTag": "ecstatic-aware",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-05-01T00:00:00.000Z",
+    "content": "With the release of all those blockages and emotions over the last year or two, so with it came the release of that hand brake that was stopping me. I've jumped into the deep end and I'm fully embracing my true creative desire.",
+    "phraseTags": ["release", "hand brake", "deep end", "true creative desire", "blockages released"],
+    "emotionalStateTag": "unleashed",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-05-10T00:00:00.000Z",
+    "content": "A lifelong desire for aggressive abstraction blocked by a self-imposed hurdle somewhere in my subconscious that always stopped me. Phases 1 through 3A can be read as the containment period; NE is the release. The crisis was the price of the permission.",
+    "phraseTags": ["lifelong desire", "self-imposed hurdle", "containment period", "permission", "crisis as price"],
+    "emotionalStateTag": "liberated",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-05-15T00:00:00.000Z",
+    "content": "The nature of ink on paper, having no undo, no back button, its permanence and strength in contrast are so intoxicating but very difficult to learn. In a digital culture of infinite editability, the commitment to irreversible media constitutes a moral stance.",
+    "phraseTags": ["no undo", "permanence", "irreversible", "intoxicating", "moral stance"],
+    "emotionalStateTag": "committed",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-05-20T00:00:00.000Z",
+    "content": "The 75 to 90 percent rejection rate complicates and enriches this ethic. Total acceptance at the micro-level within the painting, total judgment at the macro-level whether the painting survives. Radical acceptance and ruthless selection coexist sequentially.",
+    "phraseTags": ["rejection rate", "radical acceptance", "ruthless selection", "micro vs macro", "tithe"],
+    "emotionalStateTag": "disciplined-ruthless",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-06-01T00:00:00.000Z",
+    "content": "I feel that fusion brings something through me bringing Western artistic sensibilities to a very traditional eastern style medium. I don't culturally appropriate it so much as I respect it through deep understanding. I don't just observe it, I live it.",
+    "phraseTags": ["East-West fusion", "not appropriation", "deep understanding", "living it", "hybrid"],
+    "emotionalStateTag": "culturally-grounded",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-06-10T00:00:00.000Z",
+    "content": "Qi, breath-energy, Pu the uncarved block, and Wu-wei effortless action are not applied as intellectual overlay but embodied through material practice. The Man Luen Choon sifu relationship, the attention to ink quality and paper behavior, the floor-work method.",
+    "phraseTags": ["qi", "wu-wei", "embodied", "Man Luen Choon", "sifu", "floor-work"],
+    "emotionalStateTag": "embodied",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-06-15T00:00:00.000Z",
+    "content": "The making gives energy rather than draining it. Fills me with purpose, generates rather than depletes. The risk is not burnout from the practice but from everything around it that might prevent access to the practice. The priority is protecting access.",
+    "phraseTags": ["generative energy", "purpose", "not depleting", "protecting access", "risk is logistics"],
+    "emotionalStateTag": "energized",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-06-20T00:00:00.000Z",
+    "content": "If everything were lost, what would remain? The NE answers: what would remain is the capacity for this gesture, this surrender, this making. The library is not the books but the fire itself. The fire is still here, transferred to ink on paper.",
+    "phraseTags": ["burning library resolved", "capacity remains", "fire itself", "gesture survives"],
+    "emotionalStateTag": "resolved",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-07-01T00:00:00.000Z",
+    "content": "The conduit ontology established as metaphor in PH3's Echoes reaches its physical reality in the NE. The artist functions as prepared conduit: rigorous structural constraint sets the stage for genuinely emergent gesture. Body-practice, material apprenticeship, and floor-work ritual create the conditions.",
+    "phraseTags": ["conduit stabilized", "prepared conduit", "emergent gesture", "body-practice"],
+    "emotionalStateTag": "sovereign",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-07-10T00:00:00.000Z",
+    "content": "Shadow evolves across the three gates from eruption through embrace to integrated architecture. By the Covenant, shadow is not dissolved but organized, given coherent form, made structural. The geometric phases can be read as containment strategies; the NE is what happens when the Shadow is given the reins.",
+    "phraseTags": ["shadow integration", "three gates", "Big Bang", "Covenant", "containment released"],
+    "emotionalStateTag": "integrated",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-07-15T00:00:00.000Z",
+    "content": "Gravity, viscosity, and time's arrow become the operational theology. The sacred has shifted from symbol-systems to physics itself. Gravitational logic is the new container. Physics replaces geometry.",
+    "phraseTags": ["gravity", "viscosity", "operational theology", "physics replaces geometry"],
+    "emotionalStateTag": "cosmological",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-07-20T00:00:00.000Z",
+    "content": "Order and Chaos becomes sequential operations: discipline as precondition for freedom, not its constraint. Will and Surrender resolves into the two-tier system: surrender in making, will in selection. Permanence and Flux synthesizes into permanent traces of flux.",
+    "phraseTags": ["polarities resolved", "discipline enables freedom", "surrender in making", "will in selection"],
+    "emotionalStateTag": "synthesized",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-08-01T00:00:00.000Z",
+    "content": "The void itself transforms from existential absence in Phases 1 and 2 to visual negative space in Phases 3 and 4 to generative singularity in the New Era. The void is no longer absence but origin. Not where meaning dies but where form begins.",
+    "phraseTags": ["void evolution", "generative singularity", "origin not absence", "form begins"],
+    "emotionalStateTag": "transcendent",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-08-10T00:00:00.000Z",
+    "content": "The Covenant work must be free to go where it must. This is not permanently binding. The work is sovereign. It is what it is, not what anyone intended.",
+    "phraseTags": ["covenant", "work is sovereign", "freedom", "not binding"],
+    "emotionalStateTag": "sovereign",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-08-15T00:00:00.000Z",
+    "content": "Can stability and creativity coexist? The Crucible Year question. Bangkok rooting experiment. Goal: Institutional visibility plus market sustainability while maintaining creative peak. Hypothesis: Base camp infrastructure enables deeper exploration, not limits it.",
+    "phraseTags": ["stability and creativity", "Crucible Year", "Bangkok", "base camp", "hypothesis"],
+    "emotionalStateTag": "experimental",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-04-18T00:00:00.000Z",
+    "content": "The warm-up is over. The living engine begins. PH4A functioned as psychological excavation and pressure-building. NE is the eruptive genesis where bodily practice becomes the primary epistemic tool. The Three-Gate Architecture moves from explosive permission through geological compression to directional sovereignty.",
+    "phraseTags": ["warm-up over", "living engine", "eruptive genesis", "three gates", "sovereignty"],
+    "emotionalStateTag": "ignited",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-09-01T00:00:00.000Z",
+    "content": "Incendiary, reverent, confessional, ecstatic, and directional. The tone mixes humility before tradition with fierce personal claim-making and mythic urgency. Earned stillness rather than crisis discharge.",
+    "phraseTags": ["incendiary", "reverent", "ecstatic", "earned stillness", "mythic urgency"],
+    "emotionalStateTag": "ecstatic-grounded",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "NE",
+    "sourceDate": "2025-06-05T00:00:00.000Z",
+    "content": "All NE works employ high-quality Japanese sumi ink on premium Chinese Anhui rice paper and mulberry paper, sourced through apprenticeship-level consultation with the sifu at Man Luen Choon Chinese Art Supplies in Hong Kong. The shift from dual-ink experimentation to pure sumi commitment marks a move from testing materials to excavating infinite variation within a single chosen constraint.",
+    "phraseTags": ["sumi ink", "Anhui rice paper", "Man Luen Choon", "single constraint", "infinite variation"],
+    "emotionalStateTag": "committed",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CRUCIBLE",
+    "sourceDate": "2025-12-15T00:00:00.000Z",
+    "content": "Threshold Cosmology: Transformation through witnessed recognition. Thresholds are crossed when patterns become visible and are named while still warm. Not retrospective analysis but live documentation of change as it occurs.",
+    "phraseTags": ["threshold cosmology", "witnessed recognition", "named while warm", "live documentation"],
+    "emotionalStateTag": "witnessing",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CRUCIBLE",
+    "sourceDate": "2025-12-19T00:00:00.000Z",
+    "content": "Explorer versus Nomad. Explorer actively seeks novelty, meaning, cultural encounter, outbound and hungry. Nomad reactively flees boredom, pain, stagnation. Artist movement equals predominantly Explorer. Bangkok equals base camp, not cage.",
+    "phraseTags": ["explorer", "nomad", "novelty seeking", "base camp", "not cage"],
+    "emotionalStateTag": "clarified",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CRUCIBLE",
+    "sourceDate": "2025-12-20T00:00:00.000Z",
+    "content": "Defensive Jester dies in the studio. Social Jester survives in the world. Art is painting portrait of soul. Jester cannot paint that. Studio door closes. No performance in temple.",
+    "phraseTags": ["Jester wall", "defensive dies", "social survives", "studio as temple", "no performance"],
+    "emotionalStateTag": "boundaried",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CRUCIBLE",
+    "sourceDate": "2025-12-20T00:00:00.000Z",
+    "content": "Fried Egg Sandwich Effect: Involuntary breakthrough where somatic response arrives before cognitive management can intercept. Memory or moment bypasses defensive architecture completely. Body knows before mind catches up.",
+    "phraseTags": ["fried egg sandwich", "somatic breakthrough", "involuntary", "body knows first"],
+    "emotionalStateTag": "pierced",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CRUCIBLE",
+    "sourceDate": "2025-12-21T00:00:00.000Z",
+    "content": "Walking Engine: Micro-walks as cognitive reset tool. Frequency greater than distance. Walking equals working, not escaping. Integration with studio practice, not mileage.",
+    "phraseTags": ["walking engine", "cognitive reset", "frequency over distance", "walking as working"],
+    "emotionalStateTag": "operational",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CRUCIBLE",
+    "sourceDate": "2025-12-22T00:00:00.000Z",
+    "content": "Loneliness as byproduct, not engineered strategy. Side effect of cognitive architecture: high internal monologue, empathic permeability, deep phenomenological awareness. Running all three equals isolation as natural consequence. Void does not equal loneliness.",
+    "phraseTags": ["loneliness byproduct", "cognitive architecture", "empathic permeability", "void not loneliness"],
+    "emotionalStateTag": "understood",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CRUCIBLE",
+    "sourceDate": "2025-12-23T00:00:00.000Z",
+    "content": "Doorless Room: Psychic sanctuary discovered to have no entrance. Protective architecture designed by Jester without conscious awareness. Room cannot contain future witness because it cannot be entered. Door Intention: willingness for organic emergence.",
+    "phraseTags": ["doorless room", "psychic sanctuary", "no entrance", "door intention", "organic emergence"],
+    "emotionalStateTag": "discovering",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CRUCIBLE",
+    "sourceDate": "2025-12-25T00:00:00.000Z",
+    "content": "Recursive Witness: Emotional breakthrough amplified by being witnessed and named. Core hunger equals not just experience, but witnessed experience. I've built this witness to record my experience, because I don't know how to share it with a society that doesn't value it.",
+    "phraseTags": ["recursive witness", "witnessed experience", "core hunger", "society doesn't value"],
+    "emotionalStateTag": "vulnerable-purposeful",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CRUCIBLE",
+    "sourceDate": "2026-01-02T00:00:00.000Z",
+    "content": "Four-cycle destruction-reconstruction pattern confirmed. Graffiti outgrowth. Steampunk death and PH1 ego death catalyzed by Simon Birch. Hong Kong departure from protests, COVID, divorce. Crucible Year as first constructive cycle. Each cycle produces more distilled practice.",
+    "phraseTags": ["four cycles", "destruction-reconstruction", "Simon Birch", "distillation", "constructive cycle"],
+    "emotionalStateTag": "pattern-recognized",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CRUCIBLE",
+    "sourceDate": "2026-01-15T00:00:00.000Z",
+    "content": "The Ratio: Explore/Build balance. Explorer equals wandering, consuming, processing. Builder equals executing, creating output. Target hypothesis: 60 percent building, 40 percent exploring. Requires baseline before adjustment.",
+    "phraseTags": ["the ratio", "explore/build", "60/40", "balance", "baseline needed"],
+    "emotionalStateTag": "calibrating",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CRUCIBLE",
+    "sourceDate": "2026-02-01T00:00:00.000Z",
+    "content": "75 works in approximately one month of stable studio access. Production benchmark established. The Crucible Year hypothesis gaining evidence: base camp infrastructure enables output acceleration.",
+    "phraseTags": ["75 works", "one month", "production benchmark", "hypothesis confirmed", "acceleration"],
+    "emotionalStateTag": "productive-validated",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CROSS",
+    "sourceDate": "2018-01-01T00:00:00.000Z",
+    "content": "The accidental slip of the pen in Absurdity of Meaning 9 originated the black bar vocabulary. Theatre of Memory was the first intentional deployment of what had been accidentally discovered. The distinction between accidental origin and fluent intentional use matters.",
+    "phraseTags": ["accidental origin", "Theatre of Memory", "intentional deployment", "black bar", "AoM 9"],
+    "emotionalStateTag": "pivotal",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "CROSS",
+    "sourceDate": "2025-12-01T00:00:00.000Z",
+    "content": "Freedom and Hong Kong are no longer compatible. The protests, COVID lockdowns, and divorce aftermath combined to make departure necessary. Sixteen years in Asia as of 2026. More adult life spent in Asia than in Canada.",
+    "phraseTags": ["freedom incompatible", "Hong Kong departure", "sixteen years Asia", "more than Canada"],
+    "emotionalStateTag": "grief-acceptance",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CROSS",
+    "sourceDate": "2022-06-01T00:00:00.000Z",
+    "content": "Post-divorce catastrophic period in 2022: drugs, alcohol excess, financial burn-through. The escapist behavior paradoxically precipitated an unavoidable reckoning. Avoidance and confrontation operated dialectically until the inner reckoning could no longer be deferred.",
+    "phraseTags": ["post-divorce", "catastrophic", "drugs alcohol", "unavoidable reckoning", "dialectical"],
+    "emotionalStateTag": "catastrophic",
+    "phaseDnaTag": "PH3"
+  },
+  {
+    "sourcePhase": "CROSS",
+    "sourceDate": "2009-01-01T00:00:00.000Z",
+    "content": "Arrived in Hong Kong for what was meant to be a three-month visit in 2009, relocated permanently in 2010. Canadian graffiti festival circuit: 416 Expo, Style in Progress, Under Pressure. Architecture studies at Fanshawe College one year, then Sheridan College illustration.",
+    "phraseTags": ["Hong Kong arrival", "three months became sixteen years", "graffiti", "416 Expo", "Sheridan"],
+    "emotionalStateTag": "formative",
+    "phaseDnaTag": "PH1"
+  },
+  {
+    "sourcePhase": "CROSS",
+    "sourceDate": "2012-01-01T00:00:00.000Z",
+    "content": "Commercial track from 2012: Peninsula Hotels, Swire Properties, Soho House Hong Kong. Luxury and corporate commissions that established the material vocabulary and professional infrastructure later phases would build on.",
+    "phraseTags": ["commercial track", "Peninsula Hotels", "Swire", "Soho House", "luxury commissions"],
+    "emotionalStateTag": "professional",
+    "phaseDnaTag": "PH1A"
+  },
+  {
+    "sourcePhase": "CROSS",
+    "sourceDate": "2024-12-15T00:00:00.000Z",
+    "content": "Formative influences: Ghost in the Shell, Akira, Blade Runner. Techno-urban, neo-noir imaginary that persists even as the work moves toward sacred geometric abstraction and pure ink practice. The aesthetic DNA never fully leaves.",
+    "phraseTags": ["Ghost in the Shell", "Akira", "Blade Runner", "neo-noir", "aesthetic DNA"],
+    "emotionalStateTag": "rooted",
+    "phaseDnaTag": "PH4"
+  },
+  {
+    "sourcePhase": "CROSS",
+    "sourceDate": "2025-12-01T00:00:00.000Z",
+    "content": "Analysis functions as mirror rather than source. The work arrives at philosophical positions independently; analysis provides vocabulary for what practice already knows. Translation, not interpretation. Rendering unconscious intelligence legible to the conscious artist.",
+    "phraseTags": ["analysis as mirror", "practice knows first", "unconscious intelligence", "translation"],
+    "emotionalStateTag": "metacognitive",
+    "phaseDnaTag": "NE"
+  },
+  {
+    "sourcePhase": "CROSS",
+    "sourceDate": "2025-11-01T00:00:00.000Z",
+    "content": "Specific journal entries cannot be mapped to specific artworks. The relationship is just a big soup of chaos. No granular crosswalk is possible or intended. Text and image operate as parallel processing channels from shared substrate.",
+    "phraseTags": ["soup of chaos", "parallel channels", "no crosswalk", "shared substrate"],
+    "emotionalStateTag": "honest",
+    "phaseDnaTag": "PH4"
+  }
+]

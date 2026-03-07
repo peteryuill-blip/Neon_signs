@@ -16,14 +16,20 @@ async function seedArchive() {
   const rawData = fs.readFileSync(dataPath, 'utf-8');
   const archiveData = JSON.parse(rawData);
   
-  console.log(`\n📚 Loading ${archiveData.total_entries} enriched archive entries...`);
-  console.log(`   Generated at: ${archiveData.generated_at}\n`);
+  // Handle both old format (object with entries property) and new format (direct array)
+  const entries = Array.isArray(archiveData) ? archiveData : archiveData.entries || [];
+  
+  console.log(`\n📚 Loading ${entries.length} enriched archive entries...`);
   
   // Connect to database
   const connection = await mysql.createConnection(process.env.DATABASE_URL);
   
   try {
-    // First, clear existing archive entries (optional - comment out to append)
+    // Clear pattern_matches first (foreign key references archive_entries)
+    console.log('🗑️  Clearing existing pattern matches...');
+    await connection.execute('DELETE FROM pattern_matches');
+    
+    // Clear existing archive entries
     console.log('🗑️  Clearing existing archive entries...');
     await connection.execute('DELETE FROM archive_entries');
     
@@ -31,44 +37,38 @@ async function seedArchive() {
     let inserted = 0;
     const phaseStats = {};
     
-    for (const entry of archiveData.entries) {
+    for (const entry of entries) {
       const {
-        source_phase,
-        source_date,
+        sourcePhase,
+        sourceDate,
         content,
-        phrase_tags,
-        emotional_state,
-        phase_dna,
-        somatic_state,
-        jester_activity,
-        pattern_tag,
-        week_index
+        phraseTags,
+        emotionalStateTag,
+        phaseDnaTag
       } = entry;
       
-      // Map emotional state to energy level format
-      const emotionalStateTag = emotional_state === 'hot' ? 'energized' :
-                                emotional_state === 'depleted' ? 'exhausted' :
-                                'balanced';
-      
-      // Combine pattern_tag and phase_dna for richer tagging
-      const phaseDnaTag = phase_dna || `${source_phase}_${pattern_tag}`;
+      // Skip if missing critical fields
+      if (!sourcePhase || !sourceDate || !content) {
+        console.warn('⚠️  Skipping entry with missing fields:', entry);
+        continue;
+      }
       
       await connection.execute(
         `INSERT INTO archive_entries 
          (sourcePhase, sourceDate, content, phraseTags, emotionalStateTag, phaseDnaTag, createdAt)
          VALUES (?, ?, ?, ?, ?, ?, NOW())`,
         [
-          source_phase,
-          new Date(source_date),
+          sourcePhase,
+          new Date(sourceDate),
           content,
-          JSON.stringify(phrase_tags),
-          emotionalStateTag,
-          phaseDnaTag
+          JSON.stringify(phraseTags || []),
+          emotionalStateTag || 'balanced',
+          phaseDnaTag || sourcePhase
         ]
       );
       
       inserted++;
-      phaseStats[source_phase] = (phaseStats[source_phase] || 0) + 1;
+      phaseStats[sourcePhase] = (phaseStats[sourcePhase] || 0) + 1;
     }
     
     console.log(`\n✅ Successfully inserted ${inserted} archive entries!\n`);
