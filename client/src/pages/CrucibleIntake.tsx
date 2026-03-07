@@ -37,6 +37,7 @@ function getAutoDisposition(rating: number): 'Trash' | 'Probably_Trash' | 'Save_
 
 export default function CrucibleIntake() {
   const [, navigate] = useLocation();
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   // Form state
@@ -242,11 +243,21 @@ export default function CrucibleIntake() {
           <Card className="bg-black/40 border-purple-500/30">
             <CardContent className="pt-4 space-y-4">
               {/* Photo Upload - front and center */}
+              {/* Camera capture input */}
+              <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handlePhotoChange}
+                className="hidden"
+              />
+              
+              {/* File upload input */}
               <input
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
-                capture="environment"
                 onChange={handlePhotoChange}
                 className="hidden"
               />
@@ -274,14 +285,24 @@ export default function CrucibleIntake() {
                   </button>
                 </div>
               ) : !isOptimizing && (
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-6 border-2 border-dashed border-cyan-500/30 rounded-lg hover:border-cyan-400 transition-colors"
-                >
-                  <Camera className="w-6 h-6 text-cyan-400 mx-auto mb-1" />
-                  <div className="text-xs text-gray-400">Tap to capture</div>
-                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => cameraInputRef.current?.click()}
+                    className="py-4 border-2 border-dashed border-cyan-500/30 rounded-lg hover:border-cyan-400 transition-colors"
+                  >
+                    <Camera className="w-5 h-5 text-cyan-400 mx-auto mb-1" />
+                    <div className="text-xs text-gray-400">Capture</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="py-4 border-2 border-dashed border-cyan-500/30 rounded-lg hover:border-cyan-400 transition-colors"
+                  >
+                    <Upload className="w-5 h-5 text-cyan-400 mx-auto mb-1" />
+                    <div className="text-xs text-gray-400">Upload</div>
+                  </button>
+                </div>
               )}
               
               {/* Dimensions - quick select + manual */}
