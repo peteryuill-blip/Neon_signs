@@ -364,7 +364,21 @@ export default function Results() {
                   {roundup.doorIntention && (
                     <div>
                       <p className="text-sm text-muted-foreground mb-1">Door Intention</p>
-                      <p className="italic neon-text-purple">"{roundup.doorIntention}"</p>
+                      <p className="italic neon-text-purple">\"{ roundup.doorIntention }\"</p>
+                    </div>
+                  )}
+
+                  {/* Quick Notes from This Week */}
+                  {roundup.quickNotes && roundup.quickNotes.length > 0 && (
+                    <div>
+                      <p className="text-sm text-muted-foreground mb-2">📝 Quick Notes This Week</p>
+                      <div className="space-y-2">
+                        {roundup.quickNotes.map((note: any, index: number) => (
+                          <div key={index} className="text-sm bg-cyan-500/5 border border-cyan-500/20 rounded-lg p-3 text-foreground/80">
+                            {note.content}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
