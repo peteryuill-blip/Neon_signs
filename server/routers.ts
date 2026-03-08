@@ -705,6 +705,20 @@ export const appRouter = router({
         if (!roundup || roundup.userId !== ctx.user.id) {
           throw new TRPCError({ code: 'NOT_FOUND' });
         }
+        // If no stored quickNotes, fetch notes from the quick_notes table
+        // that were created during this roundup's week period
+        if (!roundup.quickNotes) {
+          const { getQuickNotesForWeek } = await import('./db');
+          const weeklyNotes = await getQuickNotesForWeek(ctx.user.id);
+          return {
+            ...roundup,
+            quickNotes: weeklyNotes.length > 0 ? weeklyNotes.map(n => ({
+              id: n.id,
+              content: n.content,
+              createdAt: n.createdAt,
+            })) : null,
+          };
+        }
         return roundup;
       }),
 

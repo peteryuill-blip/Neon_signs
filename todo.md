@@ -567,3 +567,7 @@
 - [ ] Run seed script with new 114-entry enriched-archive-data.json
 - [ ] Replace Phase DNA system prompt with PROMPT 1 from NEON_SIGNS_SYSTEM_PROMPTS.md
 - [ ] Replace Neon's Mirror system prompt with PROMPT 2 from NEON_SIGNS_SYSTEM_PROMPTS.md
+
+## Bug: Quick Notes Not Showing in Results Page
+- [ ] Investigate why quick notes don't appear in Results page
+- [ ] Fix quick notes display issue
