@@ -506,6 +506,25 @@ export async function getUnusedQuickNotes(userId: number): Promise<QuickNote[]> 
     .orderBy(desc(quickNotes.createdAt));
 }
 
+export async function getQuickNotesForWeek(userId: number): Promise<QuickNote[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  // Calculate start of current week (Sunday)
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - dayOfWeek);
+  startOfWeek.setHours(0, 0, 0, 0);
+  
+  return db.select().from(quickNotes)
+    .where(and(
+      eq(quickNotes.userId, userId),
+      sql`${quickNotes.createdAt} >= ${startOfWeek}`
+    ))
+    .orderBy(desc(quickNotes.createdAt));
+}
+
 export async function deleteQuickNote(id: number, userId: number): Promise<void> {
   const db = await getDb();
   if (!db) return;

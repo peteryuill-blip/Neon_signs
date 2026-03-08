@@ -587,6 +587,11 @@ export const appRouter = router({
           abandonmentReason: z.string().optional(),
         })).optional(),
         city: z.string().nullable().optional(),
+        quickNotes: z.array(z.object({
+          id: z.number(),
+          content: z.string(),
+          createdAt: z.date(),
+        })).nullable().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const settings = await getUserSettings(ctx.user.id);
@@ -643,6 +648,13 @@ export const appRouter = router({
           weatherData = await fetchWeather(input.city);
         }
         
+        // Transform quickNotes to include only id, content, and createdAt for storage
+        const quickNotesForStorage = input.quickNotes?.map(note => ({
+          id: note.id,
+          content: note.content,
+          createdAt: note.createdAt,
+        })) || null;
+        
         // Create the roundup
         const roundupId = await createWeeklyRoundup({
           userId: ctx.user.id,
@@ -668,6 +680,7 @@ export const appRouter = router({
           worksData: input.worksData || null,
           city: input.city || null,
           weatherData: weatherData,
+          quickNotes: quickNotesForStorage,
         });
         
         // Detect and assign phase-DNA
@@ -1407,6 +1420,12 @@ export const appRouter = router({
     // Get unused notes (not yet linked to a roundup)
     getUnused: protectedProcedure.query(async ({ ctx }) => {
       return getUnusedQuickNotes(ctx.user.id);
+    }),
+
+    // Get this week's quick notes (created within the current week)
+    getWeekly: protectedProcedure.query(async ({ ctx }) => {
+      const { getQuickNotesForWeek } = await import('./db');
+      return getQuickNotesForWeek(ctx.user.id);
     }),
 
     // Create a new quick note

@@ -55,6 +55,9 @@ export const weeklyRoundups = mysqlTable("weekly_roundups", {
   city: varchar("city", { length: 100 }), // City for weather lookup
   weatherData: json("weatherData").$type<WeatherData | null>(), // Fetched weather info
   
+  // Quick notes collected during the week
+  quickNotes: json("quickNotes").$type<QuickNoteSnapshot[] | null>(), // Array of quick note snapshots for the week
+  
   // AI-assigned metadata
   phaseDnaAssigned: varchar("phaseDnaAssigned", { length: 32 }),
   createdDayOfWeek: varchar("createdDayOfWeek", { length: 16 }).notNull(), // Day of week when entry was created
@@ -158,6 +161,13 @@ export const quickNotes = mysqlTable("quick_notes", {
 
 export type QuickNote = typeof quickNotes.$inferSelect;
 export type InsertQuickNote = typeof quickNotes.$inferInsert;
+
+// Snapshot of quick note for storing in roundup's quickNotes JSON field
+export type QuickNoteSnapshot = {
+  id: number;
+  content: string;
+  createdAt: Date;
+};
 
 /**
  * Materials Library - surfaces, mediums, and tools for artwork trials

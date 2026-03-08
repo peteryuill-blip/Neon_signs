@@ -1,0 +1,1 @@
+ALTER TABLE `weekly_roundups` ADD `quickNotes` json;

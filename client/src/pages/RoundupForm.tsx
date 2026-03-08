@@ -60,6 +60,7 @@ interface FormData {
   dailySteps: DailySteps;
   worksData: WorkEntry[];
   worksExpanded: boolean;
+  quickNotes: Array<{ id: number; content: string; createdAt: Date }>; // Week's quick notes
 }
 
 const initialDailySteps: DailySteps = {
@@ -102,6 +103,7 @@ const initialFormData: FormData = {
   dailySteps: initialDailySteps,
   worksData: [],
   worksExpanded: false,
+  quickNotes: [],
 };
 
 const STEP_THRESHOLD_HIGH = 8000;
@@ -463,6 +465,11 @@ export default function RoundupForm() {
     enabled: isAuthenticated,
   });
 
+  // Fetch this week's quick notes
+  const { data: weeklyQuickNotes = [] } = trpc.quickNotes.getWeekly.useQuery(undefined, {
+    enabled: isAuthenticated,
+  });
+
   const submitMutation = trpc.roundup.submit.useMutation({
     onSuccess: (data) => {
       localStorage.removeItem(DRAFT_KEY);
@@ -654,7 +661,7 @@ export default function RoundupForm() {
       worksMade: formData.worksMade,
       jesterActivity: formData.jesterActivity,
       energyLevel: formData.energyLevel as 'hot' | 'sustainable' | 'depleted',
-      walkingEngineUsed: stepStats.average >= STEP_THRESHOLD_HIGH, // Auto-set based on step average
+      walkingEngineUsed: stepStats.average >= STEP_THRESHOLD_HIGH,
       walkingInsights: formData.walkingInsights || null,
       partnershipTemperature: formData.partnershipTemperature,
       thingWorked: formData.thingWorked,
@@ -664,6 +671,7 @@ export default function RoundupForm() {
       dailySteps: formData.dailySteps,
       worksData: worksDataToSubmit,
       city: formData.city || null,
+      quickNotes: weeklyQuickNotes && weeklyQuickNotes.length > 0 ? weeklyQuickNotes : null,
     });
   };
 
@@ -814,6 +822,20 @@ export default function RoundupForm() {
             />
             {errors.weatherReport && (
               <p className="text-sm neon-text-magenta mt-2">{errors.weatherReport}</p>
+            )}
+            
+            {/* Quick Notes from This Week */}
+            {weeklyQuickNotes && weeklyQuickNotes.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-cyan-500/20">
+                <p className="text-xs text-cyan-400 font-semibold mb-2">📝 Quick Notes This Week ({weeklyQuickNotes.length})</p>
+                <div className="space-y-2">
+                  {weeklyQuickNotes.map((note) => (
+                    <div key={note.id} className="text-sm bg-cyan-500/5 border border-cyan-500/20 rounded p-2 text-muted-foreground">
+                      {note.content}
+                    </div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
 
