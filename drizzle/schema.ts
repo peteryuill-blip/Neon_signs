@@ -290,3 +290,58 @@ export const workTools = mysqlTable("work_tools", {
 
 export type WorkTool = typeof workTools.$inferSelect;
 export type InsertWorkTool = typeof workTools.$inferInsert;
+
+/**
+ * Intake Presets - saved material combinations for quick recall
+ */
+export const intakePresets = mysqlTable("intake_presets", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 100 }).notNull(), // e.g., "Sumi + Rice Paper", "Ink Exploration"
+  description: text("description"), // Optional description of the preset
+  sortOrder: int("sortOrder").default(0).notNull(), // For custom ordering
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type IntakePreset = typeof intakePresets.$inferSelect;
+export type InsertIntakePreset = typeof intakePresets.$inferInsert;
+
+/**
+ * Preset Surfaces - junction table for surfaces in a preset
+ */
+export const presetSurfaces = mysqlTable("preset_surfaces", {
+  id: int("id").autoincrement().primaryKey(),
+  presetId: int("presetId").notNull(),
+  surfaceId: int("surfaceId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PresetSurface = typeof presetSurfaces.$inferSelect;
+export type InsertPresetSurface = typeof presetSurfaces.$inferInsert;
+
+/**
+ * Preset Mediums - junction table for mediums in a preset
+ */
+export const presetMediums = mysqlTable("preset_mediums", {
+  id: int("id").autoincrement().primaryKey(),
+  presetId: int("presetId").notNull(),
+  mediumId: int("mediumId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PresetMedium = typeof presetMediums.$inferSelect;
+export type InsertPresetMedium = typeof presetMediums.$inferInsert;
+
+/**
+ * Preset Tools - junction table for tools in a preset
+ */
+export const presetTools = mysqlTable("preset_tools", {
+  id: int("id").autoincrement().primaryKey(),
+  presetId: int("presetId").notNull(),
+  toolId: int("toolId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PresetTool = typeof presetTools.$inferSelect;
+export type InsertPresetTool = typeof presetTools.$inferInsert;

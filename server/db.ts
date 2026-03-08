@@ -1350,3 +1350,226 @@ export async function getCommonDimensions(userId: number): Promise<Array<{ heigh
   return (result[0] as unknown as Array<{ height: number; width: number; count: number }>)
     .filter(d => d.height && d.width);
 }
+
+
+// ============ INTAKE PRESETS QUERIES ============
+
+import { intakePresets, InsertIntakePreset, IntakePreset, presetSurfaces, InsertPresetSurface, presetMediums, InsertPresetMedium, presetTools, InsertPresetTool } from "../drizzle/schema";
+
+export async function createIntakePreset(preset: InsertIntakePreset): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  const result = await db.insert(intakePresets).values(preset);
+  return result[0].insertId;
+}
+
+export async function getIntakePresetsForUser(userId: number): Promise<Array<{
+  preset: IntakePreset;
+  surfaceIds: number[];
+  mediumIds: number[];
+  toolIds: number[];
+}>> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const presets = await db.select().from(intakePresets)
+    .where(eq(intakePresets.userId, userId))
+    .orderBy(intakePresets.sortOrder, intakePresets.createdAt);
+  
+  // Fetch materials for each preset
+  const result = await Promise.all(presets.map(async (preset) => {
+    const [surfaceIds, mediumIds, toolIds] = await Promise.all([
+      getPresetSurfaces(preset.id),
+      getPresetMediums(preset.id),
+      getPresetTools(preset.id)
+    ]);
+    return { preset, surfaceIds, mediumIds, toolIds };
+  }));
+  
+  return result;
+}
+
+export async function getIntakePresetById(id: number, userId: number): Promise<IntakePreset | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+  
+  const result = await db.select().from(intakePresets)
+    .where(and(
+      eq(intakePresets.id, id),
+      eq(intakePresets.userId, userId)
+    ))
+    .limit(1);
+  
+  return result[0];
+}
+
+export async function updateIntakePreset(id: number, userId: number, updates: Partial<Omit<InsertIntakePreset, 'userId'>>): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  // Verify ownership
+  const existing = await getIntakePresetById(id, userId);
+  if (!existing) {
+    throw new Error("Preset not found or access denied");
+  }
+  
+  await db.update(intakePresets)
+    .set(updates)
+    .where(eq(intakePresets.id, id));
+}
+
+export async function deleteIntakePreset(id: number, userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  // Verify ownership
+  const existing = await getIntakePresetById(id, userId);
+  if (!existing) {
+    throw new Error("Preset not found or access denied");
+  }
+  
+  // Delete all associated materials
+  await db.delete(presetSurfaces).where(eq(presetSurfaces.presetId, id));
+  await db.delete(presetMediums).where(eq(presetMediums.presetId, id));
+  await db.delete(presetTools).where(eq(presetTools.presetId, id));
+  
+  // Delete the preset
+  await db.delete(intakePresets).where(eq(intakePresets.id, id));
+}
+
+// ============ PRESET MATERIALS QUERIES ============
+
+export async function addPresetSurface(presetId: number, surfaceId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.insert(presetSurfaces).values({ presetId, surfaceId });
+}
+
+export async function getPresetSurfaces(presetId: number): Promise<number[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db.select({ surfaceId: presetSurfaces.surfaceId })
+    .from(presetSurfaces)
+    .where(eq(presetSurfaces.presetId, presetId));
+  
+  return result.map(r => r.surfaceId);
+}
+
+export async function removePresetSurface(presetId: number, surfaceId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.delete(presetSurfaces)
+    .where(and(
+      eq(presetSurfaces.presetId, presetId),
+      eq(presetSurfaces.surfaceId, surfaceId)
+    ));
+}
+
+export async function addPresetMedium(presetId: number, mediumId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.insert(presetMediums).values({ presetId, mediumId });
+}
+
+export async function getPresetMediums(presetId: number): Promise<number[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db.select({ mediumId: presetMediums.mediumId })
+    .from(presetMediums)
+    .where(eq(presetMediums.presetId, presetId));
+  
+  return result.map(r => r.mediumId);
+}
+
+export async function removePresetMedium(presetId: number, mediumId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.delete(presetMediums)
+    .where(and(
+      eq(presetMediums.presetId, presetId),
+      eq(presetMediums.mediumId, mediumId)
+    ));
+}
+
+export async function addPresetTool(presetId: number, toolId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.insert(presetTools).values({ presetId, toolId });
+}
+
+export async function getPresetTools(presetId: number): Promise<number[]> {
+  const db = await getDb();
+  if (!db) return [];
+  
+  const result = await db.select({ toolId: presetTools.toolId })
+    .from(presetTools)
+    .where(eq(presetTools.presetId, presetId));
+  
+  return result.map(r => r.toolId);
+}
+
+export async function removePresetTool(presetId: number, toolId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  
+  await db.delete(presetTools)
+    .where(and(
+      eq(presetTools.presetId, presetId),
+      eq(presetTools.toolId, toolId)
+    ));
+}
+
+export async function getFullPreset(presetId: number): Promise<{
+  preset: IntakePreset;
+  surfaceIds: number[];
+  mediumIds: number[];
+  toolIds: number[];
+} | undefined> {
+  const preset = await getIntakePresetById(presetId, 0); // Note: userId check happens in caller
+  if (!preset) return undefined;
+  
+  const [surfaceIds, mediumIds, toolIds] = await Promise.all([
+    getPresetSurfaces(presetId),
+    getPresetMediums(presetId),
+    getPresetTools(presetId)
+  ]);
+  
+  return { preset, surfaceIds, mediumIds, toolIds };
+}
+
+export async function savePresetFromCurrentSelection(
+  userId: number,
+  name: string,
+  description: string | undefined,
+  surfaceIds: number[],
+  mediumIds: number[],
+  toolIds: number[]
+): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  
+  // Create the preset
+  const presetId = await createIntakePreset({
+    userId,
+    name,
+    description,
+    sortOrder: 0
+  });
+  
+  // Add all materials
+  await Promise.all([
+    ...surfaceIds.map(id => addPresetSurface(presetId, id)),
+    ...mediumIds.map(id => addPresetMedium(presetId, id)),
+    ...toolIds.map(id => addPresetTool(presetId, id))
+  ]);
+  
+  return presetId;
+}

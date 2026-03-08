@@ -1,1 +1,1 @@
-ALTER TABLE `works_core` ADD `photoThumbnail` text;
+-- ALTER TABLE `works_core` ADD `photoThumbnail` text;

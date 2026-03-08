@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { trpc } from '@/lib/trpc';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -67,7 +68,17 @@ export default function CrucibleIntake() {
   // Track if defaults have been applied
   const [defaultsApplied, setDefaultsApplied] = useState(false);
   
+  // Presets state
+  const [showPresetSave, setShowPresetSave] = useState(false);
+  const [presetName, setPresetName] = useState('');
+  const [presetDescription, setPresetDescription] = useState('');
+  const [showPresetLoad, setShowPresetLoad] = useState(false);
+  const [selectedPresetId, setSelectedPresetId] = useState<number | null>(null);
+  
   const uploadPhotoMutation = trpc.works.uploadPhoto.useMutation();
+  const { data: presets } = trpc.intakePresets.getAll.useQuery();
+  const savePresetMutation = trpc.intakePresets.create.useMutation();
+  const deletePresetMutation = trpc.intakePresets.delete.useMutation();
   
   // Fetch materials
   const { data: surfacesRaw } = trpc.materials.getByType.useQuery({ type: 'Surface' });
@@ -579,7 +590,147 @@ export default function CrucibleIntake() {
             )}
           </Card>
           
-          {/* SECTION 3: NOTES (collapsed by default) */}
+          {/* SECTION 3: INTAKE PRESETS */}
+          {presets && presets.length > 0 && (
+            <Card className="bg-black/40 border-green-500/30">
+              <button
+                type="button"
+                onClick={() => setShowPresetLoad(!showPresetLoad)}
+                className="w-full px-4 py-3 flex items-center justify-between text-left"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-green-400 text-sm font-medium">Quick Presets</span>
+                  <span className="text-xs text-gray-500">({presets.length})</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {showPresetLoad ? (
+                    <ChevronUp className="w-4 h-4 text-gray-500" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                  )}
+                </div>
+              </button>
+              
+              {showPresetLoad && (
+                <CardContent className="pt-0 space-y-2">
+                  {presets.map((item) => (
+                    <div key={item.preset.id} className="flex items-center justify-between p-2 rounded border border-green-500/20 bg-black/50 hover:bg-green-500/10 transition-colors">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSurfaceIds(item.surfaceIds || []);
+                          setMediumIds(item.mediumIds || []);
+                          setToolIds(item.toolIds || []);
+                          setShowPresetLoad(false);
+                          toast.success(`Loaded preset: ${item.preset.name}`);
+                        }}
+                        className="flex-1 text-left"
+                      >
+                        <div className="text-xs font-medium text-green-400">{item.preset.name}</div>
+                        {item.preset.description && (
+                          <div className="text-[10px] text-gray-500 truncate">{item.preset.description}</div>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          deletePresetMutation.mutate({ id: item.preset.id }, {
+                            onSuccess: () => {
+                              toast.success('Preset deleted');
+                            }
+                          });
+                        }}
+                        className="ml-2 p-1 text-gray-500 hover:text-red-400 transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </CardContent>
+              )}
+            </Card>
+          )}
+          
+          {/* SECTION 4: SAVE PRESET */}
+          {surfaceIds.length > 0 && mediumIds.length > 0 && (
+            <Card className="bg-black/40 border-green-500/30">
+              <button
+                type="button"
+                onClick={() => setShowPresetSave(!showPresetSave)}
+                className="w-full px-4 py-3 flex items-center justify-between text-left"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-green-400 text-sm font-medium">Save as Preset</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {showPresetSave ? (
+                    <ChevronUp className="w-4 h-4 text-gray-500" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 text-gray-500" />
+                  )}
+                </div>
+              </button>
+              
+              {showPresetSave && (
+                <CardContent className="pt-0 space-y-3">
+                  <div>
+                    <Label className="text-green-400 text-xs">Preset Name *</Label>
+                    <Input
+                      type="text"
+                      value={presetName}
+                      onChange={(e) => setPresetName(e.target.value.slice(0, 100))}
+                      placeholder="e.g., Acrylic on Canvas"
+                      className="mt-1 bg-black/50 border-green-500/30 text-white"
+                      maxLength={100}
+                    />
+                    <div className="text-[10px] text-gray-600 text-right">{presetName.length}/100</div>
+                  </div>
+                  
+                  <div>
+                    <Label className="text-green-400 text-xs">Description (optional)</Label>
+                    <Textarea
+                      value={presetDescription}
+                      onChange={(e) => setPresetDescription(e.target.value.slice(0, 500))}
+                      placeholder="Quick notes about this combination..."
+                      className="mt-1 bg-black/50 border-green-500/30 h-12 text-sm"
+                      maxLength={500}
+                    />
+                    <div className="text-[10px] text-gray-600 text-right">{presetDescription.length}/500</div>
+                  </div>
+                  
+                  <Button
+                    type="button"
+                    onClick={() => {
+                      if (!presetName.trim()) {
+                        toast.error('Preset name is required');
+                        return;
+                      }
+                      savePresetMutation.mutate({
+                        name: presetName,
+                        description: presetDescription || undefined,
+                        surfaceIds,
+                        mediumIds,
+                        toolIds
+                      }, {
+                        onSuccess: () => {
+                          toast.success('Preset saved!');
+                          setPresetName('');
+                          setPresetDescription('');
+                          setShowPresetSave(false);
+                        }
+                      });
+                    }}
+                    disabled={!presetName.trim() || savePresetMutation.isPending}
+                    className="w-full bg-green-600/20 hover:bg-green-600/30 border border-green-500/30 text-green-400 disabled:opacity-30"
+                  >
+                    {savePresetMutation.isPending ? 'Saving...' : 'Save Preset'}
+                  </Button>
+                </CardContent>
+              )}
+            </Card>
+          )}
+          
+          {/* SECTION 5: NOTES (collapsed by default) */}
           <Card className="bg-black/40 border-cyan-500/30">
             <button
               type="button"

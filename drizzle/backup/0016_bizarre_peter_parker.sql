@@ -1,0 +1,1 @@
+ALTER TABLE `works_core` MODIFY COLUMN `disposition` enum('Trash','Probably_Trash','Save_Archive','Save_Has_Potential') NOT NULL;

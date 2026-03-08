@@ -1858,6 +1858,72 @@ export const appRouter = router({
       }),
   }),
 
+  // Intake Presets
+  intakePresets: router({
+    // Get all presets for user
+    getAll: protectedProcedure.query(async ({ ctx }) => {
+        const { getIntakePresetsForUser } = await import('./db');
+      return getIntakePresetsForUser(ctx.user.id);
+    }),
+
+    // Get single preset with all materials
+    get: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const { getIntakePresetById, getFullPreset } = await import('./db');
+        const preset = await getIntakePresetById(input.id, ctx.user.id);
+        if (!preset) {
+          throw new TRPCError({ code: 'NOT_FOUND' });
+        }
+        return getFullPreset(input.id);
+      }),
+
+    // Create new preset from current selection
+    create: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1).max(100),
+        description: z.string().max(500).optional(),
+        surfaceIds: z.array(z.number()).min(1),
+        mediumIds: z.array(z.number()).min(1),
+        toolIds: z.array(z.number()).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { savePresetFromCurrentSelection } = await import('./db');
+        const id = await savePresetFromCurrentSelection(
+          ctx.user.id,
+          input.name,
+          input.description,
+          input.surfaceIds,
+          input.mediumIds,
+          input.toolIds || []
+        );
+        return { id };
+      }),
+
+    // Update preset
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().min(1).max(100).optional(),
+        description: z.string().max(500).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { updateIntakePreset } = await import('./db');
+        const { id, ...updates } = input;
+        await updateIntakePreset(id, ctx.user.id, updates);
+        return { success: true };
+      }),
+
+    // Delete preset
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const { deleteIntakePreset } = await import('./db');
+        await deleteIntakePreset(input.id, ctx.user.id);
+        return { success: true };
+      }),
+  }),
+
   // Crucible Analytics
   crucibleAnalytics: router({
     // Rating distribution by surface
