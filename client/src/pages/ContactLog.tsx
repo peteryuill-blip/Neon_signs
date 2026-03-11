@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Trash2, User, Building2, MapPin, Link2, FileText } from 'lucide-react';
+import { ArrowLeft, Trash2, User, Building2, MapPin, Link2, FileText, Download } from 'lucide-react';
 
 const CITIES = ['Hong Kong', 'Bangkok', 'Singapore', 'Other'] as const;
 type City = typeof CITIES[number];
@@ -69,6 +69,33 @@ export default function ContactLog() {
     setForm(prev => ({ ...prev, [field]: value }));
   }
 
+  function exportCSV() {
+    if (contacts.length === 0) {
+      toast.error('No contacts to export');
+      return;
+    }
+    const headers = ['Name', 'Role/Title', 'Organization', 'City', 'How Connected', 'Notes', 'Date Added'];
+    const rows = contacts.map(c => [
+      c.name,
+      c.role ?? '',
+      c.organization ?? '',
+      c.city ?? '',
+      c.howConnected ?? '',
+      c.notes ?? '',
+      new Date(c.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }),
+    ]);
+    const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
+    const csv = [headers, ...rows].map(row => row.map(escape).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `contacts-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Exported ${contacts.length} contact${contacts.length !== 1 ? 's' : ''}`);
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground pb-24">
       {/* Header */}
@@ -79,7 +106,18 @@ export default function ContactLog() {
           </button>
         </Link>
         <h1 className="font-semibold text-base">Contact Log</h1>
-        <span className="ml-auto text-xs text-muted-foreground">{contacts.length} contacts</span>
+        <div className="ml-auto flex items-center gap-2">
+          <span className="text-xs text-muted-foreground">{contacts.length} contacts</span>
+          {contacts.length > 0 && (
+            <button
+              onClick={exportCSV}
+              className="text-muted-foreground hover:text-cyan-400 transition-colors"
+              title="Export as CSV"
+            >
+              <Download className="w-4 h-4" />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="max-w-lg mx-auto px-4 pt-5 space-y-6">
