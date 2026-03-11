@@ -75,6 +75,7 @@ import {
   getCommonDimensions,
   createContact,
   getContacts,
+  updateContact,
   deleteContact,
 } from "./db";
 import { buildUnifiedCSV } from "./csv-helpers";
@@ -2180,6 +2181,9 @@ export const appRouter = router({
         role: z.string().max(255).optional(),
         organization: z.string().max(255).optional(),
         city: z.string().max(100).optional(),
+        phone: z.string().max(100).optional(),
+        instagram: z.string().max(100).optional(),
+        email: z.string().max(320).optional(),
         howConnected: z.string().max(2000).optional(),
         notes: z.string().max(5000).optional(),
       }))
@@ -2190,10 +2194,33 @@ export const appRouter = router({
           role: input.role ?? null,
           organization: input.organization ?? null,
           city: input.city ?? null,
+          phone: input.phone ?? null,
+          instagram: input.instagram ?? null,
+          email: input.email ?? null,
           howConnected: input.howConnected ?? null,
           notes: input.notes ?? null,
         });
         return { id };
+      }),
+
+    // Update a contact
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().min(1).max(255),
+        role: z.string().max(255).optional().nullable(),
+        organization: z.string().max(255).optional().nullable(),
+        city: z.string().max(100).optional().nullable(),
+        phone: z.string().max(100).optional().nullable(),
+        instagram: z.string().max(100).optional().nullable(),
+        email: z.string().max(320).optional().nullable(),
+        howConnected: z.string().max(2000).optional().nullable(),
+        notes: z.string().max(5000).optional().nullable(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const { id, ...data } = input;
+        await updateContact(id, ctx.user.id, data);
+        return { success: true };
       }),
 
     // Get all contacts for the current user

@@ -1602,6 +1602,9 @@ export async function createContact(data: {
   role?: string | null;
   organization?: string | null;
   city?: string | null;
+  phone?: string | null;
+  instagram?: string | null;
+  email?: string | null;
   howConnected?: string | null;
   notes?: string | null;
 }): Promise<number> {
@@ -1613,10 +1616,29 @@ export async function createContact(data: {
     role: data.role ?? null,
     organization: data.organization ?? null,
     city: data.city ?? null,
+    phone: data.phone ?? null,
+    instagram: data.instagram ?? null,
+    email: data.email ?? null,
     howConnected: data.howConnected ?? null,
     notes: data.notes ?? null,
   });
   return (result as any).insertId as number;
+}
+
+export async function updateContact(id: number, userId: number, data: {
+  name?: string;
+  role?: string | null;
+  organization?: string | null;
+  city?: string | null;
+  phone?: string | null;
+  instagram?: string | null;
+  email?: string | null;
+  howConnected?: string | null;
+  notes?: string | null;
+}): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(contacts).set(data).where(and(eq(contacts.id, id), eq(contacts.userId, userId)));
 }
 
 export async function getContacts(userId: number): Promise<Contact[]> {

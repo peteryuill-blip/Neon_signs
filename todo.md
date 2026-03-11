@@ -579,3 +579,12 @@
 - [x] Build ContactLog page with 6-field form
 - [x] Add list view sorted by most recent
 - [x] Add Contact Log to More menu navigation
+
+## Feature: Contact Log Enhancements
+- [ ] Add phone, instagram, email columns to contacts schema
+- [ ] Push migration
+- [ ] Update backend create/update procedures for new fields
+- [ ] Update ContactLog form with 3 new optional fields
+- [ ] Display new fields in contact cards
+- [ ] Add inline edit functionality to contact cards
+- [ ] Update CSV export to include new fields
