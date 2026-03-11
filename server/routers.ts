@@ -73,6 +73,9 @@ import {
   getUnifiedExportData,
   getLastTrialDefaults,
   getCommonDimensions,
+  createContact,
+  getContacts,
+  deleteContact,
 } from "./db";
 import { buildUnifiedCSV } from "./csv-helpers";
 import { TRPCError } from "@trpc/server";
@@ -2166,6 +2169,45 @@ export const appRouter = router({
         temporalTrends,
       };
     }),
+  }),
+
+  // ─── Contacts ──────────────────────────────────────────────────────────────
+  contacts: router({
+    // Create a new contact
+    create: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1).max(255),
+        role: z.string().max(255).optional(),
+        organization: z.string().max(255).optional(),
+        city: z.string().max(100).optional(),
+        howConnected: z.string().max(2000).optional(),
+        notes: z.string().max(5000).optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const id = await createContact({
+          userId: ctx.user.id,
+          name: input.name,
+          role: input.role ?? null,
+          organization: input.organization ?? null,
+          city: input.city ?? null,
+          howConnected: input.howConnected ?? null,
+          notes: input.notes ?? null,
+        });
+        return { id };
+      }),
+
+    // Get all contacts for the current user
+    getAll: protectedProcedure.query(async ({ ctx }) => {
+      return getContacts(ctx.user.id);
+    }),
+
+    // Delete a contact
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        await deleteContact(input.id, ctx.user.id);
+        return { success: true };
+      }),
   }),
 });
 

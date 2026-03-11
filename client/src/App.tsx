@@ -17,6 +17,7 @@ import CommandCenter from "./pages/CommandCenter";
 import CrucibleWorks from "./pages/CrucibleWorks";
 import WorkDetail from "./pages/WorkDetail";
 import WorkEdit from "./pages/WorkEdit";
+import ContactLog from "./pages/ContactLog";
 import BottomNav from "./components/BottomNav";
 
 function Router() {
@@ -36,6 +37,7 @@ function Router() {
       <Route path="/crucible/works" component={CrucibleWorks} />
       <Route path="/crucible/work/:id" component={WorkDetail} />
       <Route path="/crucible/work/:id/edit" component={WorkEdit} />
+      <Route path="/contacts" component={ContactLog} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

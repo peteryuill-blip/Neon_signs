@@ -355,3 +355,20 @@ export const presetTools = mysqlTable("preset_tools", {
 
 export type PresetTool = typeof presetTools.$inferSelect;
 export type InsertPresetTool = typeof presetTools.$inferInsert;
+
+/**
+ * Contacts - simple contact log entries
+ */
+export const contacts = mysqlTable("contacts", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  role: varchar("role", { length: 255 }),
+  organization: varchar("organization", { length: 255 }),
+  city: varchar("city", { length: 100 }),
+  howConnected: text("howConnected"),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+export type Contact = typeof contacts.$inferSelect;
+export type InsertContact = typeof contacts.$inferInsert;

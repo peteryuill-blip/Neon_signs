@@ -9,7 +9,8 @@ import {
   quickNotes, InsertQuickNote, QuickNote,
   materials, InsertMaterial, Material,
   worksCore, InsertWorkCore, WorkCore,
-  workSurfaces, workMediums, workTools
+  workSurfaces, workMediums, workTools,
+  contacts, Contact
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
@@ -1591,4 +1592,43 @@ export async function savePresetFromCurrentSelection(
   ]);
   
   return presetId;
+}
+
+// ─── Contacts ────────────────────────────────────────────────────────────────
+
+export async function createContact(data: {
+  userId: number;
+  name: string;
+  role?: string | null;
+  organization?: string | null;
+  city?: string | null;
+  howConnected?: string | null;
+  notes?: string | null;
+}): Promise<number> {
+  const db = await getDb();
+  if (!db) throw new Error('DB unavailable');
+  const [result] = await db.insert(contacts).values({
+    userId: data.userId,
+    name: data.name,
+    role: data.role ?? null,
+    organization: data.organization ?? null,
+    city: data.city ?? null,
+    howConnected: data.howConnected ?? null,
+    notes: data.notes ?? null,
+  });
+  return (result as any).insertId as number;
+}
+
+export async function getContacts(userId: number): Promise<Contact[]> {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(contacts)
+    .where(eq(contacts.userId, userId))
+    .orderBy(desc(contacts.createdAt));
+}
+
+export async function deleteContact(id: number, userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(contacts).where(and(eq(contacts.id, id), eq(contacts.userId, userId)));
 }

@@ -16,6 +16,7 @@ const MORE_ITEMS = [
   { path: '/materials', label: 'Materials Library' },
   { path: '/history', label: 'History & Trends' },
   { path: '/roundup', label: 'Weekly Roundup' },
+  { path: '/contacts', label: 'Contact Log' },
   { path: '/settings', label: 'Settings' },
 ];
 

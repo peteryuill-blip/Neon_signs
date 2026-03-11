@@ -571,3 +571,11 @@
 ## Bug: Quick Notes Not Showing in Results Page
 - [ ] Investigate why quick notes don't appear in Results page
 - [ ] Fix quick notes display issue
+
+## Feature: Contact Log
+- [x] Add contacts table to drizzle schema (name, role, organization, city, howConnected, notes, userId, createdAt)
+- [x] Push migration to database
+- [x] Add db helpers for contacts (createContact, getContacts,- [x] Add tRPC procedures (contacts.create, contacts.getAll, contacts.delete))
+- [x] Build ContactLog page with 6-field form
+- [x] Add list view sorted by most recent
+- [x] Add Contact Log to More menu navigation
