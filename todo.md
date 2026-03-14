@@ -594,3 +594,6 @@
 - [x] Display notes with date+time stamps in RoundupForm
 - [x] Delete quick_notes rows after successful roundup submission
 - [x] Verify week boundary matches between notes and roundup
+
+## Feature: Contact Log Search
+- [x] Add search input to filter contacts by name, organization, or notes

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Trash2, User, Building2, MapPin, Link2, FileText, Download, Pencil, X, Check, Phone, Instagram, Mail } from 'lucide-react';
+import { ArrowLeft, Trash2, User, Building2, MapPin, Link2, FileText, Download, Pencil, X, Check, Phone, Instagram, Mail, Search } from 'lucide-react';
 
 const CITIES = ['Hong Kong', 'Bangkok', 'Singapore', 'Other'] as const;
 type City = typeof CITIES[number];
@@ -301,9 +301,24 @@ function ContactCard({ contact, onDeleted, onUpdated }: {
 export default function ContactLog() {
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const utils = trpc.useUtils();
   const { data: contacts = [], isLoading } = trpc.contacts.getAll.useQuery();
+
+  const filteredContacts = searchQuery.trim()
+    ? contacts.filter(c => {
+        const q = searchQuery.toLowerCase();
+        return (
+          c.name.toLowerCase().includes(q) ||
+          (c.organization ?? '').toLowerCase().includes(q) ||
+          (c.role ?? '').toLowerCase().includes(q) ||
+          (c.notes ?? '').toLowerCase().includes(q) ||
+          (c.city ?? '').toLowerCase().includes(q) ||
+          (c.howConnected ?? '').toLowerCase().includes(q)
+        );
+      })
+    : contacts;
 
   const createMutation = trpc.contacts.create.useMutation({
     onSuccess: () => {
@@ -403,9 +418,25 @@ export default function ContactLog() {
           </div>
         )}
 
+        {/* Search */}
+        {contacts.length > 0 && (
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 pointer-events-none" />
+            <Input
+              type="search"
+              placeholder="Search by name, org, city, notes…"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="pl-9 cyber-input rounded-xl"
+            />
+          </div>
+        )}
+
         {/* List */}
         <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-cyan-400 uppercase tracking-wider">All Contacts</h2>
+          <h2 className="text-sm font-semibold text-cyan-400 uppercase tracking-wider">
+            {searchQuery.trim() ? `Results (${filteredContacts.length})` : 'All Contacts'}
+          </h2>
 
           {isLoading && (
             <div className="text-center text-muted-foreground text-sm py-8">Loading…</div>
@@ -417,7 +448,13 @@ export default function ContactLog() {
             </div>
           )}
 
-          {contacts.map(contact => (
+          {!isLoading && contacts.length > 0 && filteredContacts.length === 0 && (
+            <div className="text-center text-muted-foreground text-sm py-8">
+              No contacts match "{searchQuery}".
+            </div>
+          )}
+
+          {filteredContacts.map(contact => (
             <ContactCard
               key={contact.id}
               contact={contact}
