@@ -588,3 +588,9 @@
 - [ ] Display new fields in contact cards
 - [ ] Add inline edit functionality to contact cards
 - [ ] Update CSV export to include new fields
+
+## Fix: Quick Notes in Roundup
+- [x] Ensure getWeekly returns createdAt timestamp for each note
+- [x] Display notes with date+time stamps in RoundupForm
+- [x] Delete quick_notes rows after successful roundup submission
+- [x] Verify week boundary matches between notes and roundup

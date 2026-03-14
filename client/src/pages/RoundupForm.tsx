@@ -828,10 +828,16 @@ export default function RoundupForm() {
             {weeklyQuickNotes && weeklyQuickNotes.length > 0 && (
               <div className="mt-4 pt-4 border-t border-cyan-500/20">
                 <p className="text-xs text-cyan-400 font-semibold mb-2">📝 Quick Notes This Week ({weeklyQuickNotes.length})</p>
+                <p className="text-xs text-muted-foreground/60 mb-3">These notes will be included in this report and then deleted.</p>
                 <div className="space-y-2">
                   {weeklyQuickNotes.map((note) => (
-                    <div key={note.id} className="text-sm bg-cyan-500/5 border border-cyan-500/20 rounded p-2 text-muted-foreground">
-                      {note.content}
+                    <div key={note.id} className="bg-cyan-500/5 border border-cyan-500/20 rounded p-2.5 space-y-1">
+                      <p className="text-sm text-muted-foreground">{note.content}</p>
+                      <p className="text-xs text-muted-foreground/50">
+                        {new Date(note.createdAt).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}
+                        {' · '}
+                        {new Date(note.createdAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                      </p>
                     </div>
                   ))}
                 </div>

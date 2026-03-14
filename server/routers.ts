@@ -38,6 +38,7 @@ import {
   getUnusedQuickNotes,
   deleteQuickNote,
   markNotesAsUsed,
+  deleteQuickNotesByIds,
   getRoundupsForWeeks,
   // Crucible imports
   createMaterial,
@@ -690,6 +691,12 @@ export const appRouter = router({
         // Detect and assign phase-DNA
         const phaseDna = await detectPhaseDna(input);
         await updateRoundupPhaseDna(roundupId, phaseDna);
+
+        // Delete the quick notes that were included in this roundup
+        if (input.quickNotes && input.quickNotes.length > 0) {
+          const noteIds = input.quickNotes.map(n => n.id);
+          await deleteQuickNotesByIds(noteIds, ctx.user.id);
+        }
         
         return { 
           success: true, 

@@ -1,4 +1,4 @@
-import { eq, desc, and, sql, like, or } from "drizzle-orm";
+import { eq, desc, and, sql, like, or, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { 
   InsertUser, users, 
@@ -546,6 +546,16 @@ export async function markNotesAsUsed(noteIds: number[], roundupId: number): Pro
       .set({ usedInRoundupId: roundupId })
       .where(eq(quickNotes.id, id));
   }
+}
+
+export async function deleteQuickNotesByIds(ids: number[], userId: number): Promise<void> {
+  const db = await getDb();
+  if (!db || ids.length === 0) return;
+  await db.delete(quickNotes)
+    .where(and(
+      inArray(quickNotes.id, ids),
+      eq(quickNotes.userId, userId)
+    ));
 }
 
 // Get roundups for two specific weeks (for comparison)
