@@ -222,7 +222,7 @@ export default function CrucibleIntake() {
   const canSubmit = surfaceIds.length > 0 && mediumIds.length > 0 && rating !== null && !isSubmitting;
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white pb-24">
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-black text-white pb-44">
       {/* Header */}
       <header className="border-b border-magenta-500/20 bg-black/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container py-3">
@@ -795,8 +795,8 @@ export default function CrucibleIntake() {
         </form>
       </main>
       
-      {/* Sticky Save Button at bottom */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-t from-black via-black/95 to-transparent pt-6 pb-4 px-4">
+      {/* Sticky Save Button at bottom - sits above the 64px bottom nav */}
+      <div className="fixed left-0 right-0 z-40 bg-gradient-to-t from-black via-black/95 to-transparent pt-6 pb-4 px-4" style={{ bottom: 'calc(4rem + env(safe-area-inset-bottom, 0px))' }}>
         <div className="max-w-2xl mx-auto">
           <Button
             type="submit"

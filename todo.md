@@ -600,3 +600,6 @@
 
 ## Feature: Contact Log Sort
 - [x] Add sort toggle (Most Recent / A–Z) to Contact Log
+
+## Bug: Crucible Intake Missing Submit Button
+- [x] Fix submit button hidden behind bottom nav on Crucible Intake form
