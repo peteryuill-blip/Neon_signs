@@ -603,3 +603,7 @@
 
 ## Bug: Crucible Intake Missing Submit Button
 - [x] Fix submit button hidden behind bottom nav on Crucible Intake form
+
+## Bug: Sticky Bottom Button Nav Overlap Audit
+- [x] Audit all pages for fixed bottom-0 elements hidden behind nav bar
+- [x] Fix all affected pages (CommandCenter, Materials, WorkDetail, WorkEdit, CrucibleAnalytics)
