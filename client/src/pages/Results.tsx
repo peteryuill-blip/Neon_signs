@@ -371,11 +371,18 @@ export default function Results() {
                   {/* Quick Notes from This Week */}
                   {roundup.quickNotes && roundup.quickNotes.length > 0 && (
                     <div>
-                      <p className="text-sm text-muted-foreground mb-2">📝 Quick Notes This Week</p>
+                      <p className="text-sm text-cyan-400 font-semibold mb-2">📝 Quick Notes ({roundup.quickNotes.length})</p>
                       <div className="space-y-2">
                         {roundup.quickNotes.map((note: any, index: number) => (
-                          <div key={index} className="text-sm bg-cyan-500/5 border border-cyan-500/20 rounded-lg p-3 text-foreground/80">
-                            {note.content}
+                          <div key={index} className="bg-cyan-500/5 border border-cyan-500/20 rounded-lg p-2.5 space-y-1">
+                            <p className="text-sm text-foreground/80">{note.content}</p>
+                            {note.createdAt && (
+                              <p className="text-xs text-muted-foreground/50">
+                                {new Date(note.createdAt).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}
+                                {' · '}
+                                {new Date(note.createdAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                              </p>
+                            )}
                           </div>
                         ))}
                       </div>
