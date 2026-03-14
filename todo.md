@@ -597,3 +597,6 @@
 
 ## Feature: Contact Log Search
 - [x] Add search input to filter contacts by name, organization, or notes
+
+## Feature: Contact Log Sort
+- [x] Add sort toggle (Most Recent / A–Z) to Contact Log

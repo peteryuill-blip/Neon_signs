@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Trash2, User, Building2, MapPin, Link2, FileText, Download, Pencil, X, Check, Phone, Instagram, Mail, Search } from 'lucide-react';
+import { ArrowLeft, Trash2, User, Building2, MapPin, Link2, FileText, Download, Pencil, X, Check, Phone, Instagram, Mail, Search, ArrowUpDown } from 'lucide-react';
 
 const CITIES = ['Hong Kong', 'Bangkok', 'Singapore', 'Other'] as const;
 type City = typeof CITIES[number];
@@ -302,23 +302,28 @@ export default function ContactLog() {
   const [submitting, setSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortAZ, setSortAZ] = useState(false);
 
   const utils = trpc.useUtils();
   const { data: contacts = [], isLoading } = trpc.contacts.getAll.useQuery();
 
-  const filteredContacts = searchQuery.trim()
-    ? contacts.filter(c => {
-        const q = searchQuery.toLowerCase();
-        return (
-          c.name.toLowerCase().includes(q) ||
-          (c.organization ?? '').toLowerCase().includes(q) ||
-          (c.role ?? '').toLowerCase().includes(q) ||
-          (c.notes ?? '').toLowerCase().includes(q) ||
-          (c.city ?? '').toLowerCase().includes(q) ||
-          (c.howConnected ?? '').toLowerCase().includes(q)
-        );
-      })
-    : contacts;
+  const filteredContacts = (() => {
+    let list = searchQuery.trim()
+      ? contacts.filter(c => {
+          const q = searchQuery.toLowerCase();
+          return (
+            c.name.toLowerCase().includes(q) ||
+            (c.organization ?? '').toLowerCase().includes(q) ||
+            (c.role ?? '').toLowerCase().includes(q) ||
+            (c.notes ?? '').toLowerCase().includes(q) ||
+            (c.city ?? '').toLowerCase().includes(q) ||
+            (c.howConnected ?? '').toLowerCase().includes(q)
+          );
+        })
+      : [...contacts];
+    if (sortAZ) list = list.slice().sort((a, b) => a.name.localeCompare(b.name));
+    return list;
+  })();
 
   const createMutation = trpc.contacts.create.useMutation({
     onSuccess: () => {
@@ -385,10 +390,19 @@ export default function ContactLog() {
         <div className="ml-auto flex items-center gap-2">
           <span className="text-xs text-muted-foreground">{contacts.length} contacts</span>
           {contacts.length > 0 && (
-            <button onClick={exportCSV}
-              className="text-muted-foreground hover:text-cyan-400 transition-colors" title="Export as CSV">
-              <Download className="w-4 h-4" />
-            </button>
+            <>
+              <button
+                onClick={() => setSortAZ(v => !v)}
+                className={`transition-colors ${sortAZ ? 'text-cyan-400' : 'text-muted-foreground hover:text-foreground'}`}
+                title={sortAZ ? 'Sorted A–Z (tap for recent)' : 'Sort A–Z'}
+              >
+                <ArrowUpDown className="w-4 h-4" />
+              </button>
+              <button onClick={exportCSV}
+                className="text-muted-foreground hover:text-cyan-400 transition-colors" title="Export as CSV">
+                <Download className="w-4 h-4" />
+              </button>
+            </>
           )}
         </div>
       </div>
