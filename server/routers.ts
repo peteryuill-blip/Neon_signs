@@ -595,7 +595,7 @@ export const appRouter = router({
         quickNotes: z.array(z.object({
           id: z.number(),
           content: z.string(),
-          createdAt: z.date(),
+          createdAt: z.coerce.date(),
         })).nullable().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -1172,7 +1172,8 @@ export const appRouter = router({
         'Jester Activity', 'Energy Level', 'Walking Engine', 'Walking Insights',
         'Partnership Temperature', 'Thing Worked', 'Thing Resisted', 'Somatic State',
         'Door Intention', 'Phase DNA', 'Weekly Steps', 'Avg Steps/Day',
-        'Mon Steps', 'Tue Steps', 'Wed Steps', 'Thu Steps', 'Fri Steps', 'Sat Steps', 'Sun Steps'
+        'Mon Steps', 'Tue Steps', 'Wed Steps', 'Thu Steps', 'Fri Steps', 'Sat Steps', 'Sun Steps',
+        'Quick Notes'
       ];
       
       const rows = roundups.map(r => {
@@ -1202,7 +1203,8 @@ export const appRouter = router({
           steps?.thu || 0,
           steps?.fri || 0,
           steps?.sat || 0,
-          steps?.sun || 0
+          steps?.sun || 0,
+          `"${((r.quickNotes as Array<{content: string}> | null)?.map(n => n.content).join(' | ') || '').replace(/"/g, '""')}"`
         ];
       });
       

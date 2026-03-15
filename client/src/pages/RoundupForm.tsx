@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Loader2, ArrowLeft, Calendar, AlertCircle, CheckCircle2, Save, Footprints, Plus, Trash2, ChevronDown, ChevronUp, Palette, FlaskConical, Star, ExternalLink } from "lucide-react";
+import { Loader2, ArrowLeft, Calendar, AlertCircle, CheckCircle2, Save, Footprints, Plus, Trash2, ChevronDown, ChevronUp, Palette, FlaskConical, Star, ExternalLink, X } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Link, useLocation } from "wouter";
@@ -466,10 +466,16 @@ export default function RoundupForm() {
   });
 
   // Fetch this week's quick notes
+  const utils = trpc.useUtils();
   const { data: weeklyQuickNotes = [] } = trpc.quickNotes.getWeekly.useQuery(undefined, {
     enabled: isAuthenticated,
   });
-
+  const deleteNoteMutation = trpc.quickNotes.delete.useMutation({
+    onSuccess: () => {
+      utils.quickNotes.getWeekly.invalidate();
+      toast.success('Note deleted');
+    },
+  });
   const submitMutation = trpc.roundup.submit.useMutation({
     onSuccess: (data) => {
       localStorage.removeItem(DRAFT_KEY);
@@ -831,13 +837,26 @@ export default function RoundupForm() {
                 <p className="text-xs text-muted-foreground/60 mb-3">These notes will be included in this report and then deleted.</p>
                 <div className="space-y-2">
                   {weeklyQuickNotes.map((note) => (
-                    <div key={note.id} className="bg-cyan-500/5 border border-cyan-500/20 rounded p-2.5 space-y-1">
-                      <p className="text-sm text-muted-foreground">{note.content}</p>
-                      <p className="text-xs text-muted-foreground/50">
-                        {new Date(note.createdAt).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}
-                        {' · '}
-                        {new Date(note.createdAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
-                      </p>
+                    <div key={note.id} className="bg-cyan-500/5 border border-cyan-500/20 rounded p-2.5">
+                      <div className="flex items-start gap-2">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-muted-foreground">{note.content}</p>
+                          <p className="text-xs text-muted-foreground/50 mt-0.5">
+                            {new Date(note.createdAt).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}
+                            {' · '}
+                            {new Date(note.createdAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => deleteNoteMutation.mutate({ id: note.id })}
+                          className="h-6 w-6 text-muted-foreground/50 hover:text-red-400 shrink-0"
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>

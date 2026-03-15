@@ -607,3 +607,10 @@
 ## Bug: Sticky Bottom Button Nav Overlap Audit
 - [x] Audit all pages for fixed bottom-0 elements hidden behind nav bar
 - [x] Fix all affected pages (CommandCenter, Materials, WorkDetail, WorkEdit, CrucibleAnalytics)
+
+## Bug: Quick Notes Not in Roundup/CSV
+- [ ] Audit getWeekly query - check week boundary and data returned
+- [ ] Audit RoundupForm - verify notes are loaded and passed to submit mutation
+- [ ] Audit roundup.submit procedure - verify quickNotes are saved to DB
+- [ ] Audit CSV export - add quickNotes column to CSV output
+- [ ] Add delete button to individual quick notes

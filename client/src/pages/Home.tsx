@@ -177,14 +177,21 @@ function QuickNotesWidget() {
               notes.map((note) => (
                 <div
                   key={note.id}
-                  className="group flex items-start gap-2 p-2.5 rounded-lg bg-[var(--neon-amber)]/5 border border-[var(--border-subtle)]"
+                  className="flex items-start gap-2 p-2.5 rounded-lg bg-[var(--neon-amber)]/5 border border-[var(--border-subtle)]"
                 >
-                  <p className="flex-1 text-sm text-foreground/80">{note.content}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-foreground/80">{note.content}</p>
+                    <p className="text-[10px] text-muted-foreground/50 mt-0.5">
+                      {new Date(note.createdAt).toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' })}
+                      {' · '}
+                      {new Date(note.createdAt).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => deleteNote.mutate({ id: note.id })}
-                    className="h-6 w-6 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-red-400 transition-opacity shrink-0"
+                    className="h-6 w-6 text-muted-foreground hover:text-red-400 shrink-0"
                   >
                     <X className="h-3 w-3" />
                   </Button>
