@@ -27,7 +27,7 @@ export default function CrucibleWorks() {
   const [surfaceFilter, setSurfaceFilter] = useState<string>('all');
   const [lightboxWork, setLightboxWork] = useState<any>(null);
   
-  const { data: works, isLoading } = trpc.works.getAll.useQuery({ limit: 100 });
+  const { data: works, isLoading } = trpc.works.getAll.useQuery({});
   const { data: surfaces } = trpc.materials.getByType.useQuery({ type: 'Surface' });
   const { refetch: fetchExportData } = trpc.works.exportCSV.useQuery(undefined, { enabled: false });
   

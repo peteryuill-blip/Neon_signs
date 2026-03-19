@@ -615,3 +615,4 @@
 - [ ] Audit CSV export - add quickNotes column to CSV output
 - [ ] Add delete button to individual quick notes
 - [x] Add surface filter to Crucible Works page
+- [x] Remove 100-work cap on Crucible Works page — show all trials
