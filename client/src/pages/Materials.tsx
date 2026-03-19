@@ -388,9 +388,11 @@ function MaterialCard({ material, onEdit }: { material: any; onEdit: () => void 
 
         {/* Code + Name on same line — code always visible on the left */}
         <div className="flex items-baseline gap-2">
-          <span className={`font-mono font-bold text-sm shrink-0 ${getCodeColor()}`}>
-            {material.materialId || '—'}
-          </span>
+          {material.code && (
+            <span className={`font-mono font-bold text-sm shrink-0 ${getCodeColor()}`}>
+              {material.code}
+            </span>
+          )}
           <h3 className="font-medium text-white leading-snug min-w-0">{material.displayName}</h3>
         </div>
         
