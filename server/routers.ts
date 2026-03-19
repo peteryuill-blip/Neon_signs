@@ -1647,7 +1647,17 @@ export const appRouter = router({
     getAll: protectedProcedure
       .input(z.object({ limit: z.number().optional(), offset: z.number().optional() }))
       .query(async ({ ctx, input }) => {
-        return getAllWorks(ctx.user.id, input.limit || 100, input.offset || 0);
+        const works = await getAllWorks(ctx.user.id, input.limit || 100, input.offset || 0);
+        // Enrich each work with its surface IDs and codes for filtering
+        const enriched = await Promise.all(works.map(async (work) => {
+          const surfaces = await getWorkSurfaces(work.id);
+          return {
+            ...work,
+            surfaceIds: surfaces.map(s => s.id),
+            surfaceCodes: surfaces.map(s => s.code || s.displayName).join(', '),
+          };
+        }));
+        return enriched;
       }),
 
     // Get single work

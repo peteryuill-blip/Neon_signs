@@ -24,9 +24,11 @@ const DISPOSITION_CONFIG: Record<string, { icon: any; color: string; bgColor: st
 export default function CrucibleWorks() {
   const [dispositionFilter, setDispositionFilter] = useState<string>('all');
   const [ratingFilter, setRatingFilter] = useState<string>('all');
+  const [surfaceFilter, setSurfaceFilter] = useState<string>('all');
   const [lightboxWork, setLightboxWork] = useState<any>(null);
   
   const { data: works, isLoading } = trpc.works.getAll.useQuery({ limit: 100 });
+  const { data: surfaces } = trpc.materials.getByType.useQuery({ type: 'Surface' });
   const { refetch: fetchExportData } = trpc.works.exportCSV.useQuery(undefined, { enabled: false });
   
   const handleExportCSV = async () => {
@@ -69,6 +71,11 @@ export default function CrucibleWorks() {
   const filteredWorks = works?.filter(work => {
     if (dispositionFilter !== 'all' && work.disposition !== dispositionFilter) return false;
     if (ratingFilter !== 'all' && work.rating !== parseInt(ratingFilter)) return false;
+    if (surfaceFilter !== 'all') {
+      const surfaceId = parseInt(surfaceFilter);
+      const workSurfaceIds = (work as any).surfaceIds as number[] | undefined;
+      if (!workSurfaceIds || !workSurfaceIds.includes(surfaceId)) return false;
+    }
     return true;
   }) || [];
 
@@ -131,6 +138,27 @@ export default function CrucibleWorks() {
             </Select>
           </div>
           
+          <div className="flex-1 min-w-[160px]">
+            <label className="text-sm text-[var(--text-muted)] mb-2 block">Surface</label>
+            <Select value={surfaceFilter} onValueChange={setSurfaceFilter}>
+              <SelectTrigger className="bg-[var(--void-black)] border-[var(--border-interactive)]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Surfaces</SelectItem>
+                {surfaces?.sort((a, b) => {
+                  const aNum = parseInt((a.code || '').replace(/\D/g, '')) || 0;
+                  const bNum = parseInt((b.code || '').replace(/\D/g, '')) || 0;
+                  return aNum - bNum;
+                }).map(s => (
+                  <SelectItem key={s.id} value={String(s.id)}>
+                    {s.code ? `${s.code} – ${s.displayName}` : s.displayName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
           <div className="flex-1 min-w-[160px]">
             <label className="text-sm text-[var(--text-muted)] mb-2 block">Rating</label>
             <Select value={ratingFilter} onValueChange={setRatingFilter}>

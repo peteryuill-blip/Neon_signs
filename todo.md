@@ -614,3 +614,4 @@
 - [ ] Audit roundup.submit procedure - verify quickNotes are saved to DB
 - [ ] Audit CSV export - add quickNotes column to CSV output
 - [ ] Add delete button to individual quick notes
+- [x] Add surface filter to Crucible Works page
