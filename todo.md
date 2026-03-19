@@ -616,3 +616,4 @@
 - [ ] Add delete button to individual quick notes
 - [x] Add surface filter to Crucible Works page
 - [x] Remove 100-work cap on Crucible Works page — show all trials
+- [x] Add search bar to Crucible Works page (filter by code, discovery, technical intent)

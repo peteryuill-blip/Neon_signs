@@ -4,7 +4,8 @@ import { trpc } from '@/lib/trpc';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Flame, Star, Trash2, HelpCircle, Check, Calendar, Ruler, Clock, Download, X, Sparkles } from 'lucide-react';
+import { ArrowLeft, Flame, Star, Trash2, HelpCircle, Check, Calendar, Ruler, Clock, Download, X, Sparkles, Search } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 const RATING_LABELS: Record<number, string> = {
   1: 'Material Test',
@@ -25,6 +26,7 @@ export default function CrucibleWorks() {
   const [dispositionFilter, setDispositionFilter] = useState<string>('all');
   const [ratingFilter, setRatingFilter] = useState<string>('all');
   const [surfaceFilter, setSurfaceFilter] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [lightboxWork, setLightboxWork] = useState<any>(null);
   
   const { data: works, isLoading } = trpc.works.getAll.useQuery({});
@@ -76,6 +78,14 @@ export default function CrucibleWorks() {
       const workSurfaceIds = (work as any).surfaceIds as number[] | undefined;
       if (!workSurfaceIds || !workSurfaceIds.includes(surfaceId)) return false;
     }
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      const matchesCode = work.code?.toLowerCase().includes(q);
+      const matchesDiscovery = work.discovery?.toLowerCase().includes(q);
+      const matchesIntent = work.technicalIntent?.toLowerCase().includes(q);
+      const matchesSurface = (work as any).surfaceCodes?.toLowerCase().includes(q);
+      if (!matchesCode && !matchesDiscovery && !matchesIntent && !matchesSurface) return false;
+    }
     return true;
   }) || [];
 
@@ -121,6 +131,25 @@ export default function CrucibleWorks() {
       
       {/* Filters */}
       <div className="container py-6">
+        {/* Search bar */}
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)] pointer-events-none" />
+          <Input
+            type="text"
+            placeholder="Search by code, discovery, intent…"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            className="pl-9 pr-9 bg-[var(--void-black)] border-[var(--border-interactive)] text-white placeholder:text-[var(--text-dim)] focus-visible:ring-[var(--neon-cyan)]/40"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-white"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
+        </div>
         <div className="flex flex-wrap gap-4 mb-6">
           <div className="flex-1 min-w-[160px]">
             <label className="text-sm text-[var(--text-muted)] mb-2 block">Disposition</label>
