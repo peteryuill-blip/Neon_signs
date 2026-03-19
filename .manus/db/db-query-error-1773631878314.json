@@ -1,0 +1,8 @@
+{
+  "query": "\nSELECT \n  (SELECT COUNT(*) FROM quick_notes) AS total_quick_notes,\n  (SELECT COUNT(*) FROM quick_notes WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)) AS notes_this_week,\n  (SELECT COUNT(*) FROM weekly_roundups WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)) AS roundups_this_week,\n  (SELECT MAX(created_at) FROM weekly_roundups) AS latest_roundup_at,\n  (SELECT quick_notes FROM weekly_roundups ORDER BY created_at DESC LIMIT 1) AS latest_roundup_notes;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2Y9wzvyJgsWeM7p.root --database Qogm3U7EGpVgaoy6kEznuP --execute \nSELECT \n  (SELECT COUNT(*) FROM quick_notes) AS total_quick_notes,\n  (SELECT COUNT(*) FROM quick_notes WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)) AS notes_this_week,\n  (SELECT COUNT(*) FROM weekly_roundups WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)) AS roundups_this_week,\n  (SELECT MAX(created_at) FROM weekly_roundups) AS latest_roundup_at,\n  (SELECT quick_notes FROM weekly_roundups ORDER BY created_at DESC LIMIT 1) AS latest_roundup_notes;\n",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1054 (42S22) at line 2: Unknown column 'created_at' in 'order clause'"
+  ]
+}

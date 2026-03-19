@@ -359,15 +359,22 @@ function MaterialCard({ material, onEdit }: { material: any; onEdit: () => void 
       case 'Tool': return 'text-cyan-400 border-cyan-500/30';
     }
   };
+
+  const getCodeColor = () => {
+    switch (material.materialType) {
+      case 'Surface': return 'text-amber-400';
+      case 'Medium': return 'text-pink-400';
+      case 'Tool': return 'text-cyan-400';
+      default: return 'text-gray-400';
+    }
+  };
   
   return (
-    <Card className={`bg-black/40 ${getTypeColor()} hover:bg-black/60 transition-colors`}>
+    <Card className={`bg-black/40 border ${getTypeColor()} hover:bg-black/60 transition-colors`}>
       <CardContent className="p-4">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-2">
-            {getTypeIcon()}
-            <span className="text-xs font-mono text-gray-500">{material.materialId}</span>
-          </div>
+        {/* Top row: type icon + edit/lock */}
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-gray-500">{getTypeIcon()}</span>
           <div className="flex items-center gap-2">
             {isLocked ? (
               <Lock className="w-4 h-4 text-gray-500" />
@@ -378,11 +385,17 @@ function MaterialCard({ material, onEdit }: { material: any; onEdit: () => void 
             )}
           </div>
         </div>
-        
-        <h3 className="font-medium mt-2 text-white">{material.displayName}</h3>
+
+        {/* Code + Name on same line — code always visible on the left */}
+        <div className="flex items-baseline gap-2">
+          <span className={`font-mono font-bold text-sm shrink-0 ${getCodeColor()}`}>
+            {material.materialId || '—'}
+          </span>
+          <h3 className="font-medium text-white leading-snug min-w-0">{material.displayName}</h3>
+        </div>
         
         {material.notes && (
-          <p className="text-sm text-gray-400 mt-1 line-clamp-2">{material.notes}</p>
+          <p className="text-sm text-gray-400 mt-1.5 line-clamp-2">{material.notes}</p>
         )}
         
         <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">

@@ -1,0 +1,14 @@
+{
+  "query": "\nSELECT COUNT(*) AS total_quick_notes FROM quick_notes;\nSELECT COUNT(*) AS notes_this_week FROM quick_notes WHERE createdAt >= DATE_SUB(NOW(), INTERVAL 7 DAY);\nSELECT COUNT(*) AS roundups_this_week FROM weekly_roundups WHERE createdAt >= DATE_SUB(NOW(), INTERVAL 7 DAY);\nSELECT quick_notes FROM weekly_roundups ORDER BY createdAt DESC LIMIT 1;\n",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2Y9wzvyJgsWeM7p.root --database Qogm3U7EGpVgaoy6kEznuP --execute \nSELECT COUNT(*) AS total_quick_notes FROM quick_notes;\nSELECT COUNT(*) AS notes_this_week FROM quick_notes WHERE createdAt >= DATE_SUB(NOW(), INTERVAL 7 DAY);\nSELECT COUNT(*) AS roundups_this_week FROM weekly_roundups WHERE createdAt >= DATE_SUB(NOW(), INTERVAL 7 DAY);\nSELECT quick_notes FROM weekly_roundups ORDER BY createdAt DESC LIMIT 1;\n",
+  "returncode": 1,
+  "logs": [
+    "total_quick_notes",
+    "0",
+    "notes_this_week",
+    "0",
+    "roundups_this_week",
+    "1",
+    "ERROR 1054 (42S22) at line 5: Unknown column 'quick_notes' in 'field list'"
+  ]
+}

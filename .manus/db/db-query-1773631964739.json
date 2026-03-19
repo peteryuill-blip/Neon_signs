@@ -1,0 +1,18 @@
+{
+  "query": "SHOW COLUMNS FROM weekly_roundups LIKE 'quickNotes';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2Y9wzvyJgsWeM7p.root --database Qogm3U7EGpVgaoy6kEznuP --execute SHOW COLUMNS FROM weekly_roundups LIKE 'quickNotes';",
+  "rows": [
+    {
+      "Field": "quickNotes",
+      "Type": "json",
+      "Null": "YES",
+      "Key": "",
+      "Default": "NULL",
+      "Extra": ""
+    }
+  ],
+  "messages": [],
+  "stdout": "Field\tType\tNull\tKey\tDefault\tExtra\nquickNotes\tjson\tYES\t\tNULL\t\n",
+  "stderr": "",
+  "execution_time_ms": 1537
+}
