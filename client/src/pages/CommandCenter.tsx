@@ -679,8 +679,11 @@ export default function CommandCenter() {
                       .filter(s => s.usageCount > 0)
                       .slice(0, 15)
                       .map((surface) => (
-                        <div key={surface.materialId} className="flex justify-between items-center text-sm">
-                          <span className="text-gray-300 truncate mr-2">{surface.name || surface.code} <span className="text-[10px] text-muted-foreground">({surface.code})</span></span>
+                        <div key={surface.materialId} className="flex justify-between items-center text-sm gap-2">
+                          <span className="flex items-center gap-2 min-w-0">
+                            <span className="font-mono font-bold text-amber-400 shrink-0 text-xs">{surface.code}</span>
+                            <span className="text-gray-300 truncate">{surface.name}</span>
+                          </span>
                           <span className="neon-text-amber font-bold flex-shrink-0">{surface.usageCount}</span>
                         </div>
                       ))}
@@ -705,8 +708,11 @@ export default function CommandCenter() {
                       .filter(m => m.usageCount > 0)
                       .slice(0, 15)
                       .map((medium) => (
-                        <div key={medium.materialId} className="flex justify-between items-center text-sm">
-                          <span className="text-gray-300 truncate mr-2">{medium.name || medium.code} <span className="text-[10px] text-muted-foreground">({medium.code})</span></span>
+                        <div key={medium.materialId} className="flex justify-between items-center text-sm gap-2">
+                          <span className="flex items-center gap-2 min-w-0">
+                            <span className="font-mono font-bold text-pink-400 shrink-0 text-xs">{medium.code}</span>
+                            <span className="text-gray-300 truncate">{medium.name}</span>
+                          </span>
                           <span className="neon-text-magenta font-bold flex-shrink-0">{medium.usageCount}</span>
                         </div>
                       ))}
@@ -731,8 +737,11 @@ export default function CommandCenter() {
                       .filter(t => t.usageCount > 0)
                       .slice(0, 15)
                       .map((tool) => (
-                        <div key={tool.materialId} className="flex justify-between items-center text-sm">
-                          <span className="text-gray-300 truncate mr-2">{tool.name || tool.code} <span className="text-[10px] text-muted-foreground">({tool.code})</span></span>
+                        <div key={tool.materialId} className="flex justify-between items-center text-sm gap-2">
+                          <span className="flex items-center gap-2 min-w-0">
+                            <span className="font-mono font-bold text-cyan-400 shrink-0 text-xs">{tool.code}</span>
+                            <span className="text-gray-300 truncate">{tool.name}</span>
+                          </span>
                           <span className="neon-text-cyan font-bold flex-shrink-0">{tool.usageCount}</span>
                         </div>
                       ))}
