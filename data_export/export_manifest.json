@@ -1,0 +1,21 @@
+{
+  "exportDate": "2026-03-21",
+  "rowCounts": {
+    "users": 4,
+    "weekly_roundups": 14,
+    "archive_entries": 114,
+    "pattern_matches": 10,
+    "user_settings": 2,
+    "quick_notes": 2,
+    "materials": 29,
+    "works_core": 126,
+    "work_surfaces": 126,
+    "work_mediums": 381,
+    "work_tools": 127,
+    "intake_presets": "ERROR",
+    "preset_surfaces": "ERROR",
+    "preset_mediums": "ERROR",
+    "preset_tools": "ERROR",
+    "contacts": 2
+  }
+}
