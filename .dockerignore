@@ -1,0 +1,13 @@
+node_modules
+dist
+.git
+.gitignore
+*.log
+image_export
+image_export.zip
+data_export
+database_backup_*.sql
+.env
+.env.*
+README.md
+ARCHITECTURE.md
