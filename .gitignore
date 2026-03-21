@@ -105,3 +105,5 @@ temp/
 *.db
 *.sqlite
 *.sqlite3
+image_export/
+image_export.zip
