@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // ─── Type Exports (kept for call-site compatibility) ────────────────────────
 
@@ -117,8 +117,8 @@ function extractTextContent(content: MessageContent | MessageContent[]): string 
 // ─── Main invokeLLM ─────────────────────────────────────────────────────────
 
 export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.warn("[LLM] ANTHROPIC_API_KEY not set — returning placeholder");
+  if (!process.env.GEMINI_API_KEY) {
+    console.warn("[LLM] GEMINI_API_KEY not set — returning placeholder");
     return {
       id: "placeholder",
       created: Date.now(),
@@ -131,53 +131,52 @@ export async function invokeLLM(params: InvokeParams): Promise<InvokeResult> {
     };
   }
 
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const model = process.env.LLM_MODEL || "claude-sonnet-4-20250514";
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  const modelName = process.env.LLM_MODEL || "gemini-1.5-flash";
 
-  // Split system message out from the messages array
+  // Split system message from user/assistant messages
   let systemPrompt: string | undefined;
-  const userMessages: Anthropic.MessageParam[] = [];
+  const chatHistory: Array<{ role: string; parts: Array<{ text: string }> }> = [];
 
   for (const msg of params.messages) {
     const text = extractTextContent(msg.content);
     if (msg.role === "system") {
       systemPrompt = systemPrompt ? `${systemPrompt}\n${text}` : text;
     } else if (msg.role === "user" || msg.role === "assistant") {
-      userMessages.push({ role: msg.role, content: text });
+      chatHistory.push({
+        role: msg.role === "assistant" ? "model" : "user",
+        parts: [{ text }],
+      });
     }
   }
 
-  // Anthropic requires at least one user message
-  if (userMessages.length === 0) {
-    userMessages.push({ role: "user", content: "Begin." });
-  }
-
-  const maxTokens = params.maxTokens || params.max_tokens || 2048;
-
-  const response = await client.messages.create({
-    model,
-    max_tokens: maxTokens,
-    ...(systemPrompt ? { system: systemPrompt } : {}),
-    messages: userMessages,
+  const geminiModel = genAI.getGenerativeModel({
+    model: modelName,
+    ...(systemPrompt ? { systemInstruction: systemPrompt } : {}),
   });
 
-  // Map Anthropic response back to OpenAI-compatible InvokeResult
-  const textBlock = response.content.find(b => b.type === "text");
-  const textContent = textBlock && textBlock.type === "text" ? textBlock.text : "";
+  // Last message is the prompt; everything before is history
+  const history = chatHistory.slice(0, -1);
+  const lastMessage = chatHistory[chatHistory.length - 1];
+  const prompt = lastMessage ? lastMessage.parts[0].text : "Begin.";
+
+  const chat = geminiModel.startChat({ history });
+  const result = await chat.sendMessage(prompt);
+  const textContent = result.response.text();
 
   return {
-    id: response.id,
+    id: `gemini-${Date.now()}`,
     created: Math.floor(Date.now() / 1000),
-    model: response.model,
+    model: modelName,
     choices: [{
       index: 0,
       message: { role: "assistant", content: textContent },
-      finish_reason: response.stop_reason ?? "stop",
+      finish_reason: "stop",
     }],
     usage: {
-      prompt_tokens: response.usage.input_tokens,
-      completion_tokens: response.usage.output_tokens,
-      total_tokens: response.usage.input_tokens + response.usage.output_tokens,
+      prompt_tokens: 0,
+      completion_tokens: 0,
+      total_tokens: 0,
     },
   };
 }
