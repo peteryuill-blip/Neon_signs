@@ -83,13 +83,7 @@ export default function Results() {
       
       const timer2 = setTimeout(() => {
         setShowSection2(true);
-        if (!patterns || (patterns.phrase.length === 0 && patterns.emotional.length === 0 && patterns.phaseDna.length === 0)) {
-          analyzePatterns.mutate({ roundupId }, {
-            onSuccess: () => {
-              refetchPatterns();
-            }
-          });
-        }
+        // Pattern analysis is currently disabled — do not auto-trigger
       }, 3000);
       
       const timer3 = setTimeout(() => {
@@ -405,20 +399,7 @@ export default function Results() {
                   <h2 className="text-lg font-semibold neon-text-magenta">Pattern Archaeology</h2>
                 </div>
 
-                {patternsLoading || analyzePatterns.isPending ? (
-                  <div className="flex items-center justify-center py-12">
-                    <div className="relative">
-                      <Loader2 className="h-8 w-8 animate-spin neon-text-magenta" />
-                      <div className="absolute inset-0 blur-xl bg-[var(--neon-magenta)] opacity-30" />
-                    </div>
-                    <span className="ml-3 text-muted-foreground">Searching archive...</span>
-                  </div>
-                ) : totalMatches === 0 ? (
-                  <div className="text-center py-12 text-muted-foreground">
-                    <p className="neon-text-purple">No direct matches found in archive.</p>
-                    <p className="text-sm mt-2">This may be new territory — the archive will learn from this entry.</p>
-                  </div>
-                ) : (
+                {totalMatches > 0 ? (
                   <div className="space-y-4">
                     {/* Phrase Matches */}
                     {patterns?.phrase && patterns.phrase.length > 0 && (
@@ -481,6 +462,11 @@ export default function Results() {
                     <p className="text-sm text-muted-foreground text-center pt-2">
                       {totalMatches} pattern{totalMatches !== 1 ? 's' : ''} found across the archive
                     </p>
+                  </div>
+                ) : (
+                  <div className="text-center py-10 text-muted-foreground">
+                    <p className="neon-text-purple text-sm">Pattern analysis paused</p>
+                    <p className="text-xs mt-2 opacity-60">Archive matching will resume in a future update.</p>
                   </div>
                 )}
               </div>

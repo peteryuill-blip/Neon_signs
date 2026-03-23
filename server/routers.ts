@@ -688,9 +688,8 @@ export const appRouter = router({
           quickNotes: quickNotesForStorage,
         });
         
-        // Detect and assign phase-DNA
-        const phaseDna = await detectPhaseDna(input);
-        await updateRoundupPhaseDna(roundupId, phaseDna);
+        // Phase-DNA detection temporarily disabled
+        const phaseDna = 'NE'; // default, not computed
 
         // Delete the quick notes that were included in this roundup
         if (input.quickNotes && input.quickNotes.length > 0) {
@@ -698,8 +697,8 @@ export const appRouter = router({
           await deleteQuickNotesByIds(noteIds, ctx.user.id);
         }
         
-        return { 
-          success: true, 
+        return {
+          success: true,
           roundupId,
           weekNumber: dateInfo.weekNumber,
           year: dateInfo.year,
@@ -787,8 +786,14 @@ export const appRouter = router({
     analyze: protectedProcedure
       .input(z.object({ roundupId: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        const roundup = await getWeeklyRoundupById(input.roundupId);
-        if (!roundup || roundup.userId !== ctx.user.id) {
+        // Temporarily disabled — phase matching not in use
+        return { matches: [], message: 'Phase matching is currently disabled' };
+
+        /* eslint-disable */
+        // @ts-ignore — dead code preserved for future re-enable
+        const _roundup = await getWeeklyRoundupById(input.roundupId);
+        const roundup = _roundup!;
+        if (!_roundup || (_roundup as any).userId !== ctx.user.id) {
           throw new TRPCError({ code: 'NOT_FOUND' });
         }
         
@@ -891,7 +896,7 @@ export const appRouter = router({
             'flowing': 'sustainable',
             'uncertain': 'depleted'
           };
-          const mappedState = emotionalMapping[workEmotionalTemp] || workEmotionalTemp;
+          const mappedState = emotionalMapping[workEmotionalTemp as string] || (workEmotionalTemp as string);
           const workEmotionalMatches = await searchArchiveByEmotionalState(mappedState);
           for (const archive of workEmotionalMatches.slice(0, 2)) {
             if (!matches.find(m => m.matchedArchiveId === archive.id)) {
