@@ -391,11 +391,21 @@ function CrucibleTrialsSummary({ weekNumber, year }: { weekNumber?: number; year
   // We need the settings to calculate the week's date range
   const { data: settings } = trpc.settings.get.useQuery();
   
-  // Calculate approximate date range for this crucible week
+  // Calculate date range for this crucible week, aligned to midnight Bangkok time (UTC+7).
+  // Works are stored at midnight local time (17:00 UTC previous day), so the window must
+  // start at midnight Bangkok (17:00 UTC the day before) to avoid missing early-week works.
   const dateRange = useMemo(() => {
     if (weekNumber === undefined || !settings) return null;
-    const startDate = settings.crucibleStartDate ? new Date(settings.crucibleStartDate) : new Date('2025-12-21T00:00:00+07:00');
-    const weekStart = new Date(startDate.getTime() + weekNumber * 7 * 24 * 60 * 60 * 1000);
+    const BANGKOK_OFFSET_MS = 7 * 60 * 60 * 1000; // UTC+7 in ms
+    const rawStart = settings.crucibleStartDate ? new Date(settings.crucibleStartDate) : new Date('2025-12-21T00:00:00+07:00');
+    // Convert crucible start to Bangkok local date, then floor to midnight Bangkok
+    const startLocal = new Date(rawStart.getTime() + BANGKOK_OFFSET_MS);
+    const midnightBangkokUTC = Date.UTC(
+      startLocal.getUTCFullYear(),
+      startLocal.getUTCMonth(),
+      startLocal.getUTCDate()
+    ) - BANGKOK_OFFSET_MS; // midnight Bangkok expressed as UTC
+    const weekStart = new Date(midnightBangkokUTC + weekNumber * 7 * 24 * 60 * 60 * 1000);
     const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000);
     return {
       startDate: weekStart.toISOString(),
