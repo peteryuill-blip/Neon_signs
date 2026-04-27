@@ -8,6 +8,7 @@ import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
 import { getDb } from "../db";
+import { sql } from "drizzle-orm";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -51,7 +52,6 @@ async function startServer() {
     try {
       const db = await getDb();
       if (!db) { res.status(500).json({ error: "no db" }); return; }
-      const { sql } = await import("drizzle-orm");
       const [rows1] = await db.execute(sql`SELECT COUNT(*) as t FROM works_core`);
       const [rows2] = await db.execute(sql`SELECT tCode FROM works_core ORDER BY id DESC LIMIT 1`);
       const [rows3] = await db.execute(sql`SELECT COUNT(*) as t FROM works_core WHERE rating = 5`);
