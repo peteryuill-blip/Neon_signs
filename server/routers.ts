@@ -502,6 +502,71 @@ Generate Neon's personalized reading now.`
 
 export const appRouter = router({
   system: systemRouter,
+    // Public stats endpoint — no auth required, read-only
+  // Used by peteryuill.art Crucible page to display live data
+  public: router({
+    crucibleStats: publicProcedure.query(async ({ ctx }) => {
+      const db = ctx.db;
+
+      // Total works count
+      const [totalWorksResult] = await db.execute(
+        `SELECT COUNT(*) as total FROM works_core`
+      ) as any;
+      const totalWorks = totalWorksResult[0]?.total ?? 0;
+
+      // Latest T-code (highest id)
+      const [latestResult] = await db.execute(
+        `SELECT tCode FROM works_core ORDER BY id DESC LIMIT 1`
+      ) as any;
+      const currentTCode = latestResult[0]?.tCode ?? "T_001";
+
+      // Rating 5 works count
+      const [ratingFiveResult] = await db.execute(
+        `SELECT COUNT(*) as total FROM works_core WHERE rating = 5`
+      ) as any;
+      const ratingFiveWorks = ratingFiveResult[0]?.total ?? 0;
+
+      // Kill rate (Trash + Probably_Trash / total)
+      const [trashResult] = await db.execute(
+        `SELECT COUNT(*) as total FROM works_core WHERE disposition IN ('Trash', 'Probably_Trash')`
+      ) as any;
+      const trashCount = trashResult[0]?.total ?? 0;
+      const killRate = totalWorks > 0 ? Math.round((trashCount / totalWorks) * 100) : 0;
+
+      // Total surface area in m²
+      const [surfaceResult] = await db.execute(
+        `SELECT SUM((heightCm * widthCm) / 10000) as totalM2 FROM works_core WHERE heightCm IS NOT NULL AND widthCm IS NOT NULL`
+      ) as any;
+      const surfaceArea = surfaceResult[0]?.totalM2
+        ? parseFloat(surfaceResult[0].totalM2).toFixed(2)
+        : "0";
+
+      // Total studio hours from weekly roundups
+      const [hoursResult] = await db.execute(
+        `SELECT SUM(studioHours) as totalHours FROM weekly_roundups WHERE userId = 1`
+      ) as any;
+      const studioHours = hoursResult[0]?.totalHours
+        ? Math.round(hoursResult[0].totalHours)
+        : 0;
+
+      // Current week number from latest roundup
+      const [weekResult] = await db.execute(
+        `SELECT weekNumber FROM weekly_roundups WHERE userId = 1 ORDER BY weekNumber DESC LIMIT 1`
+      ) as any;
+      const weekNumber = weekResult[0]?.weekNumber ?? 0;
+
+      return {
+        currentTCode,
+        totalWorks,
+        ratingFiveWorks,
+        killRate,
+        surfaceArea,
+        studioHours,
+        weekNumber,
+      };
+    }),
+  }),
+
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
