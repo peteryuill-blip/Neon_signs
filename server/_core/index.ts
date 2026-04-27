@@ -72,7 +72,6 @@ async function startServer() {
       });
     } catch(e) { res.status(500).json({ error: String(e) }); }
   });
-    } catch(e) { res.status(500).json({ error: String(e) }); }
   });
 
   // Local password-based auth routes
