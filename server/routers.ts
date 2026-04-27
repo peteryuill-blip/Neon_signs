@@ -502,8 +502,6 @@ Generate Neon's personalized reading now.`
 
 export const appRouter = router({
   system: systemRouter,
-    // Public stats endpoint — no auth required, read-only
-  // Used by peteryuill.art Crucible page to display live data
   public: router({
     crucibleStats: publicProcedure.query(async ({ ctx }) => {
       const db = ctx.db;
