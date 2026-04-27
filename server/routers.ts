@@ -566,6 +566,28 @@ export const appRouter = router({
   }),
 
   
+  // Public stats endpoint — no auth required
+  public: router({
+    crucibleStats: publicProcedure.query(async ({ ctx }) => {
+      const [totalWorksResult]: any = await ctx.db.execute(`SELECT COUNT(*) as total FROM works_core`);
+      const totalWorks = totalWorksResult[0]?.total ?? 0;
+      const [latestResult]: any = await ctx.db.execute(`SELECT tCode FROM works_core ORDER BY id DESC LIMIT 1`);
+      const currentTCode = latestResult[0]?.tCode ?? "T_001";
+      const [ratingFiveResult]: any = await ctx.db.execute(`SELECT COUNT(*) as total FROM works_core WHERE rating = 5`);
+      const ratingFiveWorks = ratingFiveResult[0]?.total ?? 0;
+      const [trashResult]: any = await ctx.db.execute(`SELECT COUNT(*) as total FROM works_core WHERE disposition IN ("Trash", "Probably_Trash")`);
+      const trashCount = trashResult[0]?.total ?? 0;
+      const killRate = totalWorks > 0 ? Math.round((trashCount / totalWorks) * 100) : 0;
+      const [surfaceResult]: any = await ctx.db.execute(`SELECT SUM((heightCm * widthCm) / 10000) as totalM2 FROM works_core WHERE heightCm IS NOT NULL AND widthCm IS NOT NULL`);
+      const surfaceArea = surfaceResult[0]?.totalM2 ? parseFloat(surfaceResult[0].totalM2).toFixed(2) : "0";
+      const [hoursResult]: any = await ctx.db.execute(`SELECT SUM(studioHours) as totalHours FROM weekly_roundups WHERE userId = 1`);
+      const studioHours = hoursResult[0]?.totalHours ? Math.round(hoursResult[0].totalHours) : 0;
+      const [weekResult]: any = await ctx.db.execute(`SELECT weekNumber FROM weekly_roundups WHERE userId = 1 ORDER BY weekNumber DESC LIMIT 1`);
+      const weekNumber = weekResult[0]?.weekNumber ?? 0;
+      return { currentTCode, totalWorks, ratingFiveWorks, killRate, surfaceArea, studioHours, weekNumber };
+    }),
+  }),
+
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
