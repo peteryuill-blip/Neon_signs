@@ -52,14 +52,14 @@ async function startServer() {
       const db = await getDb();
       if (!db) { res.status(500).json({ error: "no db" }); return; }
       const { sql } = await import("drizzle-orm");
-      const r1 = await db.execute(sql`SELECT COUNT(*) as t FROM works_core`);
-      const r2 = await db.execute(sql`SELECT tCode FROM works_core ORDER BY id DESC LIMIT 1`);
-      const r3 = await db.execute(sql`SELECT COUNT(*) as t FROM works_core WHERE rating = 5`);
-      const r4 = await db.execute(sql`SELECT COUNT(*) as t FROM works_core WHERE disposition IN ('Trash', 'Probably_Trash')`);
-      const r5 = await db.execute(sql`SELECT SUM((heightCm * widthCm) / 10000) as m2 FROM works_core WHERE heightCm IS NOT NULL`);
-      const r6 = await db.execute(sql`SELECT SUM(studioHours) as h FROM weekly_roundups WHERE userId = 1`);
-      const r7 = await db.execute(sql`SELECT weekNumber FROM weekly_roundups WHERE userId = 1 ORDER BY weekNumber DESC LIMIT 1`);
-      const a1=r1 as any,a2=r2 as any,a3=r3 as any,a4=r4 as any,a5=r5 as any,a6=r6 as any,a7=r7 as any;
+      const [rows1] = await db.execute(sql`SELECT COUNT(*) as t FROM works_core`);
+      const [rows2] = await db.execute(sql`SELECT tCode FROM works_core ORDER BY id DESC LIMIT 1`);
+      const [rows3] = await db.execute(sql`SELECT COUNT(*) as t FROM works_core WHERE rating = 5`);
+      const [rows4] = await db.execute(sql`SELECT COUNT(*) as t FROM works_core WHERE disposition IN ('Trash', 'Probably_Trash')`);
+      const [rows5] = await db.execute(sql`SELECT SUM((heightCm * widthCm) / 10000) as m2 FROM works_core WHERE heightCm IS NOT NULL`);
+      const [rows6] = await db.execute(sql`SELECT SUM(studioHours) as h FROM weekly_roundups WHERE userId = 1`);
+      const [rows7] = await db.execute(sql`SELECT weekNumber FROM weekly_roundups WHERE userId = 1 ORDER BY weekNumber DESC LIMIT 1`);
+      const a1=rows1 as any[],a2=rows2 as any[],a3=rows3 as any[],a4=rows4 as any[],a5=rows5 as any[],a6=rows6 as any[],a7=rows7 as any[];
       const total = Number(a1[0]?.t ?? 0);
       res.json({
         currentTCode: a2[0]?.tCode ?? "T_001",
@@ -70,6 +70,8 @@ async function startServer() {
         studioHours: a6[0]?.h ? Math.round(a6[0].h) : 0,
         weekNumber: a7[0]?.weekNumber ?? 0,
       });
+    } catch(e) { res.status(500).json({ error: String(e) }); }
+  });
     } catch(e) { res.status(500).json({ error: String(e) }); }
   });
 
