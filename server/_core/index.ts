@@ -29,6 +29,19 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
 
 async function startServer() {
   const app = express();
+
+  // CORS: allow peteryuill.art to fetch public stats
+  app.use((req: any, res: any, next: any) => {
+    const allowed = ["https://peter-yuill.com", "https://www.peter-yuill.com"];
+    const origin = req.headers.origin;
+    if (origin && allowed.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    }
+    res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    if (req.method === "OPTIONS") return res.sendStatus(200);
+    next();
+  });
   const server = createServer(app);
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
