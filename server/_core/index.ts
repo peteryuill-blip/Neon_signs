@@ -50,16 +50,27 @@ async function startServer() {
   app.get("/api/crucible-stats", async (req, res) => {
     try {
       const db = await getDb();
-      const [[r1]]: any = await db.execute("SELECT COUNT(*) as t FROM works_core");
-      const [[r2]]: any = await db.execute("SELECT tCode FROM works_core ORDER BY id DESC LIMIT 1");
-      const [[r3]]: any = await db.execute("SELECT COUNT(*) as t FROM works_core WHERE rating = 5");
-      const [[r4]]: any = await db.execute("SELECT COUNT(*) as t FROM works_core WHERE disposition IN (?)", ["Trash"]);
-      const [[r5]]: any = await db.execute("SELECT SUM((heightCm * widthCm) / 10000) as m2 FROM works_core WHERE heightCm IS NOT NULL");
-      const [[r6]]: any = await db.execute("SELECT SUM(studioHours) as h FROM weekly_roundups WHERE userId = 1");
-      const [[r7]]: any = await db.execute("SELECT weekNumber FROM weekly_roundups WHERE userId = 1 ORDER BY weekNumber DESC LIMIT 1");
-      const total = Number(r1?.t ?? 0);
-      res.json({ currentTCode: r2?.tCode ?? "T_001", totalWorks: total, ratingFiveWorks: Number(r3?.t ?? 0), killRate: total > 0 ? Math.round((Number(r4?.t ?? 0) / total) * 100) : 0, surfaceArea: r5?.m2 ? parseFloat(r5.m2).toFixed(2) : "0", studioHours: r6?.h ? Math.round(r6.h) : 0, weekNumber: r7?.weekNumber ?? 0 });
-    } catch(e) { res.status(500).json({ error: "unavailable" }); }
+      if (!db) { res.status(500).json({ error: "no db" }); return; }
+      const { sql } = await import("drizzle-orm");
+      const r1 = await db.execute(sql`SELECT COUNT(*) as t FROM works_core`);
+      const r2 = await db.execute(sql`SELECT tCode FROM works_core ORDER BY id DESC LIMIT 1`);
+      const r3 = await db.execute(sql`SELECT COUNT(*) as t FROM works_core WHERE rating = 5`);
+      const r4 = await db.execute(sql`SELECT COUNT(*) as t FROM works_core WHERE disposition IN ('Trash', 'Probably_Trash')`);
+      const r5 = await db.execute(sql`SELECT SUM((heightCm * widthCm) / 10000) as m2 FROM works_core WHERE heightCm IS NOT NULL`);
+      const r6 = await db.execute(sql`SELECT SUM(studioHours) as h FROM weekly_roundups WHERE userId = 1`);
+      const r7 = await db.execute(sql`SELECT weekNumber FROM weekly_roundups WHERE userId = 1 ORDER BY weekNumber DESC LIMIT 1`);
+      const a1=r1 as any,a2=r2 as any,a3=r3 as any,a4=r4 as any,a5=r5 as any,a6=r6 as any,a7=r7 as any;
+      const total = Number(a1[0]?.t ?? 0);
+      res.json({
+        currentTCode: a2[0]?.tCode ?? "T_001",
+        totalWorks: total,
+        ratingFiveWorks: Number(a3[0]?.t ?? 0),
+        killRate: total > 0 ? Math.round((Number(a4[0]?.t ?? 0) / total) * 100) : 0,
+        surfaceArea: a5[0]?.m2 ? parseFloat(a5[0].m2).toFixed(2) : "0",
+        studioHours: a6[0]?.h ? Math.round(a6[0].h) : 0,
+        weekNumber: a7[0]?.weekNumber ?? 0,
+      });
+    } catch(e) { res.status(500).json({ error: String(e) }); }
   });
 
   // Local password-based auth routes
