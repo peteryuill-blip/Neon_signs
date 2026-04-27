@@ -7,6 +7,7 @@ import { registerLocalAuthRoutes } from "./localAuth";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
+import { getDb } from "../db";
 
 function isPortAvailable(port: number): Promise<boolean> {
   return new Promise(resolve => {
@@ -46,6 +47,21 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  app.get("/api/crucible-stats", async (req, res) => {
+    try {
+      const db = await getDb();
+      const [[r1]]: any = await db.execute("SELECT COUNT(*) as t FROM works_core");
+      const [[r2]]: any = await db.execute("SELECT tCode FROM works_core ORDER BY id DESC LIMIT 1");
+      const [[r3]]: any = await db.execute("SELECT COUNT(*) as t FROM works_core WHERE rating = 5");
+      const [[r4]]: any = await db.execute("SELECT COUNT(*) as t FROM works_core WHERE disposition IN (?)", ["Trash"]);
+      const [[r5]]: any = await db.execute("SELECT SUM((heightCm * widthCm) / 10000) as m2 FROM works_core WHERE heightCm IS NOT NULL");
+      const [[r6]]: any = await db.execute("SELECT SUM(studioHours) as h FROM weekly_roundups WHERE userId = 1");
+      const [[r7]]: any = await db.execute("SELECT weekNumber FROM weekly_roundups WHERE userId = 1 ORDER BY weekNumber DESC LIMIT 1");
+      const total = Number(r1?.t ?? 0);
+      res.json({ currentTCode: r2?.tCode ?? "T_001", totalWorks: total, ratingFiveWorks: Number(r3?.t ?? 0), killRate: total > 0 ? Math.round((Number(r4?.t ?? 0) / total) * 100) : 0, surfaceArea: r5?.m2 ? parseFloat(r5.m2).toFixed(2) : "0", studioHours: r6?.h ? Math.round(r6.h) : 0, weekNumber: r7?.weekNumber ?? 0 });
+    } catch(e) { res.status(500).json({ error: "unavailable" }); }
+  });
+
   // Local password-based auth routes
   registerLocalAuthRoutes(app);
   // tRPC API
