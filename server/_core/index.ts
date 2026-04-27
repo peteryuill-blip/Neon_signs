@@ -70,7 +70,7 @@ async function startServer() {
         studioHours: a6[0]?.h ? Math.round(a6[0].h) : 0,
         weekNumber: a7[0]?.weekNumber ?? 0,
       });
-    } catch(e) { res.status(500).json({ error: String(e) }); }
+    } catch(e: any) { res.status(500).json({ error: e?.message ?? String(e) }); }
   });
   });
 
