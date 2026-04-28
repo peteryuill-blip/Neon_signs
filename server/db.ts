@@ -1324,6 +1324,7 @@ export async function getUnifiedExportData(userId: number): Promise<{
       phaseDna: r.phaseDnaAssigned,
       weeklySteps: r.weeklyStepTotal,
       avgDailySteps: r.dailyStepAverage,
+      dailySteps: r.dailySteps,
     })),
     trials,
   };
