@@ -67,7 +67,7 @@ export const ROUNDUP_HEADERS = [
   'Works_Started','Works_Finished','Works_Notes',
   'Jester_Activity','Energy_Level','Walking_Engine','Walking_Insights',
   'Partnership_Temperature','Thing_Worked','Thing_Resisted',
-  'Somatic_State','Door_Intention','Phase_DNA','Weekly_Steps','Avg_Steps_Day'
+  'Somatic_State','Door_Intention','Phase_DNA','Weekly_Steps','Avg_Steps_Day','Steps_Mon','Steps_Tue','Steps_Wed','Steps_Thu','Steps_Fri','Steps_Sat','Steps_Sun'
 ];
 
 export const TRIAL_HEADERS = [
@@ -84,7 +84,7 @@ export function buildUnifiedCSV(data: {
     worksMade: string; jesterActivity: number; energyLevel: string; walkingEngineUsed: boolean;
     walkingInsights: string | null; partnershipTemperature: string; thingWorked: string;
     thingResisted: string; somaticState: string; doorIntention: string | null; phaseDna: string | null;
-    weeklySteps: number | null; avgDailySteps: number | null;
+    weeklySteps: number | null; avgDailySteps: number | null; dailySteps: { mon: number; tue: number; wed: number; thu: number; fri: number; sat: number; sun: number } | null;
   }>;
   trials: Array<{
     code: string; date: string; week: number; rating: number | null; disposition: string;
@@ -120,7 +120,8 @@ export function buildUnifiedCSV(data: {
       esc(cleanDeferred(r.doorIntention)),
       esc(r.phaseDna || ''),
       esc(r.weeklySteps || 0),
-      esc(r.avgDailySteps || 0)
+      esc(r.avgDailySteps || 0),
+      esc(r.dailySteps?.mon ?? 0),esc(r.dailySteps?.tue ?? 0),esc(r.dailySteps?.wed ?? 0),esc(r.dailySteps?.thu ?? 0),esc(r.dailySteps?.fri ?? 0),esc(r.dailySteps?.sat ?? 0),esc(r.dailySteps?.sun ?? 0)
     ];
   });
 

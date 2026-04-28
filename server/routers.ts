@@ -1357,6 +1357,7 @@ export const appRouter = router({
           phaseDna: r.phaseDnaAssigned,
           weeklySteps: r.weeklyStepTotal,
           avgDailySteps: r.dailyStepAverage,
+          dailySteps: r.dailySteps as { mon: number; tue: number; wed: number; thu: number; fri: number; sat: number; sun: number } | null,
         })),
         generatedAt: new Date().toISOString()
       };
