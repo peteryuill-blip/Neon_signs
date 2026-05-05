@@ -624,7 +624,7 @@ export const appRouter = router({
       // Can submit if:
       // 1. Less than 7 entries this week AND
       // 2. Either it's check-in day OR there's already a check-in day entry
-      const canSubmit = entryCount < 7 && (dateInfo.isCheckInDay || hasCheckInDayEntry);
+      const canSubmit = entryCount < 7;
       
       return {
         canSubmit,
