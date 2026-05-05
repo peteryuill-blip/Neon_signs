@@ -711,13 +711,7 @@ export const appRouter = router({
           });
         }
         
-        // Validate: must have check-in day entry OR be on check-in day
-        if (!dateInfo.isCheckInDay && !hasCheckInDayEntry) {
-          throw new TRPCError({
-            code: 'FORBIDDEN',
-            message: `Your first entry of the week must be on ${checkInDay}. Additional entries can be submitted any day after.`
-          });
-        }
+        // Day restriction removed - any day submission allowed
         
         // Calculate step statistics if provided
         let weeklyStepTotal: number | undefined;
