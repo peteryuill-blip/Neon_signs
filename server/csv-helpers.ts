@@ -14,7 +14,7 @@ export function cleanDeferred(val: string | null | undefined): string {
 export function escapeCSV(val: string | number | null | undefined): string {
   if (val === null || val === undefined || val === '') return '';
   const s = String(val);
-  if (s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r')) {
+  if (s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r') || /^[=+\-@|]/.test(s)) {
     return `"${s.replace(/"/g, '""')}"`;
   }
   return s;
@@ -141,11 +141,11 @@ export function buildUnifiedCSV(data: {
   });
 
   return [
-    '=== WEEKLY ROUNDUPS ===',
+    '"=== WEEKLY ROUNDUPS ==="',
     ROUNDUP_HEADERS.join(','),
     ...roundupRows.map(r => r.join(',')),
     '',
-    '=== CRUCIBLE TRIALS ===',
+    '"=== CRUCIBLE TRIALS ==="',
     TRIAL_HEADERS.join(','),
     ...trialRows.map(r => r.join(','))
   ].join('\n');

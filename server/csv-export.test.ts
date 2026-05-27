@@ -13,7 +13,7 @@ function cleanDeferred(val: string | null | undefined): string {
 function esc(val: string | number | null | undefined): string {
   if (val === null || val === undefined || val === '') return '';
   const s = String(val);
-  if (s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r')) {
+  if (s.includes(',') || s.includes('"') || s.includes('\n') || s.includes('\r') || /^[=+\-@|]/.test(s)) {
     return `"${s.replace(/"/g, '""')}"`;
   }
   return s;
@@ -112,6 +112,17 @@ describe('CSV Export: esc (CSV escaping)', () => {
   it('handles numbers', () => {
     expect(esc(42)).toBe('42');
     expect(esc(0)).toBe('0');
+  });
+
+  it('quotes strings starting with = to prevent formula injection', () => {
+    expect(esc('=== CRUCIBLE TRIALS ===')).toBe('"=== CRUCIBLE TRIALS ==="');
+    expect(esc('=SUM(A1)')).toBe('"=SUM(A1)"');
+  });
+
+  it('quotes strings starting with + or - or @ to prevent formula injection', () => {
+    expect(esc('+1')).toBe('"+1"');
+    expect(esc('-1')).toBe('"-1"');
+    expect(esc('@user')).toBe('"@user"');
   });
 });
 
