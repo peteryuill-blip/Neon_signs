@@ -125,7 +125,14 @@ export function buildUnifiedCSV(data: {
     ];
   });
 
-  const trialRows = data.trials.map(t => {
+  const trialRows = data.trials
+    .slice()
+    .sort((a, b) => {
+      const numA = parseInt(a.code.replace(/\D/g, ''), 10);
+      const numB = parseInt(b.code.replace(/\D/g, ''), 10);
+      return numB - numA;
+    })
+    .map(t => {
     const disp = t.disposition.replace(/_/g, ' ');
     const saveFlag = disp === 'Save Has Potential' ? 'TRUE' : 'FALSE';
     const intent = splitTechnicalIntent(t.technicalIntent);
