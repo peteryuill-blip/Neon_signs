@@ -141,11 +141,9 @@ export function buildUnifiedCSV(data: {
   });
 
   return [
-    '"=== WEEKLY ROUNDUPS ==="',
     ROUNDUP_HEADERS.join(','),
     ...roundupRows.map(r => r.join(',')),
     '',
-    '"=== CRUCIBLE TRIALS ==="',
     TRIAL_HEADERS.join(','),
     ...trialRows.map(r => r.join(','))
   ].join('\n');
