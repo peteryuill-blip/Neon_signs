@@ -245,7 +245,13 @@ export default function CrucibleIntake() {
             </div>
             <div className="text-right">
               <div className="font-mono text-cyan-400 text-lg">{nextCodeData?.nextCode || 'T_001'}</div>
-              <div className="text-xs text-gray-500">{workDate}</div>
+              <input
+                type="date"
+                value={workDate}
+                onChange={(e) => setWorkDate(e.target.value)}
+                max={new Date().toISOString().split('T')[0]}
+                className="text-xs text-gray-400 bg-transparent border-b border-gray-700 focus:border-cyan-400 outline-none text-right"
+              />
             </div>
           </div>
         </div>
