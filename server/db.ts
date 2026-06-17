@@ -459,7 +459,7 @@ export async function upsertUserSettings(settings: InsertUserSettings): Promise<
 export async function updateWeeklyRoundup(
   id: number,
   userId: number,
-  updates: Partial<Omit<InsertWeeklyRoundup, 'userId' | 'weekNumber' | 'year' | 'createdDayOfWeek'>>
+  updates: Partial<Omit<InsertWeeklyRoundup, 'userId' | 'createdDayOfWeek'>>
 ): Promise<void> {
   const db = await getDb();
   if (!db) return;
