@@ -12,11 +12,16 @@ import { naturalSortByCode } from '@shared/naturalSort';
 
 // Rating descriptions
 const RATING_LABELS: Record<number, { label: string; description: string }> = {
-  1: { label: 'Material Test', description: 'Pure motor practice, no insight expected' },
+  1: { label: 'Somatic Drill', description: 'Pure motor practice, no insight expected' },
   2: { label: 'Glitch Harvest', description: 'Failure with observable data' },
   3: { label: 'Stable Execution', description: 'Expected outcome, no surprise' },
   4: { label: 'Signal Detected', description: 'Something new emerged' },
-  5: { label: 'Breakthrough', description: 'Reserve for genuine breakthrough moments' },
+  5: { label: 'Breakthrough', description: 'Strong emergence, genuine shift' },
+  6: { label: 'Clear Signal', description: 'Consistent breakthrough-level quality' },
+  7: { label: 'High Form', description: 'Standout work, gallery consideration' },
+  8: { label: 'Exhibition Ready', description: 'Meets high standard for public showing' },
+  9: { label: 'Peak Form', description: 'Among the best work of the practice' },
+  10: { label: 'Masterwork', description: 'Canonical work, definitive achievement' },
 };
 
 const DISPOSITION_OPTIONS = [
@@ -407,21 +412,21 @@ export default function CrucibleIntake() {
               
               {/* Rating - no default */}
               <div>
-                <Label className="text-magenta-400 text-xs">Rating *</Label>
-                <div className="flex gap-1.5 mt-1.5">
-                  {[1, 2, 3, 4, 5].map((r) => (
+                <Label className="text-magenta-400 text-xs">Rating * <span className="text-gray-600 font-normal">/ 10</span></Label>
+                <div className="grid grid-cols-5 gap-1.5 mt-1.5">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((r) => (
                     <button
                       key={r}
                       type="button"
                       onClick={() => setRating(r)}
-                      className={`flex-1 py-2.5 rounded-lg border transition-all ${
+                      className={`py-2.5 rounded-lg border transition-all ${
                         rating === r
                           ? 'bg-magenta-500/20 border-magenta-400 text-magenta-400'
                           : 'bg-black/30 border-gray-700 text-gray-500 hover:border-gray-500'
                       }`}
                     >
                       <div className="flex items-center justify-center gap-0.5">
-                        {r >= 4 ? <Flame className="w-3 h-3" /> : <Star className="w-3 h-3" />}
+                        {r >= 8 ? <Flame className="w-3 h-3" /> : <Star className="w-3 h-3" />}
                         <span className="font-bold text-sm">{r}</span>
                       </div>
                     </button>

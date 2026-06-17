@@ -15,6 +15,11 @@ const RATING_LABELS: Record<number, string> = {
   3: 'Stable Execution',
   4: 'Signal Detected',
   5: 'Breakthrough',
+  6: 'Clear Signal',
+  7: 'High Form',
+  8: 'Exhibition Ready',
+  9: 'Peak Form',
+  10: 'Masterwork',
 };
 
 const DISPOSITION_OPTIONS = [
@@ -489,25 +494,20 @@ export default function WorkEdit() {
               <CardTitle className="text-amber-400">Rating</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex gap-2">
-                {[1, 2, 3, 4, 5].map((r) => (
+              <div className="grid grid-cols-5 gap-2">
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((r) => (
                   <button
                     key={r}
                     type="button"
                     onClick={() => setRating(r)}
-                    className={`flex-1 p-4 rounded-lg border-2 transition-all ${
+                    className={`p-3 rounded-lg border-2 transition-all ${
                       rating === r
                         ? 'border-amber-400 bg-amber-400/20'
                         : 'border-purple-500/30 hover:border-amber-400/50'
                     }`}
                   >
-                    <Star
-                      className={`w-6 h-6 mx-auto mb-2 ${
-                        rating === r ? 'fill-amber-400 text-amber-400' : 'text-gray-600'
-                      }`}
-                    />
-                    <div className="text-xs text-gray-400">{r}</div>
-                    <div className="text-xs text-gray-500 mt-1">{RATING_LABELS[r]}</div>
+                    <div className="text-sm font-bold text-center text-gray-300">{r}</div>
+                    <div className="text-[10px] text-gray-500 mt-1 text-center leading-tight">{RATING_LABELS[r]}</div>
                   </button>
                 ))}
               </div>

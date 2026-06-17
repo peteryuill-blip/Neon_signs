@@ -161,11 +161,11 @@ function getDateInfoWithSettings(settings?: {
   checkInDay: string;
   timezone: string;
   currentCycle: number;
-} | null): { 
-  dayOfWeek: string; 
-  date: Date; 
-  weekNumber: number; 
-  year: number; 
+} | null, targetDate?: Date): {
+  dayOfWeek: string;
+  date: Date;
+  weekNumber: number;
+  year: number;
   crucibleYear: number;
   totalWeeks: number;
   isCheckInDay: boolean;
@@ -174,8 +174,8 @@ function getDateInfoWithSettings(settings?: {
   const timezone = settings?.timezone || DEFAULT_TIMEZONE;
   const checkInDay = settings?.checkInDay || DEFAULT_CHECK_IN_DAY;
   const currentCycle = settings?.currentCycle || 1;
-  
-  const now = new Date();
+
+  const now = targetDate || new Date();
   const offset = getTimezoneOffset(timezone);
   const localTime = new Date(now.getTime() + offset);
   
@@ -520,7 +520,7 @@ export const appRouter = router({
 
       // Rating 5 works count
       const [ratingFiveResult] = await db.execute(
-        `SELECT COUNT(*) as total FROM works_core WHERE rating = 5`
+        `SELECT COUNT(*) as total FROM works_core WHERE rating = 5 OR rating >= 8`
       ) as any;
       const ratingFiveWorks = ratingFiveResult[0]?.total ?? 0;
 
@@ -573,7 +573,7 @@ export const appRouter = router({
       const totalWorks = totalWorksResult[0]?.total ?? 0;
       const [latestResult]: any = await ctx.db.execute(`SELECT tCode FROM works_core ORDER BY id DESC LIMIT 1`);
       const currentTCode = latestResult[0]?.tCode ?? "T_001";
-      const [ratingFiveResult]: any = await ctx.db.execute(`SELECT COUNT(*) as total FROM works_core WHERE rating = 5`);
+      const [ratingFiveResult]: any = await ctx.db.execute(`SELECT COUNT(*) as total FROM works_core WHERE rating = 5 OR rating >= 8`);
       const ratingFiveWorks = ratingFiveResult[0]?.total ?? 0;
       const [trashResult]: any = await ctx.db.execute(`SELECT COUNT(*) as total FROM works_core WHERE disposition IN ("Trash", "Probably_Trash")`);
       const trashCount = trashResult[0]?.total ?? 0;
@@ -682,10 +682,14 @@ export const appRouter = router({
           content: z.string(),
           createdAt: z.coerce.date(),
         })).nullable().optional(),
+        targetDate: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
         const settings = await getUserSettings(ctx.user.id);
-        const dateInfo = getDateInfoWithSettings(settings);
+        const dateInfo = getDateInfoWithSettings(
+          settings,
+          input.targetDate ? new Date(input.targetDate) : undefined
+        );
         const checkInDay = settings?.checkInDay || 'Sunday';
         
         // Get current entry count for this week
@@ -1820,7 +1824,7 @@ export const appRouter = router({
         toolIds: z.array(z.number()).optional(),
         technicalIntent: z.string().max(140).optional(),
         discovery: z.string().max(280).optional(),
-        rating: z.number().min(1).max(5),
+        rating: z.number().min(1).max(10),
         disposition: z.enum(['Trash', 'Probably_Trash', 'Save_Archive', 'Save_Has_Potential']),
         heightCm: z.number().positive().optional(), // Height in cm
         widthCm: z.number().positive().optional(), // Width in cm
@@ -1886,7 +1890,7 @@ export const appRouter = router({
         date: z.string().optional(), // ISO date string
         technicalIntent: z.string().max(140).optional(),
         discovery: z.string().max(280).optional(),
-        rating: z.number().min(1).max(5).optional(),
+        rating: z.number().min(1).max(10).optional(),
         disposition: z.enum(['Trash', 'Probably_Trash', 'Save_Archive', 'Save_Has_Potential']).optional(),
         heightCm: z.number().positive().optional(),
         widthCm: z.number().positive().optional(),
