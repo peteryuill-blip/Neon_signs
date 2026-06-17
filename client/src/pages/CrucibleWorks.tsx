@@ -258,7 +258,7 @@ export default function CrucibleWorks() {
                         
                         {/* Rating stars */}
                         <div className="flex gap-0.5">
-                          {[1, 2, 3, 4, 5].map((i) => (
+                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
                             <Star
                               key={i}
                               className={`w-3 h-3 ${

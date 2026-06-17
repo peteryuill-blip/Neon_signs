@@ -237,7 +237,7 @@ export const worksCore = mysqlTable("works_core", {
   // Work details
   technicalIntent: varchar("technicalIntent", { length: 140 }), // Pre-action hypothesis
   discovery: varchar("discovery", { length: 280 }), // Post-action observation
-  rating: int("rating").notNull(), // 1-5 (somatic_drill to breakthrough)
+  rating: int("rating").notNull(), // 1-10 (somatic drill to masterwork); legacy entries 1-5
   disposition: mysqlEnum("disposition", ["Trash", "Probably_Trash", "Save_Archive", "Save_Has_Potential"]).notNull(),
   
   // Size (dimensions in cm)

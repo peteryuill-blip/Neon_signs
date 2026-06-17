@@ -9,7 +9,12 @@ const RATING_LABELS: Record<number, { label: string; description: string }> = {
   2: { label: 'Glitch Harvest', description: 'Failure with observable data' },
   3: { label: 'Stable Execution', description: 'Expected outcome, no surprise' },
   4: { label: 'Signal Detected', description: 'Something new emerged' },
-  5: { label: 'Breakthrough', description: 'Paradigm shift moment' },
+  5: { label: 'Breakthrough', description: 'Strong emergence, genuine shift' },
+  6: { label: 'Clear Signal', description: 'Consistent breakthrough-level quality' },
+  7: { label: 'High Form', description: 'Standout work, gallery consideration' },
+  8: { label: 'Exhibition Ready', description: 'Meets high standard for public showing' },
+  9: { label: 'Peak Form', description: 'Among the best work of the practice' },
+  10: { label: 'Masterwork', description: 'Canonical work, definitive achievement' },
 };
 
 const DISPOSITION_CONFIG = {
@@ -113,17 +118,9 @@ export default function WorkDetail() {
                 <CardTitle className="text-amber-400 text-lg">Rating</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center gap-3 mb-2">
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <Star
-                      key={i}
-                      className={`w-6 h-6 ${
-                        i <= work.rating
-                          ? 'fill-amber-400 text-amber-400'
-                          : 'text-gray-600'
-                      }`}
-                    />
-                  ))}
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-3xl font-bold text-amber-400">{work.rating}</span>
+                  <span className="text-lg text-gray-600">/10</span>
                 </div>
                 <div className="text-lg font-bold text-white">{ratingInfo.label}</div>
                 <div className="text-sm text-gray-400">{ratingInfo.description}</div>

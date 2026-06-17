@@ -476,7 +476,7 @@ export default function CommandCenter() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-5 gap-2 sm:gap-4">
-                  {[1, 2, 3, 4, 5].map((rating) => {
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => {
                     const ratingData = data.ratingDistribution?.find((r) => r.rating === rating);
                     const count = ratingData?.count || 0;
                     const total = data.ratingDistribution?.reduce((sum, r) => sum + (r.count || 0), 0) || 1;
@@ -484,11 +484,7 @@ export default function CommandCenter() {
 
                     return (
                       <div key={rating} className="text-center">
-                        <div className="flex justify-center mb-1">
-                          {Array.from({ length: rating }).map((_, i) => (
-                            <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                          ))}
-                        </div>
+                        <div className="text-sm font-bold text-yellow-400 mb-1">{rating}</div>
                         <div className="text-xl font-bold text-yellow-400">{count}</div>
                         <div className="text-[10px] text-muted-foreground">{percentage}%</div>
                       </div>

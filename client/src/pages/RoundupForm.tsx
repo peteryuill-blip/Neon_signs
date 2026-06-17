@@ -470,6 +470,7 @@ export default function RoundupForm() {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [errors, setErrors] = useState<Partial<Record<keyof FormData | 'worksDataInquiry', string>>>({});
   const [draftSaved, setDraftSaved] = useState(false);
+  const [targetDate, setTargetDate] = useState<string>('');
 
   const { data: canSubmitData, isLoading: checkingSubmit } = trpc.roundup.canSubmit.useQuery(undefined, {
     enabled: isAuthenticated,
@@ -688,6 +689,7 @@ export default function RoundupForm() {
       worksData: worksDataToSubmit,
       city: formData.city || null,
       quickNotes: weeklyQuickNotes && weeklyQuickNotes.length > 0 ? weeklyQuickNotes : null,
+      targetDate: targetDate || undefined,
     });
   };
 
@@ -744,7 +746,9 @@ export default function RoundupForm() {
             <div>
               <h1 className="text-lg font-semibold neon-text-white">Weekly Roundup</h1>
               <p className="text-sm text-muted-foreground">
-                Week {canSubmitData?.weekNumber}, {canSubmitData?.year}
+                {targetDate
+                  ? `Late entry for ${targetDate}`
+                  : `Week ${canSubmitData?.weekNumber}, ${canSubmitData?.year}`}
               </p>
             </div>
           </div>
@@ -803,6 +807,23 @@ export default function RoundupForm() {
             )}
           </div>
         )}
+
+        {/* Late entry override */}
+        <div className="cyber-form rounded-xl p-4 mb-4 border border-amber-500/20">
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <p className="text-xs text-amber-400 font-semibold">Submitting for a past week?</p>
+              <p className="text-xs text-muted-foreground">Leave blank to submit for the current week.</p>
+            </div>
+            <input
+              type="date"
+              value={targetDate}
+              onChange={(e) => setTargetDate(e.target.value)}
+              max={new Date().toISOString().split('T')[0]}
+              className="cyber-input rounded-lg text-sm px-3 py-1.5 w-40"
+            />
+          </div>
+        </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">

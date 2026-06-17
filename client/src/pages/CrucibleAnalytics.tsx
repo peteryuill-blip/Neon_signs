@@ -91,19 +91,14 @@ export default function CrucibleAnalytics() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-5 gap-4">
-              {[1, 2, 3, 4, 5].map((rating) => {
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => {
                 const ratingData = ratingDist?.find((r) => r.rating === rating);
                 const count = ratingData?.count || 0;
                 const total = ratingDist?.reduce((sum, r) => sum + (r.count || 0), 0) || 1;
                 const percentage = ((count / total) * 100).toFixed(0);
-                
                 return (
                   <div key={rating} className="text-center">
-                    <div className="flex justify-center mb-2">
-                      {Array.from({ length: rating }).map((_, i) => (
-                        <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      ))}
-                    </div>
+                    <div className="text-sm font-bold text-yellow-400 mb-1">{rating}</div>
                     <div className="text-2xl font-bold text-yellow-400">{count}</div>
                     <div className="text-xs text-gray-500">{percentage}%</div>
                   </div>
