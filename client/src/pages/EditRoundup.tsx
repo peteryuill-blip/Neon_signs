@@ -85,6 +85,7 @@ export default function EditRoundup() {
   });
   
   // Form state
+  const [targetDate, setTargetDate] = useState("");
   const [weatherReport, setWeatherReport] = useState("");
   const [studioHours, setStudioHours] = useState(0);
   const [worksMade, setWorksMade] = useState("");
@@ -101,6 +102,9 @@ export default function EditRoundup() {
   // Initialize form when roundup loads
   useEffect(() => {
     if (roundup) {
+      // Pre-fill date from createdAt so user can see and change it
+      const d = new Date(roundup.createdAt);
+      setTargetDate(d.toISOString().split('T')[0]);
       setWeatherReport(roundup.weatherReport || "");
       setStudioHours(roundup.studioHours || 0);
       setWorksMade(roundup.worksMade || "");
@@ -140,7 +144,7 @@ export default function EditRoundup() {
       worksMade,
       jesterActivity,
       energyLevel,
-      walkingEngineUsed: stepStats.average >= STEP_THRESHOLD_HIGH, // Auto-set based on steps
+      walkingEngineUsed: stepStats.average >= STEP_THRESHOLD_HIGH,
       walkingInsights: walkingInsights || undefined,
       partnershipTemperature,
       thingWorked,
@@ -148,6 +152,7 @@ export default function EditRoundup() {
       somaticState,
       doorIntention: doorIntention || undefined,
       dailySteps,
+      targetDate: targetDate || undefined,
     });
   };
   
@@ -234,6 +239,24 @@ export default function EditRoundup() {
 
       <main className="container py-8 max-w-2xl">
         <div className="space-y-6">
+          {/* Week Date */}
+          <div className="cyber-card rounded-xl overflow-hidden">
+            <div className="p-6">
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="text-lg font-semibold neon-text-amber">Week Date</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                Change this to move the roundup to a different crucible week.
+              </p>
+              <input
+                type="date"
+                value={targetDate}
+                onChange={(e) => setTargetDate(e.target.value)}
+                className="cyber-input rounded-lg text-sm px-3 py-2 w-full"
+              />
+            </div>
+          </div>
+
           {/* Weather Report */}
           <div className="cyber-card rounded-xl overflow-hidden">
             <div className="p-6">

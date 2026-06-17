@@ -1502,10 +1502,11 @@ export const appRouter = router({
           technicalNote: z.string().optional(),
           abandonmentReason: z.string().optional(),
         })).optional(),
+        targetDate: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
-        const { id, ...updates } = input;
-        
+        const { id, targetDate, ...updates } = input;
+
         // Filter out undefined values
         const filteredUpdates: Record<string, unknown> = {};
         for (const [key, value] of Object.entries(updates)) {
@@ -1513,11 +1514,19 @@ export const appRouter = router({
             filteredUpdates[key] = value;
           }
         }
-        
+
+        // If a target date is provided, recalculate weekNumber and year
+        if (targetDate) {
+          const settings = await getUserSettings(ctx.user.id);
+          const dateInfo = getDateInfoWithSettings(settings, new Date(targetDate));
+          filteredUpdates.weekNumber = dateInfo.weekNumber;
+          filteredUpdates.year = dateInfo.year;
+        }
+
         if (Object.keys(filteredUpdates).length === 0) {
           throw new TRPCError({ code: 'BAD_REQUEST', message: 'No updates provided' });
         }
-        
+
         await updateWeeklyRoundup(id, ctx.user.id, filteredUpdates);
         
         return { success: true };
