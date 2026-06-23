@@ -59,7 +59,8 @@ async function startServer() {
       const [rows5] = await db.execute(sql`SELECT SUM((heightCm * widthCm) / 10000) as m2 FROM works_core WHERE userId = 1 AND heightCm IS NOT NULL AND widthCm IS NOT NULL`);
       const [rows6] = await db.execute(sql`SELECT SUM(studioHours) as h FROM weekly_roundups WHERE userId = 1`);
       const [rows7] = await db.execute(sql`SELECT weekNumber FROM weekly_roundups WHERE userId = 1 ORDER BY weekNumber DESC LIMIT 1`);
-      const a1=rows1 as any[],a2=rows2 as any[],a3=rows3 as any[],a4=rows4 as any[],a5=rows5 as any[],a6=rows6 as any[],a7=rows7 as any[];
+      const [rows8] = await db.execute(sql`SELECT COUNT(DISTINCT userId) as t FROM works_core`);
+      const a1=rows1 as any[],a2=rows2 as any[],a3=rows3 as any[],a4=rows4 as any[],a5=rows5 as any[],a6=rows6 as any[],a7=rows7 as any[],a8=rows8 as any[];
       const total = Number(a1[0]?.t ?? 0);
       res.json({
         currentTCode: a2[0]?.code ?? "T_001",
@@ -69,6 +70,7 @@ async function startServer() {
         surfaceArea: a5[0]?.m2 ? parseFloat(a5[0].m2).toFixed(2) : "0",
         studioHours: a6[0]?.h ? Math.round(a6[0].h) : 0,
         weekNumber: a7[0]?.weekNumber ?? 0,
+        workerCount: Number(a8[0]?.t ?? 0),
       });
     } catch(e: any) { res.status(500).json({ error: e?.message ?? String(e) }); }
   });
